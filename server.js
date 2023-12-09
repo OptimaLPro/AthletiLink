@@ -520,7 +520,6 @@ app.post("/create_post", async (req, res) => {
   }
 }); 
 
-
 // ---------- Add user groups ----------
 app.post("/add_user_groups", (req, res) => {
   try {
