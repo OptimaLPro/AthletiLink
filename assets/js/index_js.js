@@ -209,6 +209,16 @@ function getPostsAndComments(all_posts) {
 
                     all_comments.forEach(function (comment) {
                         var card_comment = document.createElement("div");
+
+                        var deleteIconComment = document.createElement("button");
+                        deleteIconComment.className = "btn btn-danger ml-auto mt-2 mr-2 deleteIcon";
+                        deleteIconComment.style.display = admin === "master" ? "inline" : "none";
+                        deleteIconComment.innerHTML = '<i class="fa fa-times"></i>';
+                        deleteIconComment.addEventListener("click", function () {
+                            // Replace this with your actual function to delete a post
+                            deleteComment(comment._id);
+                        });
+
                         card_comment.className = "card";
                         card_comment.innerHTML = `
                     <div class="card-body">
@@ -217,7 +227,9 @@ function getPostsAndComments(all_posts) {
                         <span class="font-weight-bold">${comment.date}</span>
                     </div>
                     `;
+                        card_comment.appendChild(deleteIconComment);
                         collapseElem.appendChild(accordionElem);
+                        // collapseElem.appendChild(deleteIconComment);
                         accordionElem.appendChild(card_comment);
                     });
                 }
@@ -251,6 +263,28 @@ function deletePost(post_id, all_posts) {
     $('#confirmDeleteBtn').off('click').on('click', function () {
         console.log(`Delete post with ID: ${post_id}`);
         $.post(`http://localhost:5500/delete_post/${post_id}`, function (data) {
+            clearPosts();
+            var postsApiUrl = "http://localhost:5500/posts";
+            fetch(postsApiUrl)
+                .then((response) => response.json())
+                .then((posts) => {
+                    var all_posts = posts.posts;
+                    getPostsAndComments(all_posts);
+                })
+                .catch((error) => {
+                    console.error("Error fetching posts:", error);
+                });
+            $('#deletePostModal').modal('hide');
+        });
+    });
+}
+
+function deleteComment(comment_id, all_posts) {
+    $('#deletePostModal').modal('show');
+
+    $('#confirmDeleteBtn').off('click').on('click', function () {
+        console.log(`Delete comment with ID: ${comment_id}`);
+        $.post(`http://localhost:5500/delete_comment/${comment_id}`, function (data) {
             clearPosts();
             var postsApiUrl = "http://localhost:5500/posts";
             fetch(postsApiUrl)

@@ -403,7 +403,23 @@ app.post("/delete_comment/:comment_id", async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
+    const post_id = comment.post_id;
+
     await comment.deleteOne();
+
+    const post = await Posts.findById(post_id);
+    new_comments_counter = post.comments - 1;
+    data = {
+      comments: new_comments_counter
+    }
+
+    const updatedPost = await Posts.findByIdAndUpdate(post_id, data, {
+      new: true,
+    });
+    if (!updatedPost) {
+      return res.status(404).json({ message: "post not found" });
+    }
+
     createLog("Delete Comment", `${comment_id}`, req);
     res.status(200).json({ message: "Comment deleted successfully" });
   } catch (error) {
@@ -467,7 +483,7 @@ app.post("/create_post", async (req, res) => {
     console.log(error);
     res.status(500).json({ message: error.message });
   }
-}); 
+});
 
 // ---------- Add user groups ----------
 app.post("/add_user_groups", (req, res) => {
