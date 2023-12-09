@@ -137,7 +137,7 @@ app.get("/user/:id", async (req, res) => {
 });
 
 // ---------- Get User By Session ----------
-app.get("/user_session", async (res) => {
+app.get("/user_session", async (req, res) => {
   try {
     const user_id = session.user_id;
     const admin = session.admin;
@@ -147,8 +147,9 @@ app.get("/user_session", async (res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 // ---------- Get User By ID ----------
-app.get("/user_details", async (res) => {
+app.get("/user_details", async (req, res) => {
   try {
     const users = await Users.findById(session.user_id);
     // console.log(users)
@@ -171,7 +172,7 @@ app.get("/getUserByMail/:email", async (req, res) => {
 });
 
 // ---------- Get All Users ----------
-app.get("/getUsers", async (res) => {
+app.get("/getUsers", async (req, res) => {
   try {
     const users = await Users.find({});
     res.status(200).json({ users });
@@ -182,7 +183,7 @@ app.get("/getUsers", async (res) => {
 });
 
 // ---------- Get All Users Groups By ID ----------
-app.get("/user_groups/", async (res) => {
+app.get("/user_groups/", async (req, res) => {
   try {
     const user_groups = await User_groups.find({
       user_id: session.user_id,
@@ -267,7 +268,7 @@ app.post("/update_user/:user_id", async (req, res) => {
 });
 
 // ---------- Get All Posts ----------
-app.get("/posts", async (res) => {
+app.get("/posts", async (req, res) => {
   try {
     const posts = await Posts.find({});
     res.status(200).json({ posts });
@@ -314,7 +315,7 @@ app.post("/update_post/:post_id", async (req, res) => {
 });
 
 // ---------- Get All Groups ----------
-app.get("/groups", async (res) => {
+app.get("/groups", async (req, res) => {
   try {
     const groups = await Groups.find({});
     res.status(200).json({ groups });
@@ -336,7 +337,7 @@ app.get("/posts/:group_name", async (req, res) => {
 });
 
 // ---------- Get All Comments ----------
-app.get("/comments", async (res) => {
+app.get("/comments", async (req, res) => {
   try {
     const comments = await Comments.find({});
     res.status(200).json({ comments });
