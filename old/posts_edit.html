@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Management</title>
+    <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 80%;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #postTable {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #postTable th,
+        #postTable td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        #postTable th {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        #postTable tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        #postTable tbody tr:hover {
+            background-color: #e2e6ea;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="d-flex justify-content-center">Post Management</h1>
+        <table id="postTable" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User ID</th>
+                    <th>Title</th>
+                    <th>Host</th>
+                    <th>Duration</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                    <th>Likes</th>
+                    <th>Did</th>
+                    <th>Comments</th>
+                    <th>Group Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Fetch posts and populate the table on page load
+            fetchPosts();
+
+            // Function to fetch posts from the server
+            function fetchPosts() {
+                $.get("http://localhost:5500/posts", function (data) {
+                    const posts = data.posts;
+                    console.log(posts);
+                    populateTable(posts);
+                });
+            }
+
+            // Function to populate the table with post data
+            function populateTable(posts) {
+                const tableBody = $("#postTable tbody");
+                tableBody.empty();
+
+                posts.forEach(function (post) {
+                    const row = `
+                        <tr>
+                            <td>${post._id}</td>
+                            <td>${post.user_id}</td>
+                            <td>${post.title}</td>
+                            <td>${post.host}</td>
+                            <td>${post.duration}</td>
+                            <td>${post.location}</td>
+                            <td>${post.description}</td>
+                            <td>${post.likes}</td>
+                            <td>${post.did}</td>
+                            <td>${post.comments}</td>
+                            <td>${post.group_name}</td>
+                            <td>${post.date}</td>
+                            <td>${post.time}</td>
+                            <td>${post.status}</td>
+                            <td>
+                                <button onclick="updatePost('${post._id}')">Update</button>
+                                <button onclick="deletePost('${post._id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.append(row);
+                });
+            }
+
+            // Function to delete a post
+            window.deletePost = function (postId) {
+                $.post(`/delete_post/${postId}`, function (data) {
+                    console.log(data.message);
+                    fetchPosts(); // Refresh the table after deletion
+                });
+            };
+
+            // Function to update a post (you need to implement the update logic on the server)
+            window.updatePost = function (postId) {
+                // Implement the logic to open a modal or redirect to an update page
+                console.log(`Update post with ID: ${postId}`);
+            };
+        });
+    </script>
+</body>
+
+</html>

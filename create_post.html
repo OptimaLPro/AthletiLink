@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Post</title>
+    <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5WBEiQ8kMwK1exenCukskr8HCiERvjT0&libraries=places"></script>
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: f1f1f1;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 25%;
+            /* Set the max-width to make it more narrow */
+            width: 100%;
+            /* Make sure it takes 100% width of its container */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-6 effect-fadeIn">
+        <form action="http://localhost:5500/create_post" method="post">
+            <h2 class="text-center mb-4">Create Post</h2>
+
+            <div class="form-group">
+                <label for="group">Group</label>
+                <select id="group" name="group" class="form-control" required>
+                    <!-- Use JavaScript to populate this dropdown with options from the Groups API -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" class="form-control" maxlength="50" required value="test" />
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Duration</label>
+                <select id="duration" name="duration" class="form-control duration-dropdown" required>
+                    <!-- Populate this dropdown with options from 15 minutes to 2 hours in jumps of 15 minutes -->
+                    <!-- You can add these options dynamically using JavaScript -->
+                    <option value="15">15 minutes</option>
+                    <option value="30">30 minutes</option>
+                    <option value="45" selected="true">45 minutes</option>
+                    <option value="60">1 hour</option>
+                    <option value="75">1 hour 15 minutes</option>
+                    <option value="90">1 hour 30 minutes</option>
+                    <option value="105">1 hour 45 minutes</option>
+                    <option value="120">2 hours</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="time">Time</label>
+                <select id="time" name="time" class="form-control" required>
+                    <!-- Options will be dynamically added here using JavaScript -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Date">Date</label>
+                <div class="input-group date">
+                    <input type="text" class="form-control" id="datepicker" name="date" required value="28/11/2023">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" class="form-control" maxlength="100" required
+                    placeholder="" value="Tel Aviv, Israel" />
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" class="form-control" rows="4" required>test</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="coverPhoto">Cover Photo</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="coverPhoto" name="coverPhoto" accept="image/*"
+                        onchange="updateFileName()">
+                    <label class="custom-file-label" for="coverPhotoLabel">Choose file</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="hidden" id="like" name="like" value="0" />
+                <input type="hidden" id="did" name="did" value="0" />
+                <input type="hidden" id="comments" name="comments" value="0" />
+            </div>
+            <div>
+                <br>
+                <p class="text-center">Heads up! It might take around 10 minutes for us to give your request the thumbs
+                    up. 😊</p>
+                <br>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-dark btn-block">
+                    Submit your request
+                </button>
+            </div>
+        </form>
+    </div>
+
+
+    <script>
+        // Initialize datepicker
+        $(document).ready(function () {
+            $('#datepicker').datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true
+            });
+
+            var input = document.getElementById('location');
+            var autocomplete = new google.maps.places.Autocomplete(input, {
+                strictBounds: true
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('http://localhost:5500/user_groups/')
+                .then(response => response.json())
+                .then(data => {
+                    const allGroups = data.user_groups_res; // Corrected variable name
+                    const groupDropdown = document.getElementById('group');
+                    allGroups.forEach(function (group) {
+                        const option = document.createElement('option');
+                        option.value = group.group; // Use 'group' instead of data.user_groups_res.group
+                        option.text = group.group; // Use 'group' instead of data.user_groups_res.group
+                        groupDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching groups:', error));
+
+
+            var timeDropdown = document.getElementById('time');
+
+            // Loop through all 24 hours and add options with 15-minute intervals
+            for (var hour = 0; hour < 24; hour++) {
+                for (var minute = 0; minute < 60; minute += 15) {
+                    // Format the hour and minute to HH:MM format
+                    var formattedHour = hour.toString().padStart(2, '0');
+                    var formattedMinute = minute.toString().padStart(2, '0');
+
+                    // Create an option element
+                    var option = document.createElement('option');
+                    option.value = formattedHour + ':' + formattedMinute;
+                    option.text = formattedHour + ':' + formattedMinute;
+
+                    // Append the option to the dropdown
+                    timeDropdown.appendChild(option);
+                }
+            }
+            timeDropdown.value = "18:00";
+        });
+
+
+    </script>
+</body>
+
+</html>

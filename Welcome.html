@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AthletiLink</title>
+    <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <style>
+        body {
+            background-color: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .logo-container {
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 3s forwards;
+        }
+
+        .logo {
+            max-width: 100%;
+            height: 600px;
+            width: 200;
+        }
+
+        .sign-in-up-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background-color: transparent !important;
+            border: 1px solid #343a40 !important;
+            color: #343a40 !important;
+            font-size: 20px; /* Adjust the font size as needed */
+            margin-right: 10px;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards 0.5s;
+        }
+
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="assets/images/logo.png" alt="Logo" class="logo">
+        <div class="sign-in-up-container">
+            <button type="button" class="btn"><a href="SignIn.html" style="color:black"> Sign In</a></button>
+            <button type="button" class="btn"><a href="SignUp.html" style="color:black"> Sign Up</a></button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.8/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

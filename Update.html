@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+  <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
+  <!-- Link to Roboto font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <!-- Bootstrap-datepicker CSS and jQuery -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f1f1f1;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 50%;
+      width: 100%;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-block {
+      padding: 0.75rem;
+      font-size: 1rem;
+    }
+
+    /*Add the styles from signup.html here*/
+    .effect-fadeIn {
+      animation: fadeIn 1s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Add the styles for the form container from signup.html */
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 50%;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5 effect-fadeIn">
+    <form action="http://localhost:5500/update_user" method="post" class="bg-white p-4 shadow rounded" id="settingsForm">
+      <h2 class="text-center mb-4">Settings</h2>
+
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" name="firstName" class="form-control" required />
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" name="lastName" class="form-control" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" class="form-control" disabled />
+      </div>
+
+      <div class="form-group">
+        <label for="newpassword">New Password</label>
+        <input type="password" id="newpassword" name="newpassword" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmnewPassword">Confirm New Password</label>
+        <input type="password" id="confirmnewPassword" name="confirmnewPassword" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label for="datepicker">Date of Birth</label>
+        <input type="text" id="datepicker" name="dob" class="form-control" required />
+      </div>
+
+      <div class="form-group">
+        <label for="profilePicture">Profile Picture</label>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="profilePicture" name="profilePicture" accept="image/*" onchange="updateFileName()">
+          <label class="custom-file-label" id="profilePictureLabel" for="profilePicture">Choose file</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button type="submit" class="btn btn-dark btn-block">
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Bootstrap and datepicker scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      // Initialize datepicker for the settings page
+      $('#datepicker').datepicker({
+        format: 'mm/dd/yyyy', // Change format if necessary
+        autoclose: true
+      });
+
+      // Fetch data from the API for the settings page
+      fetch('http://localhost:5500/user_details') // Replace with your API endpoint
+        .then(response => response.json())
+        .then(data => {
+          // Populate the input fields with API data
+          document.getElementById('firstName').value = data.users.first_name || '';
+          document.getElementById('lastName').value = data.users.last_name || '';
+          document.getElementById('email').value = data.users.email || '';
+          document.getElementById('datepicker').value = data.users.date || '';
+          // Update other fields as needed
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    });
+
+    // Function to update file name in the profile picture input
+    function updateFileName() {
+      var fileName = $("#profilePicture").val().split("\\").pop();
+      $("#profilePictureLabel").text(fileName);
+    }
+  </script>
+</body>
+
+</html>

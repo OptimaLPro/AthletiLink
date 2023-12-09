@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>My Groups</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
+    <style>
+        #sports-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #save-button-container {
+            display: none;
+        }
+
+        input.form-check-input.default-checkboxs {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #ffffff;
+            /* Dark background color for the header */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="main-container" class="container mt-5 effect-fadeIn" style="margin-bottom: 80px;">
+        <div class="row" id="sports-cards-container">
+            <!-- Sports cards rendered here -->
+        </div>
+        <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+            <a href="index.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+                </span></a>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var apiUrl = "http://localhost:5500/user_groups";
+            fetch(apiUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    var groups = data.user_groups_res;
+                    groups.forEach(function (group) {
+
+                        // group.group is the name of the group
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching data from MongoDB:", error);
+                });
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var userChosenCategories = [];
+            var allCategories = [];
+
+            // Fetch all chosen user categories from MongoDB
+            var apiUrl = "http://localhost:5500/user_groups";
+            fetch(apiUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    var groups = data.user_groups_res;
+
+                    groups.forEach(function (group) {
+                        var sport = group.group;
+                        userChosenCategories.push(sport);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching user groups from MongoDB:", error);
+                })
+                .then(() => {
+                    // Fetch all the categories from MongoDB
+                    var groupsApiUrl = "http://localhost:5500/groups";
+                    fetch(groupsApiUrl)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            var groups = data.groups;
+
+                            groups.forEach(function (group) {
+                                var sport = group.group_name;
+                                var backgroundImage = group.pic;
+
+                                allCategories.push({ sport, backgroundImage });
+                            });
+
+                            // Now that both sets of data are available, create the cards
+                            createSportsCards();
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching all categories from MongoDB:", error);
+                        });
+                });
+
+            function createSportsCards() {
+                var mainContainer = document.getElementById("main-container");
+                var container = document.getElementById("sports-cards-container");
+
+                allCategories.forEach(function (category) {
+                    var isChecked = userChosenCategories.includes(category.sport);
+
+                    var cardDiv = document.createElement("div");
+                    cardDiv.className = "col-md-3 mb-4";
+
+                    var card = document.createElement("div");
+                    card.className = "card";
+                    card.style.cursor = "pointer"; // Set cursor style to indicate clickability
+                    card.style.backgroundColor = "white"; // Set background color to white
+                    card.style.color = "white"; // Set text color to white
+                    card.style.height = "300px"; // Set card height
+                    card.style.border = "1px solid #dee2e6"; // Add a border for separation
+
+                    // Set background image if available
+                    if (category.backgroundImage) {
+                        card.style.backgroundImage = `url(${category.backgroundImage})`;
+                        card.style.backgroundSize = "cover";
+                        card.style.backgroundPosition = "center";
+                    }
+
+                    var cardBody = document.createElement("div");
+                    cardBody.className = "card-body d-flex flex-column align-items-center justify-content-center"; // Center content vertically
+
+                    var cardTitle = document.createElement("div");
+                    cardTitle.className = "card-title";
+                    cardTitle.style = "font-size: 40px;";
+
+                    // Add black shadow to the title
+                    cardTitle.style.textShadow = "2px 2px 2px black";
+
+                    cardTitle.textContent = category.sport;
+
+                    var formCheckDiv = document.createElement("div");
+                    formCheckDiv.className = "form-check text-center"; // Center the checkbox
+
+                    var checkbox = document.createElement("input");
+                    checkbox.className = "form-check-input default-checkboxs";
+
+                    // Add black shadow to the checkbox
+                    checkbox.style.boxShadow = "2px 2px 2px black";
+
+                    checkbox.type = "checkbox";
+                    checkbox.value = "";
+                    checkbox.checked = isChecked;
+
+                    // Toggle checkbox state when the card is clicked
+                    card.addEventListener("click", function (event) {
+                        // Check if the click target is the checkbox
+                        if (!event.target.classList.contains('form-check-input')) {
+                            checkbox.checked = !checkbox.checked;
+                        }
+                    });
+
+                    // Toggle checkbox state when the checkbox is clicked
+                    checkbox.addEventListener("click", function (event) {
+                        // Stop the event from propagating to the card click handler
+                        event.stopPropagation();
+                    });
+
+                    formCheckDiv.appendChild(checkbox);
+
+                    cardBody.appendChild(cardTitle);
+                    cardBody.appendChild(formCheckDiv);
+
+                    card.appendChild(cardBody);
+                    cardDiv.appendChild(card);
+                    container.appendChild(cardDiv);
+                    mainContainer.appendChild(container);
+                });
+
+                var buttonRow = document.createElement("div");
+                buttonRow.className = "row justify-content-center mt-4";
+                var saveButton = document.createElement("button");
+                saveButton.className = "btn btn-dark btn-lg save-btn";
+                saveButton.textContent = "Save!";
+                saveButton.addEventListener("click", saveUserGroups); // Attach the saveUserGroups function to the click event
+                buttonRow.appendChild(saveButton);
+                mainContainer.appendChild(buttonRow);
+            }
+
+            function saveUserGroups() {
+                var checkedCards = document.querySelectorAll('.form-check-input');
+
+                var newSelectedCategories = [];
+                var unselectedCategories = [];
+
+                checkedCards.forEach(function (checkbox) {
+                    var categoryTitle = checkbox.parentElement.parentElement.querySelector('.card-title').textContent;
+
+                    if (checkbox.checked) {
+                        if (!userChosenCategories.includes(categoryTitle)) {
+                            // Category is newly selected
+                            newSelectedCategories.push(categoryTitle);
+                        }
+                    } else {
+                        if (userChosenCategories.includes(categoryTitle)) {
+                            // Category is unchecked
+                            unselectedCategories.push(categoryTitle);
+                        }
+                    }
+                });
+
+                console.log("Selected categories:", newSelectedCategories);
+                console.log("Unselected categories:", unselectedCategories);
+
+                // Add logic to update the database based on selectedCategories
+                // You can use fetch() or another AJAX library to send a request to your server
+                // Example using fetch():
+
+                if (newSelectedCategories.length) {
+                    console.log("123ASD")
+                    var apiUrl = "http://localhost:5500/add_user_groups";
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ newSelectedCategories }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Success:', data);
+                            window.location.href = 'index.html';
+                        })
+                        .catch((error) => {
+                            console.error('Error updating user groups:', error);
+                        });
+                }
+
+                else if (unselectedCategories.length) {
+                    var apiUrl = "http://localhost:5500/remove_user_groups";
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ unselectedCategories }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Success:', data);
+                            window.location.href = 'index.html';
+                        })
+                        .catch((error) => {
+                            console.error('Error updating user groups:', error);
+                        });
+                }
+
+                else {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

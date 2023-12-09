@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up</title>
+  <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: f1f1f1;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 30%;
+      /* Set the max-width to make it more narrow */
+      width: 100%;
+      /* Make sure it takes 100% width of its container */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5 effect-fadeIn">
+    <form action="http://localhost:5500/user" method="post">
+      <h2 class="text-center mb-4">Sign Up</h2>
+
+      <div class="form-row">
+        <!-- First Name -->
+        <div class="form-group col-md-6">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" name="firstName" class="form-control" required value="Test" />
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group col-md-6">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" name="lastName" class="form-control" required value="Test" />
+        </div>
+
+        <!-- Password -->
+        <div class="form-group col-md-6">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-control" required value="Test" />
+        </div>
+        <!-- Confirm Password -->
+        <div class="form-group col-md-6">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required
+            value="Test" />
+        </div>
+
+        <!-- Secret Phrase for Password Reset -->
+        <div class="form-group col-md-12">
+          <label for="secretPhrase">Secret Phrase <small>(For password reset. Keep it safe!)</small></label>
+          <input type="text" id="secretPhrase" name="secretPhrase" class="form-control" required
+            value="the quick brown fox jumps over the lazy" />
+        </div>
+      </div>
+
+      <!-- The rest of your form remains unchanged -->
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" class="form-control" required value="Test@test.com" />
+      </div>
+
+      <!-- <div class="form-group">
+        <label for="dob">Date of Birth</label>
+        <div class="input-group date" data-provide="datepicker">
+          <input type="text" id="dob" name="dob" class="form-control" required value="11/11/2023" />
+        </div>
+      </div> -->
+
+      <div class="form-group">
+        <label for="Date">Date of Birth</label>
+        <div class="input-group date">
+          <input type="text" class="form-control" id="datepicker" name="dob" required>
+          <div class="input-group-addon">
+            <span class="glyphicon glyphicon-th"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="profilePicture">Profile Picture</label>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="profilePicture" name="profilePicture" accept="image/*"
+            onchange="updateFileName()">
+          <label class="custom-file-label" id="profilePictureLabel" for="profilePicture">Choose file</label>
+        </div>
+      </div>
+
+      <!-- The rest of your form remains unchanged -->
+
+      <div class="form-group">
+        <button type="submit" class="btn btn-dark btn-block">
+          Sign Up
+        </button>
+      </div>
+    </form>
+  </div>
+  <div id="close-icon" class="position-fixed effect-fadeIn"
+    style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+    <a href="welcome.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+      </span></a>
+
+  </div>
+
+  <script>
+    // // Initialize datepicker
+    // $(document).ready(function () {
+    //   $("#dob").datepicker({
+    //     format: "mm/dd/yyyy",
+    //     autoclose: true
+    //   });
+    // });
+
+    // Initialize datepicker
+    $(document).ready(function () {
+      $('#datepicker').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true
+      });
+    });
+
+    function updateFileName() {
+      var fileName = $("#profilePicture").val().split("\\").pop();
+      $("#profilePictureLabel").text(fileName);
+    }
+  </script>
+
+</body>
+
+</html>
