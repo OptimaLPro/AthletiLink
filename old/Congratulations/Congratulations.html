@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Congratulations!</title>
+    <!-- Link to Roboto font from Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <!-- Select2 CSS and JS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css"
+    />
+    <link rel="stylesheet" href="Congratulations.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js"></script>
+    <script src="Congratulations.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="bg-white p-4 shadow rounded text-center">
+            <h2>Congratulations, [First Name]!</h2>
+            <p>You are now a member of our community.</p>
+            <p>Please select the sports you're interested in:</p>
+
+            <!-- Searchable sports selection dropdown -->
+            <input
+              type="text"
+              id="myInput"
+              onkeyup="myFunction()"
+              placeholder="Search for names.."
+            />
+
+            <ul id="myUL">
+              <li onclick="moveItem(this)"><a href="#">Volleyball</a></li>
+              <li onclick="moveItem(this)"><a href="#">Badminton</a></li>
+              <li onclick="moveItem(this)"><a href="#">Swimming</a></li>
+              <li onclick="moveItem(this)"><a href="#">Boxing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Table Tennis</a></li>
+              <li onclick="moveItem(this)"><a href="#">Skiing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Ice Skating</a></li>
+              <li onclick="moveItem(this)"><a href="#">Roller Skating</a></li>
+              <li onclick="moveItem(this)"><a href="#">Cricket</a></li>
+              <li onclick="moveItem(this)"><a href="#">Rugby</a></li>
+              <li onclick="moveItem(this)"><a href="#">Pool</a></li>
+              <li onclick="moveItem(this)"><a href="#">Darts</a></li>
+              <li onclick="moveItem(this)">
+                <a href="#">American Football</a>
+              </li>
+              <li onclick="moveItem(this)"><a href="#">Bowling</a></li>
+              <li onclick="moveItem(this)"><a href="#">Ice Hockey</a></li>
+              <li onclick="moveItem(this)"><a href="#">Surfing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Karate</a></li>
+              <li onclick="moveItem(this)"><a href="#">Horse Racing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Snowboarding</a></li>
+              <li onclick="moveItem(this)"><a href="#">Skateboarding</a></li>
+              <li onclick="moveItem(this)"><a href="#">Cycling</a></li>
+              <li onclick="moveItem(this)"><a href="#">Archery</a></li>
+              <li onclick="moveItem(this)"><a href="#">Fishing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Gymnastics</a></li>
+              <li onclick="moveItem(this)"><a href="#">Figure Skating</a></li>
+              <li onclick="moveItem(this)"><a href="#">rock Climbing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Sumo Wrestling</a></li>
+              <li onclick="moveItem(this)"><a href="#">Taekwondo</a></li>
+              <li onclick="moveItem(this)"><a href="#">Fencing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Water Skiing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Jet Skiing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Weight Lifting</a></li>
+              <li onclick="moveItem(this)"><a href="#">Scuba Diving</a></li>
+              <li onclick="moveItem(this)"><a href="#">Judo</a></li>
+              <li onclick="moveItem(this)"><a href="#">Wind Surfing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Kickboxing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Sky Diving</a></li>
+              <li onclick="moveItem(this)"><a href="#">Hang Gliding</a></li>
+              <li onclick="moveItem(this)"><a href="#">Bungee Jumping</a></li>
+              <li onclick="moveItem(this)"><a href="#">Lacrosse</a></li>
+              <li onclick="moveItem(this)"><a href="#">Polo</a></li>
+              <li onclick="moveItem(this)"><a href="#">Wrestling</a></li>
+              <li onclick="moveItem(this)"><a href="#">Squash</a></li>
+              <li onclick="moveItem(this)"><a href="#">Handball</a></li>
+              <li onclick="moveItem(this)"><a href="#">Rowing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Sailin</a></li>
+              <li onclick="moveItem(this)"><a href="#">Thai Boxing</a></li>
+              <li onclick="moveItem(this)"><a href="#">KiteSurfing</a></li>
+              <li onclick="moveItem(this)"><a href="#">Triathlon</a></li>
+              <li onclick="moveItem(this)"><a href="#">Paddleboarding</a></li>
+              <li onclick="moveItem(this)"><a href="#">Ultimate Frisbee</a></li>
+              <li onclick="moveItem(this)"><a href="#">Hiking</a></li>
+              <li onclick="moveItem(this)">
+                <a href="#">Canoeing/Kayaking</a>
+              </li>
+              <li onclick="moveItem(this)">
+                <a href="#">Cross-Country Skiing</a>
+              </li>
+              <li onclick="moveItem(this)">
+                <a href="#">Mixed Martial Arts (MMA)</a>
+              </li>
+              <li onclick="moveItem(this)"><a href="#">Paragliding</a></li>
+              <li onclick="moveItem(this)"><a href="#">Equestrian</a></li>
+              <li onclick="moveItem(this)">
+                <a href="#">Synchronized Swimming</a>
+              </li>
+              <li onclick="moveItem(this)"><a href="#">Snowmobiling</a></li>
+              <li onclick="moveItem(this)"><a href="#">Biathlon</a></li>
+              <li onclick="moveItem(this)"><a href="#">Curling</a></li>
+              <li onclick="moveItem(this)"><a href="#">Racquetball</a></li>
+              <li onclick="moveItem(this)"><a href="#">Parkour</a></li>
+              <li onclick="moveItem(this)"><a href="#">Capoeira</a></li>
+              <li onclick="moveItem(this)"><a href="#">Lacrosse</a></li>
+              <li onclick="moveItem(this)"><a href="#">Snooker</a></li>
+              <li onclick="moveItem(this)"><a href="#">Aerobics</a></li>
+              <li onclick="moveItem(this)"><a href="#">Bobsledding</a></li>
+              <li onclick="moveItem(this)"><a href="#">Motocross</a></li>
+              <li onclick="moveItem(this)"><a href="#">Triathlon</a></li>
+              <li onclick="moveItem(this)"><a href="#">Kendo</a></li>
+              <li onclick="moveItem(this)"><a href="#">Decathlon</a></li>
+              <li onclick="moveItem(this)"><a href="#">Orienteering</a></li>
+              <li onclick="moveItem(this)"><a href="#">Speed Skating</a></li>
+            </ul>
+
+            <a href="signin.html" class="btn btn-primary mt-3">Continue</a>
+          </div>
+        </div>
+
+        <!-- Side List for Selected Sports -->
+        <div class="col-md-6">
+          <div class="selected-sports bg-light p-4 shadow rounded">
+            <h3>Selected Sports:</h3>
+            <ul id="selectedSportsList"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
