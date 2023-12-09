@@ -99,7 +99,7 @@ app.get("", (req, res) => {
   }
 });
 
-// ---------- Create User 1 ----------
+// ---------- Create User ----------
 app.post("/user", upload.single('profilePicture'), async (req, res) => {
   try {
     const profilePicture = req.file ? `/assets/images/profile-pictures/${req.file.filename}` : null;
@@ -120,6 +120,7 @@ app.post("/user", upload.single('profilePicture'), async (req, res) => {
       if (err) {
         throw err;
       }
+      session.user_id = collection.insertedId;
       console.log("Record Inserted Successfully");
     });
 
