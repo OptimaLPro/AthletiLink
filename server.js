@@ -185,16 +185,16 @@ app.get("/getUsers", async (req, res) => {
 // ---------- Get All Users Groups By ID ----------
 app.get("/user_groups/", async (req, res) => {
   try {
-    const user_groups = await User_groups.find({
+    const user_groups_res = await User_groups.find({
       user_id: session.user_id,
     });
 
-    if (!user_groups) {
+    if (!user_groups_res) {
       return res.status(404).json({ message: "User not found" });
     }
 
 
-    res.status(200).json({ user_groups });
+    res.status(200).json({ user_groups_res });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
