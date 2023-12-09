@@ -33,27 +33,21 @@ button:focus {
   justify-content: center;
   align-items: center;
   height: 60px;
-  /* Adjust the height as needed */
   background-color: #333;
-  /* Optional: Add a background color for visualization */
 }
 
-/* Style for the profile circle */
 .profile-circle {
   width: 60px;
   height: 60px;
   background-color: #f8f9fa;
-  /* Background color similar to ChatGPT */
   border-radius: 50%;
   overflow: hidden;
   margin-top: 15px;
   margin-right: 10px;
   border: 2px solid #ffffff;
-  /* Dark background color for the header */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-/* Style for the profile image inside the circle (add this dynamically) */
 .profile-circle img {
   width: 100%;
   height: 100%;
@@ -62,9 +56,7 @@ button:focus {
 
 body {
   font-family: "Roboto", sans-serif;
-  /* Use Roboto font */
   background-color: #f8f9fa;
-  /* Background color similar to ChatGPT */
   margin: 0;
   padding: 0;
 }
@@ -75,44 +67,27 @@ body {
 
 #sidebar {
   background-color: #1e1e1e;
-  /* Deep blue background color */
   color: #ffffff;
-  /* White text color */
   width: 15%;
-  /* Adjust the width as needed */
   min-width: 200px;
-  /* Set a minimum width */
   height: 100vh;
-  /* Set a fixed height, adjust as needed */
   padding: 20px;
   overflow-y: auto;
-  /* Make the sidebar scrollable */
 }
 
 #content {
   width: 85%;
-  /* Adjust the width as needed */
-  /* padding: 20px; */
   position: relative;
-  /* Set the position to relative for absolute positioning within */
   overflow-y: auto;
-  /* Make the content area scrollable */
   height: 100vh;
-  /* Set a fixed height, adjust as needed */
 }
 
 #header {
   height: 5%;
-  /* Set the height of the header */
   background-color: #343a40;
-  /* Dark background color for the header */
   color: #ffffff;
-  /* White text color */
   display: flex;
-  /* Use flexbox to align items */
-  /* align-items: center; Center items vertically */
   padding: 0 20px;
-  /* Add padding for better spacing */
   position: relative;
 }
 
@@ -145,19 +120,14 @@ body {
   position: fixed;
   bottom: 0;
   right: 0;
-  /* Change from left: 0 to right: 0 */
   width: 85%;
-  /* Match the width of the content */
   background-color: #343a40;
-  /* Dark background color for the footer */
   color: #ffffff;
-  /* White text color */
   padding: 10px 20px;
 }
 
 .card {
   position: relative;
-  /* margin-bottom: 20px; */
 }
 
 .card-buttons {
@@ -169,37 +139,24 @@ body {
 #groups-sidebar,
 #settings-sidebar {
   max-height: calc(100vh - 40px);
-  /* Adjust max-height to accommodate padding */
   overflow-y: auto;
-
-  /* Add a vertical scrollbar if needed */
 }
 
 #groups-sidebar a,
 #settings-sidebar a {
   color: #ffffff;
-  /* White text color for links */
   background-color: #1e1e1e;
-  /* Set background color */
   display: block;
-  /* Make the links full width */
   padding: 10px 15px;
-  /* Add padding for better spacing */
   margin-bottom: 5px;
   border-radius: 15px;
-  /* Add margin between links */
   transition: background-color 0.3s;
-
-  /* Add smooth transition */
 }
 
 #groups-sidebar a:hover,
 #settings-sidebar a:hover {
   background-color: #007bff;
-  /* Change the background color on hover */
   color: #ffffff;
-
-  /* Change the text color on hover */
 }
 
 #section {
@@ -216,11 +173,6 @@ body {
 
 .logo {
   scale: 0.3;
-  /* width: 200px;
-  height: 30px;
-  margin-left: 40%;
-  margin-top: 10px; */
-  /* transform: translateX(-50%); */
 }
 
 .list-group-item {
@@ -255,7 +207,6 @@ body {
   margin-top: -5px;
   margin-right: 10px;
   border: 2px solid #ffffff;
-  /* Dark background color for the header */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
