@@ -9,18 +9,14 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(adminApiUrl)
         .then((response) => response.json())
         .then((data) => {
-            console.log("THIS IS IT");
-            console.log(data);
             admin = data.admin;
             var user_id = data.user_id;
             if (user_id == null) {
                 window.location.href = 'signin.html';
                 return;
             }
-            console.log(admin);
             if (admin === "master") {
                 var adminBtn = document.getElementsByClassName("admin")[0];
-                console.log(adminBtn);
                 adminBtn.style.display = "inline";
                 adminBtn.addEventListener("click", function () {
                     window.location.href = 'control_panel.html';
@@ -54,12 +50,10 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(userDetailsApiUrl)
         .then((response) => response.json())
         .then((data) => {
-            console.log("user details");
             console.log(data);
             var profile_pic = data.users.profile_pic;
             var user_first_name = data.users.first_name;
             var user_last_name = data.users.last_name;
-            // console.log(profile_pic);
 
             $(document).ready(function () {
                 $("#profileCircle").html(
@@ -102,7 +96,6 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(postsApiUrl)
         .then((response) => response.json())
         .then((posts) => {
-            console.log(posts);
             var all_posts = posts.posts;
             getPostsAndComments(all_posts);
         })
@@ -263,7 +256,6 @@ function deletePost(post_id, all_posts) {
             fetch(postsApiUrl)
                 .then((response) => response.json())
                 .then((posts) => {
-                    console.log(posts);
                     var all_posts = posts.posts;
                     getPostsAndComments(all_posts);
                 })

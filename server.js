@@ -85,14 +85,14 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // ---------- Home Page - Redirect By Session  ----------
-app.get("/", (req, res) => {
+// app.get("/", (req, res) => {
 
-  if (session.user_id) {
-    res.sendFile(__dirname + "/index.html");
-  } else {
-    res.redirect("signin.html");
-  }
-});
+//   if (session.user_id) {
+//     res.sendFile(__dirname + "/index.html");
+//   } else {
+//     res.redirect("signin.html");
+//   }
+// });
 
 // ---------- Create User ----------
 app.post("/user", upload.single('profilePicture'), async (req, res) => {
