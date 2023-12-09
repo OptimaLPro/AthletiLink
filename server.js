@@ -13,8 +13,6 @@ const Logs = require("./models/logs");
 
 app.use(express.static('assets'));
 const port = 5500;
-session.user_id = null;
-
 
 // ---------- File Upload ----------
 const multer = require('multer');
@@ -28,14 +26,14 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
   }
 });
-
 const upload = multer({ storage: storage });
 
 // ---------- Session ----------
+session.user_id = null;
+session.admin = null;
 
 const generateRandomString = () => {
   return crypto.randomBytes(32).toString("hex");
-  console.log(generateRandomString);
 };
 
 app.use(
@@ -51,7 +49,6 @@ app.use(
 // ---------- Create Log function ----------
 const createLog = async (event_type, description, req, response = "") => {
   try {
-    // console.log("Creating log");
     await Logs.create({
       timestamp: new Date().toISOString(),
       user_id: `${session.user_id}`,
@@ -87,14 +84,12 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// ---------- Home Page ----------
-app.get("", (req, res) => {
+// ---------- Home Page - Redirect By Session  ----------
+app.get("/", (req, res) => {
 
   if (session.user_id) {
-    console.log("user id is: " + session.user_id);
     res.sendFile(__dirname + "/index.html");
   } else {
-    console.log("no user id");
     res.redirect("signin.html");
   }
 });
@@ -103,7 +98,6 @@ app.get("", (req, res) => {
 app.post("/user", upload.single('profilePicture'), async (req, res) => {
   try {
     const profilePicture = req.file ? `/assets/images/profile-pictures/${req.file.filename}` : null;
-    console.log(profilePicture);
 
     var data = {
       first_name: req.body.firstName,
@@ -121,7 +115,7 @@ app.post("/user", upload.single('profilePicture'), async (req, res) => {
         throw err;
       }
       session.user_id = collection.insertedId;
-      console.log("Record Inserted Successfully");
+      console.log("User Created Successfully");
     });
 
     return res.redirect("http://127.0.0.1:5500/SignupRedirect.html");
@@ -143,7 +137,7 @@ app.get("/user/:id", async (req, res) => {
 });
 
 // ---------- Get User By Session ----------
-app.get("/user_session", async (req, res) => {
+app.get("/user_session", async (res) => {
   try {
     const user_id = session.user_id;
     const admin = session.admin;
@@ -154,7 +148,7 @@ app.get("/user_session", async (req, res) => {
   }
 });
 // ---------- Get User By ID ----------
-app.get("/user_details", async (req, res) => {
+app.get("/user_details", async (res) => {
   try {
     const users = await Users.findById(session.user_id);
     // console.log(users)
@@ -177,7 +171,7 @@ app.get("/getUserByMail/:email", async (req, res) => {
 });
 
 // ---------- Get All Users ----------
-app.get("/getUsers", async (req, res) => {
+app.get("/getUsers", async (res) => {
   try {
     const users = await Users.find({});
     res.status(200).json({ users });
@@ -187,45 +181,19 @@ app.get("/getUsers", async (req, res) => {
   }
 });
 
-// ---------- Get User_Group ----------
-// app.put("/updateUser", (req, res) => {
-//   const userId = '6560be2908c5e0672f0015a0'; // Extracting user ID from the request parameters
-//   const { firstName, lastName, password, email, dob } = req.body; // Destructuring properties from the request body
-//   console.log("lolollo in update");
-//   // Assuming 'User' is your mongoose model
-//   User.findByIdAndUpdate(
-//     userId,
-//     { firstName, lastName, password, email, date: dob }, // Update fields with new values
-//     { new: true }, // To return the updated document
-//     (err, updatedUser) => {
-//       if (err) {
-//         console.error("Error updating user:", err);
-//         return res.status(500).json({ error: "Failed to update user" });
-//       }
-//       if (!updatedUser) {
-//         return res.status(404).json({ error: "User not found" });
-//       }
-
-//       console.log("User updated successfully:", updatedUser);
-//       res.status(200).json({ message: "User updated successfully", user: updatedUser });
-//     }
-//   );
-// });
-
-
 // ---------- Get All Users Groups By ID ----------
-app.get("/user_groups/", async (req, res) => {
+app.get("/user_groups/", async (res) => {
   try {
-    const user_groups_res = await User_groups.find({
+    const user_groups = await User_groups.find({
       user_id: session.user_id,
     });
 
-    if (!user_groups_res) {
+    if (!user_groups) {
       return res.status(404).json({ message: "User not found" });
     }
 
 
-    res.status(200).json({ user_groups_res });
+    res.status(200).json({ user_groups });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -234,13 +202,7 @@ app.get("/user_groups/", async (req, res) => {
 
 // ---------- Update User ----------
 app.post("/update_user", async (req, res) => {
-  console.log("/update_user api called");
   try {
-    console.log("The user session id is: " + session.user_id);
-    const userId = session.user_id;
-
-    console.log("the new password is: " + req.body.newpassword);
-
     if (req.body.newpassword == "") {
       var data = {
         first_name: req.body.firstName,
@@ -257,7 +219,7 @@ app.post("/update_user", async (req, res) => {
     }
 
     const updatedFields = data;
-    const updatedUser = await Users.findByIdAndUpdate(userId, updatedFields, {
+    const updatedUser = await Users.findByIdAndUpdate(session.user_id, updatedFields, {
       new: true, // Return the updated document
     });
 
@@ -275,8 +237,7 @@ app.post("/update_user", async (req, res) => {
 
 // ---------- Update User By ID ----------
 app.post("/update_user/:user_id", async (req, res) => {
-  const userId = req.params.user_id;
-  console.log("/update_user by ID api called with ID: " + userId);
+  const user_id = req.params.user_id;
   try {
     var data = {
       first_name: req.body.firstName,
@@ -289,18 +250,15 @@ app.post("/update_user/:user_id", async (req, res) => {
     };
 
     const updatedFields = data;
-    // console.log("updatedFields:", updatedFields);
 
-    // Find the user by ID and update the fields
-    const updatedUser = await Users.findByIdAndUpdate(userId, updatedFields, {
-      new: true, // Return the updated document
+    const updatedUser = await Users.findByIdAndUpdate(user_id, updatedFields, {
+      new: true,
     });
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    // console.log("User Updated Successfully:", updatedUser);
-    createLog("User Update", `Updated: ${userId}`, req, updatedUser);
+    createLog("User Update", `Updated: ${user_id}`, req, updatedUser);
     return res.status(200).json(updatedUser);
   } catch (error) {
     console.error(error);
@@ -309,7 +267,7 @@ app.post("/update_user/:user_id", async (req, res) => {
 });
 
 // ---------- Get All Posts ----------
-app.get("/posts", async (req, res) => {
+app.get("/posts", async (res) => {
   try {
     const posts = await Posts.find({});
     res.status(200).json({ posts });
@@ -322,7 +280,6 @@ app.get("/posts", async (req, res) => {
 // ---------- Update Post By ID ----------
 app.post("/update_post/:post_id", async (req, res) => {
   const post_id = req.params.post_id;
-  console.log("/update_post by ID api called with ID: " + post_id);
   try {
     var data = {
       user_id: req.body.firstName,
@@ -340,7 +297,6 @@ app.post("/update_post/:post_id", async (req, res) => {
     };
 
     const updatedFields = data;
-    // console.log("updatedFields:", updatedFields);
 
     const updatedPost = await Posts.findByIdAndUpdate(post_id, updatedFields, {
       new: true,
@@ -357,9 +313,8 @@ app.post("/update_post/:post_id", async (req, res) => {
   }
 });
 
-
 // ---------- Get All Groups ----------
-app.get("/groups", async (req, res) => {
+app.get("/groups", async (res) => {
   try {
     const groups = await Groups.find({});
     res.status(200).json({ groups });
@@ -381,7 +336,7 @@ app.get("/posts/:group_name", async (req, res) => {
 });
 
 // ---------- Get All Comments ----------
-app.get("/comments", async (req, res) => {
+app.get("/comments", async (res) => {
   try {
     const comments = await Comments.find({});
     res.status(200).json({ comments });
@@ -409,7 +364,6 @@ app.get("/comments/:post_id", async (req, res) => {
 // ---------- Update Comment By ID ----------
 app.post("/update_comment/:comment_id", async (req, res) => {
   const comment_id = req.params.comment_id;
-  console.log("/update_comment by ID api called with ID: " + comment_id);
   try {
     var data = {
       post_id: req.body.post_id,
@@ -422,7 +376,6 @@ app.post("/update_comment/:comment_id", async (req, res) => {
     };
 
     const updatedFields = data;
-    // console.log("updatedFields:", updatedFields);
 
     const updatedComment = await Comments.findByIdAndUpdate(comment_id, updatedFields, {
       new: true,
@@ -443,7 +396,6 @@ app.post("/update_comment/:comment_id", async (req, res) => {
 app.post("/delete_comment/:comment_id", async (req, res) => {
   try {
     const comment_id = req.params.comment_id;
-
     const comment = await Comments.findById(comment_id);
 
     if (!comment) {
@@ -465,19 +417,16 @@ app.get("/SetSessionID/:user_id", async (req, res) => {
     const the_user_id = req.params.user_id;
 
     if (!the_user_id) {
-      return res.status(404).json({ message: "Not good Session ID" });
+      return res.status(404).json({ message: "Invalid Session ID" });
     }
     session.user_id = the_user_id;
-    console.log(the_user_id);
     const user = await Users.findById(the_user_id);
     const admin = user.admin;
 
     if (admin === "master") {
       session.admin = "master";
-      console.log("ADMIN");
+      console.log("Admin User");
     }
-    else
-      console.log("not admin");
 
     createLog("Signin", "", req);
     res.status(200).json({ the_user_id });
@@ -490,7 +439,6 @@ app.get("/SetSessionID/:user_id", async (req, res) => {
 // ---------- Create Post ----------
 app.post("/create_post", async (req, res) => {
   try {
-    console.log("Creating Post");
     const user = await Users.findById(session.user_id);
 
     var data = {
@@ -588,7 +536,6 @@ app.post("/remove_user_groups", (req, res) => {
 app.post("/delete_post/:post_id", async (req, res) => {
   try {
     const post_id = req.params.post_id;
-
     const post = await Posts.findById(post_id);
 
     if (!post) {
@@ -607,15 +554,15 @@ app.post("/delete_post/:post_id", async (req, res) => {
 // ---------- Delete User by ID ----------
 app.post("/delete_user/:user_id", async (req, res) => {
   try {
-    const userId = req.params.user_id;
-    const deletedUser = await Users.findByIdAndDelete(userId);
+    const user_id = req.params.user_id;
+    const deletedUser = await Users.findByIdAndDelete(user_id);
 
     if (!deletedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
     console.log("User Deleted Successfully:", deletedUser);
-    createLog("Delete User", `${userId}`, req);
+    createLog("Delete User", `${user_id}`, req);
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     console.error(error);
@@ -638,10 +585,9 @@ app.get("/signout", async (req, res) => {
 
 //----------- Like API -------------
 app.post('/like_posts/:postId', async (req, res) => {
-  const postId = req.params.postId;
+  const post_id = req.params.postId;
   try {
-    const foundPost = await Posts.findById(postId);
-
+    const foundPost = await Posts.findById(post_id);
 
     if (!foundPost) {
       return res.status(404).json({ error: 'Post not found' });
@@ -652,8 +598,8 @@ app.post('/like_posts/:postId', async (req, res) => {
       likes: newLikes
     }
 
-    const updatedPost = await Posts.findByIdAndUpdate(postId, data, {
-      new: true, // Return the updated document
+    const updatedPost = await Posts.findByIdAndUpdate(post_id, data, {
+      new: true,
     });
     if (!updatedPost) {
       return res.status(404).json({ message: "post not found" });
@@ -664,13 +610,12 @@ app.post('/like_posts/:postId', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
-//----------- get posts id------------
 
-// Route to get a post by ID
+//----------- Get Post By ID -------------
 app.get('/posts_id/:postId', async (req, res) => {
-  const postId = req.params.postId;
+  const post_id = req.params.postId;
   try {
-    const foundPost = await Posts.findById(postId);
+    const foundPost = await Posts.findById(post_id);
 
     if (!foundPost) {
       return res.status(404).json({ error: 'Post not found' });
@@ -712,15 +657,15 @@ app.get('/posts_id/:postId', async (req, res) => {
 //     return res.status(500).json({ error: 'Internal server error' });
 //   }
 // });
+
 // ---------- Connect to DB ----------
 mongoose
   .connect(
     "mongodb+srv://AthletiLink:5q8ImIn@cluster0.ktoakuq.mongodb.net/AthletiLink?retryWrites=true&w=majority"
   )
   .then(() => {
-    console.log("DB isConnected!");
     app.listen(port, () => {
-      console.log(`App listening on port ${port}`);
+      console.log(`DB is Connected on port ${port}!`);
     });
   })
   .catch((error) => {
