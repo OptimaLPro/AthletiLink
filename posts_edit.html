@@ -486,6 +486,7 @@
             $('#displayUserId').text(post_id);
         };
 
+        // Function to update a user
         window.updatePost = function (post_id) {
             console.log(`Update post with ID: ${post_id}`);
             const postsToUpdate = posts.find(post => post._id === post_id);
