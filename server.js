@@ -461,7 +461,6 @@ app.post("/delete_comment/:comment_id", async (req, res) => {
 // ---------- Create SessionID with UserID ----------
 app.get("/SetSessionID/:user_id", async (req, res) => {
   try {
-    // console.log("HERE INSIDE");
     const the_user_id = req.params.user_id;
 
     if (!the_user_id) {
