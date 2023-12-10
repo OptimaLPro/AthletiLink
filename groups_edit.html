@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>My Groups</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
+    <style>
+        #sports-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #save-button-container {
+            display: none;
+        }
+
+        input.form-check-input.default-checkboxs {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #ffffff;
+            /* Dark background color for the header */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .search-container {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        .input-group-text {
+            cursor: pointer;
+        }
+
+        .add-group-btn {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="search-container input-group mb-3 mt-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" value="group_name" id="dropdownButton">By Group Name <i class="fa fa-caret-down"
+                    aria-hidden="true"></i></button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" value="group_name">By Group Name</a>
+                <a class="dropdown-item" value="active">By Active Groups</a>
+                <a class="dropdown-item" value="inactive">By Inactive Groups</a>
+            </div>
+        </div>
+        <input type="text" class="form-control" id="searchText" placeholder="Search everything...">
+        <div class="input-group-append">
+            <span class="input-group-text" id="clearSearch">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </span>
+        </div>
+        <button class="btn btn-primary add-group-btn" data-toggle="modal" data-target="#addGroupModal">Add
+            Group</button>
+    </div>
+
+    <div id="main-container" class="container mt-5 effect-fadeIn" style="margin-bottom: 80px;">
+        <div class="row" id="sports-cards-container">
+            <!-- Groups rendered here -->
+        </div>
+        <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+            <a href="index.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+                </span></a>
+
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="deleteGroupModal" tabindex="-1" role="dialog" aria-labelledby="deleteGroupModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteGroupModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this group?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="addGroupModal" tabindex="-1" role="dialog" aria-labelledby="addGroupModalModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addGroupModalLabel">Add Group</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="post_id">Group Name</label>
+                        <input type="text" id="post_id" name="user_id" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user_id">Image URL</label>
+                        <input type="text" id="user_id" name="user_id" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" name="status" class="form-control" required>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="AddGroupBtn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateGroupModal" tabindex="-1" role="dialog" aria-labelledby="updateGroupModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <!-- ... (modal content) ... -->
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
+
+<script>
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     var apiUrl = "http://localhost:5500/user_groups";
+    //     fetch(apiUrl)
+    //         .then((response) => response.json())
+    //         .then((data) => {
+    //             groups = data.user_groups_res;
+    //             groups.forEach(function (group) {
+
+    //                 // group.group is the name of the group
+    //             });
+    //         })
+    //         .catch((error) => {
+    //             console.error("Error fetching data from MongoDB:", error);
+    //         });
+    // });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let groups;
+        fetchGroups();
+
+        $('.dropdown-item').click(function () {
+            console.log($(this).attr('value'));
+            var selectedValue = $(this).attr('value');
+            $('#dropdownButton').html($(this).text() + ' <i class="fa fa-caret-down" aria-hidden="true"></i>');
+            $('#dropdownButton').attr('value', selectedValue);
+            searchGroups(selectedValue); // Add this line to pass the selected value
+        });
+
+        $("#clearSearch").on("click", function () {
+            $("#searchText").val(""); // Clear the search input
+            const selectedValue = $("#dropdownButton").attr('value');
+            searchGroups(selectedValue); // Filter users after clearing search input
+        });
+
+        $("#searchText").on("input", function () {
+            const selectedValue = $("#dropdownButton").attr('value');
+            searchGroups(selectedValue);
+        });
+
+        $("#AddGroupBtn").on("click", function () {
+            $.post(`http://localhost:5500/create_group`, function (data) {
+                fetchGroups();
+                $('#addGroupModal').modal('hide');
+            });
+
+
+            fetch(`http://localhost:5500/create_group`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedComment),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Comment updated successfully:", data);
+                    fetchComments();
+                    $('#updateCommentModal').modal('hide');
+                })
+                .catch(error => {
+                    console.error("Error updating comment:", error);
+                });
+
+        });
+
+        function searchGroups(criteria) {
+            const searchText = $("#searchText").val().toLowerCase();
+            const filteredGroups = filterByText(searchText, criteria);
+            clearGroups();
+            createSportsCards(filteredGroups);
+        }
+
+        function filterByText(text, criteria) {
+            const lowercaseText = text.toLowerCase();
+            console.log(`Filtering by ${criteria} for ${text}`);
+
+            if (criteria == "active") {
+                return groups.filter(function (group) {
+                    const value = group["status"].toLowerCase();
+                    const value_name = group["group_name"].toLowerCase();
+                    return value == "active" && value_name.includes(text);
+                });
+            }
+
+            if (criteria == "inactive") {
+                return groups.filter(function (group) {
+                    const value = group["status"].toLowerCase();
+                    const value_name = group["group_name"].toLowerCase();
+                    return value == "inactive" && value_name.includes(text);
+                });
+            }
+
+            if (criteria == "group_name") {
+                return groups.filter(function (group) {
+
+                    const value = group["group_name"].toLowerCase();
+                    return value.includes(text);
+                });
+            }
+        }
+
+        function createSportsCards(groups) {
+            var mainContainer = document.getElementById("main-container");
+            var container = document.getElementById("sports-cards-container");
+
+            groups.forEach(function (group) {
+                var isChecked = group.status == "active" ? true : false;
+                var cardDiv = document.createElement("div");
+
+                var deleteIcon = document.createElement("button");
+                deleteIcon.className = "btn btn-danger ml-auto mt-2 mr-2 deleteIconGroups";
+                deleteIcon.style.display = "inline";
+                deleteIcon.innerHTML = '<i class="fa fa-times"></i>';
+                deleteIcon.addEventListener("click", function () {
+                    console.log(group._id);
+                    deleteGroup(group._id);
+                });
+
+                var updateIcon = document.createElement("button");
+                updateIcon.className = "btn btn-info ml-auto mt-2 mr-2 updateIconGroups";
+                updateIcon.style.display = "inline";
+                updateIcon.innerHTML = '<i class="fa fa-pencil fa-xs"></i>';
+                updateIcon.addEventListener("click", function () {
+                    updateGroup(group._id);
+                });
+
+                cardDiv.className = "col-md-3 mb-4";
+
+                var card = document.createElement("div");
+                card.className = "card";
+                card.style.cursor = "pointer"; // Set cursor style to indicate clickability
+                card.style.backgroundColor = "white"; // Set background color to white
+                card.style.color = "white"; // Set text color to white
+                card.style.height = "300px"; // Set card height
+                card.style.border = "1px solid #dee2e6"; // Add a border for separation
+
+                // Set background image if available
+                if (group.pic) {
+                    card.style.backgroundImage = `url(${group.pic})`;
+                    card.style.backgroundSize = "cover";
+                    card.style.backgroundPosition = "center";
+                }
+
+                var cardBody = document.createElement("div");
+                cardBody.className = "card-body d-flex flex-column align-items-center justify-content-center"; // Center content vertically
+
+                var cardTitle = document.createElement("div");
+                cardTitle.className = "card-title";
+                cardTitle.style = "font-size: 40px;";
+
+                // Add black shadow to the title
+                cardTitle.style.textShadow = "2px 2px 2px black";
+
+                cardTitle.textContent = group.group_name;
+
+                var formCheckDiv = document.createElement("div");
+                formCheckDiv.className = "form-check text-center"; // Center the checkbox
+
+                var checkbox = document.createElement("input");
+                checkbox.className = "form-check-input default-checkboxs";
+
+                // Add black shadow to the checkbox
+                checkbox.style.boxShadow = "2px 2px 2px black";
+
+                checkbox.type = "checkbox";
+                checkbox.value = "";
+                checkbox.checked = isChecked;
+
+                // Toggle checkbox state when the card is clicked
+                card.addEventListener("click", function (event) {
+                    // Check if the click target is the checkbox
+                    if (!event.target.classList.contains('form-check-input')) {
+                        checkbox.checked = !checkbox.checked;
+                    }
+                });
+
+                // Toggle checkbox state when the checkbox is clicked
+                checkbox.addEventListener("click", function (event) {
+                    // Stop the event from propagating to the card click handler
+                    event.stopPropagation();
+                });
+
+                formCheckDiv.appendChild(checkbox);
+
+                cardBody.appendChild(cardTitle);
+                cardBody.appendChild(formCheckDiv);
+
+                card.appendChild(cardBody);
+
+                cardDiv.appendChild(card);
+                cardDiv.appendChild(deleteIcon);
+                cardDiv.appendChild(updateIcon);
+                container.appendChild(cardDiv);
+                mainContainer.appendChild(container);
+            });
+
+            // var buttonRow = document.createElement("div");
+            // buttonRow.className = "row justify-content-center mt-4";
+            // var saveButton = document.createElement("button");
+            // saveButton.className = "btn btn-dark btn-lg save-btn";
+            // saveButton.textContent = "Save!";
+            // saveButton.addEventListener("click", saveUserGroups); // Attach the saveUserGroups function to the click event
+            // buttonRow.appendChild(saveButton);
+            // mainContainer.appendChild(buttonRow);
+        }
+
+        // function saveUserGroups() {
+        //     var checkedCards = document.querySelectorAll('.form-check-input');
+
+        //     var newSelectedCategories = [];
+        //     var unselectedCategories = [];
+
+        //     checkedCards.forEach(function (checkbox) {
+        //         var categoryTitle = checkbox.parentElement.parentElement.querySelector('.card-title').textContent;
+
+        //         if (checkbox.checked) {
+        //             if (!userChosenCategories.includes(categoryTitle)) {
+        //                 // Category is newly selected
+        //                 newSelectedCategories.push(categoryTitle);
+        //             }
+        //         } else {
+        //             if (userChosenCategories.includes(categoryTitle)) {
+        //                 // Category is unchecked
+        //                 unselectedCategories.push(categoryTitle);
+        //             }
+        //         }
+        //     });
+
+        //     console.log("Selected categories:", newSelectedCategories);
+        //     console.log("Unselected categories:", unselectedCategories);
+
+        //     // Add logic to update the database based on selectedCategories
+        //     // You can use fetch() or another AJAX library to send a request to your server
+        //     // Example using fetch():
+
+        //     if (newSelectedCategories.length) {
+        //         console.log("123ASD")
+        //         var apiUrl = "http://localhost:5500/add_user_groups";
+        //         fetch(apiUrl, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //             },
+        //             body: JSON.stringify({ newSelectedCategories }),
+        //         })
+        //             .then(response => response.json())
+        //             .then(data => {
+        //                 console.log('Success:', data);
+        //                 window.location.href = 'index.html';
+        //             })
+        //             .catch((error) => {
+        //                 console.error('Error updating user groups:', error);
+        //             });
+        //     }
+
+        //     else if (unselectedCategories.length) {
+        //         var apiUrl = "http://localhost:5500/remove_user_groups";
+        //         fetch(apiUrl, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //             },
+        //             body: JSON.stringify({ unselectedCategories }),
+        //         })
+        //             .then(response => response.json())
+        //             .then(data => {
+        //                 console.log('Success:', data);
+        //                 window.location.href = 'index.html';
+        //             })
+        //             .catch((error) => {
+        //                 console.error('Error updating user groups:', error);
+        //             });
+        //     }
+
+        //     else {
+        //         window.location.href = 'index.html';
+        //     }
+        // }
+
+        function clearGroups() {
+            console.log("clearGroups");
+            var groupContainer = document.getElementById("sports-cards-container");
+            groupContainer.innerHTML = "";
+            console.log("DONE");
+        }
+
+        function fetchGroups() {
+            $.get("http://localhost:5500/groups", function (data) {
+                groups = data.groups;
+                clearGroups();
+                createSportsCards(groups);
+            });
+        }
+
+        window.updateGroup = function (group_id) {
+            console.log(`Update comment with ID: ${comment_id}`);
+            const commentsToUpdate = comments.find(comment => comment._id === comment_id);
+            console.log(commentsToUpdate);
+            $("#post_id").val(commentsToUpdate.post_id);
+            $("#user_id").val(commentsToUpdate.user_id);
+            $("#first_name").val(commentsToUpdate.first_name);
+            $("#last_name").val(commentsToUpdate.last_name);
+            $("#description").val(commentsToUpdate.description);
+            $("#datepicker").val(commentsToUpdate.date);
+            $("#time").val(commentsToUpdate.time);
+
+            $('#updateCommentModal').modal('show');
+
+            // $("#saveChangesBtn").off('click').on("click", function () {
+            //     const updatedComment = {
+            //         post_id: $("#post_id").val(),
+            //         user_id: $("#user_id").val(),
+            //         first_name: $("#first_name").val(),
+            //         last_name: $("#last_name").val(),
+            //         description: $("#description").val(),
+            //         date: $("#datepicker").val(),
+            //         time: $("#time").val(),
+            //     };
+
+            //     console.log(updatedComment);
+
+            //     fetch(`http://localhost:5500/update_comment/${comment_id}`, {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //         },
+            //         body: JSON.stringify(updatedComment),
+            //     })
+            //         .then(response => {
+            //             if (!response.ok) {
+            //                 throw new Error(`HTTP error! Status: ${response.status}`);
+            //             }
+            //             return response.json();
+            //         })
+            //         .then(data => {
+            //             console.log("Comment updated successfully:", data);
+            //             fetchComments();
+            //             $('#updateCommentModal').modal('hide');
+            //         })
+            //         .catch(error => {
+            //             console.error("Error updating comment:", error);
+            //         });
+            // });
+        };
+
+        window.deleteGroup = function (group_id) {
+            console.log(`Delete group with ID: ${group_id}`);
+            $('#deleteGroupModal').modal('show');
+
+            str_group_id = group_id.toString();
+
+            $('#confirmDeleteBtn').off('click').on('click', function () {
+                console.log(`Delete group with ID: ${group_id}`);
+                $.post(`http://localhost:5500/delete_group/${str_group_id}`, function (data) {
+                    fetchGroups();
+                    $('#deleteGroupModal').modal('hide');
+                });
+            });
+        };
+    });
+
+</script>

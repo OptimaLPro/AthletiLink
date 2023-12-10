@@ -325,6 +325,47 @@ app.get("/groups", async (req, res) => {
   }
 });
 
+// ---------- Create a Group ----------
+app.post("/create_group", async (req, res) => {
+  group_name = req.body.group_name;
+  try {
+    var data = {
+      group_name: req.body.group_name,
+      pic: req.body.pic,
+      status: req.body.status
+    };
+
+    var db = mongoose.connection;
+    const result = await db.collection("groups").insertOne(data); // Use await to wait for the operation to complete
+    createLog("Group Created", `${group_name}`, req, result);
+    res.status(200).json({ result });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+// ---------- Delete Group By ID ----------
+app.post("/delete_group/:group_id", async (req, res) => {
+  try {
+    const group_id = req.params.group_id;
+    const group = await Groups.findById(group_id);
+
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    await group.deleteOne();
+
+    createLog("Group Deleted", `${group_id}`, req);
+    res.status(200).json({ message: "Group deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting group:", error);
+    res.status(500).json({ message: "Failed to delete group" });
+  }
+});
+
 // ---------- Get Posts by Group Name ----------
 app.get("/posts/:group_name", async (req, res) => {
   try {
