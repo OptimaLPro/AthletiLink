@@ -133,16 +133,46 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="AddGroupBtn">Save Changes</button>
+                    <button type="button" class="btn btn-primary" id="AddGroupBtn">Add</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="updateGroupModal" tabindex="-1" role="dialog" aria-labelledby="updateGroupModalLabel"
+    <div class="modal fade" id="updateGroupModal" tabindex="-1" role="dialog" aria-labelledby="updateGroupModalModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <!-- ... (modal content) ... -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateGroupModalLabel">Update Group</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="group_name_update">Group Name</label>
+                        <input type="text" id="group_name_update" name="group_name_update" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pic_update">Image URL</label>
+                        <input type="text" id="pic_update" name="pic_update" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status_update">Status</label>
+                        <select id="status_update" name="status_update" class="form-control" required>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="updateGroupBtn">Save Changes</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -179,11 +209,6 @@
         });
 
         $("#AddGroupBtn").on("click", function () {
-            // $.post(`http://localhost:5500/create_group`, function (data) {
-            //     fetchGroups();
-            //     $('#addGroupModal').modal('hide');
-            // });
-
             const newGroup = {
                 group_name: $("#group_name").val(),
                 pic: $("#pic").val(),
@@ -345,89 +370,7 @@
                 container.appendChild(cardDiv);
                 mainContainer.appendChild(container);
             });
-
-            // var buttonRow = document.createElement("div");
-            // buttonRow.className = "row justify-content-center mt-4";
-            // var saveButton = document.createElement("button");
-            // saveButton.className = "btn btn-dark btn-lg save-btn";
-            // saveButton.textContent = "Save!";
-            // saveButton.addEventListener("click", saveUserGroups); // Attach the saveUserGroups function to the click event
-            // buttonRow.appendChild(saveButton);
-            // mainContainer.appendChild(buttonRow);
         }
-
-        // function saveUserGroups() {
-        //     var checkedCards = document.querySelectorAll('.form-check-input');
-
-        //     var newSelectedCategories = [];
-        //     var unselectedCategories = [];
-
-        //     checkedCards.forEach(function (checkbox) {
-        //         var categoryTitle = checkbox.parentElement.parentElement.querySelector('.card-title').textContent;
-
-        //         if (checkbox.checked) {
-        //             if (!userChosenCategories.includes(categoryTitle)) {
-        //                 // Category is newly selected
-        //                 newSelectedCategories.push(categoryTitle);
-        //             }
-        //         } else {
-        //             if (userChosenCategories.includes(categoryTitle)) {
-        //                 // Category is unchecked
-        //                 unselectedCategories.push(categoryTitle);
-        //             }
-        //         }
-        //     });
-
-        //     console.log("Selected categories:", newSelectedCategories);
-        //     console.log("Unselected categories:", unselectedCategories);
-
-        //     // Add logic to update the database based on selectedCategories
-        //     // You can use fetch() or another AJAX library to send a request to your server
-        //     // Example using fetch():
-
-        //     if (newSelectedCategories.length) {
-        //         console.log("123ASD")
-        //         var apiUrl = "http://localhost:5500/add_user_groups";
-        //         fetch(apiUrl, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //             },
-        //             body: JSON.stringify({ newSelectedCategories }),
-        //         })
-        //             .then(response => response.json())
-        //             .then(data => {
-        //                 console.log('Success:', data);
-        //                 window.location.href = 'index.html';
-        //             })
-        //             .catch((error) => {
-        //                 console.error('Error updating user groups:', error);
-        //             });
-        //     }
-
-        //     else if (unselectedCategories.length) {
-        //         var apiUrl = "http://localhost:5500/remove_user_groups";
-        //         fetch(apiUrl, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //             },
-        //             body: JSON.stringify({ unselectedCategories }),
-        //         })
-        //             .then(response => response.json())
-        //             .then(data => {
-        //                 console.log('Success:', data);
-        //                 window.location.href = 'index.html';
-        //             })
-        //             .catch((error) => {
-        //                 console.error('Error updating user groups:', error);
-        //             });
-        //     }
-
-        //     else {
-        //         window.location.href = 'index.html';
-        //     }
-        // }
 
         function clearGroups() {
             console.log("clearGroups");
@@ -445,54 +388,46 @@
         }
 
         window.updateGroup = function (group_id) {
-            console.log(`Update comment with ID: ${comment_id}`);
-            const commentsToUpdate = comments.find(comment => comment._id === comment_id);
-            console.log(commentsToUpdate);
-            $("#post_id").val(commentsToUpdate.post_id);
-            $("#user_id").val(commentsToUpdate.user_id);
-            $("#first_name").val(commentsToUpdate.first_name);
-            $("#last_name").val(commentsToUpdate.last_name);
-            $("#description").val(commentsToUpdate.description);
-            $("#datepicker").val(commentsToUpdate.date);
-            $("#time").val(commentsToUpdate.time);
+            console.log(`Update group with ID: ${group_id}`);
+            const groupToUpdate = groups.find(group => group._id === group_id);
+            console.log(groupToUpdate);
+            $("#group_name_update").val(groupToUpdate.group_name);
+            $("#pic_update").val(groupToUpdate.pic);
+            $("#status_update").val(groupToUpdate.status);
 
-            $('#updateCommentModal').modal('show');
+            $('#updateGroupModal').modal('show');
 
-            // $("#saveChangesBtn").off('click').on("click", function () {
-            //     const updatedComment = {
-            //         post_id: $("#post_id").val(),
-            //         user_id: $("#user_id").val(),
-            //         first_name: $("#first_name").val(),
-            //         last_name: $("#last_name").val(),
-            //         description: $("#description").val(),
-            //         date: $("#datepicker").val(),
-            //         time: $("#time").val(),
-            //     };
+            $("#updateGroupBtn").off('click').on("click", function () {
+                const updatedGroup = {
+                    group_name: $("#group_name_update").val(),
+                    pic: $("#pic_update").val(),
+                    status: $("#status_update").val(),
+                };
 
-            //     console.log(updatedComment);
+                console.log(updatedGroup);
 
-            //     fetch(`http://localhost:5500/update_comment/${comment_id}`, {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify(updatedComment),
-            //     })
-            //         .then(response => {
-            //             if (!response.ok) {
-            //                 throw new Error(`HTTP error! Status: ${response.status}`);
-            //             }
-            //             return response.json();
-            //         })
-            //         .then(data => {
-            //             console.log("Comment updated successfully:", data);
-            //             fetchComments();
-            //             $('#updateCommentModal').modal('hide');
-            //         })
-            //         .catch(error => {
-            //             console.error("Error updating comment:", error);
-            //         });
-            // });
+                fetch(`http://localhost:5500/update_group/${group_id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedGroup),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Group updated successfully:", data);
+                        fetchGroups();
+                        $('#updateGroupModal').modal('hide');
+                    })
+                    .catch(error => {
+                        console.error("Error updating group:", error);
+                    });
+            });
         };
 
         window.deleteGroup = function (group_id) {

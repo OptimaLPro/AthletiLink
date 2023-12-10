@@ -345,6 +345,33 @@ app.post("/create_group", async (req, res) => {
   }
 });
 
+// ---------- Update Group By ID ----------
+app.post("/update_group/:group_id", async (req, res) => {
+  const group_id = req.params.group_id;
+  try {
+    var data = {
+      group_name: req.body.group_name,
+      pic: req.body.pic,
+      status: req.body.status
+    };
+
+    const updatedFields = data;
+
+    const updatedGroup = await Groups.findByIdAndUpdate(group_id, updatedFields, {
+      new: true,
+    });
+
+    if (!updatedGroup) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+    createLog("Group Update", `Updated: ${group_id}`, req, updatedGroup);
+    return res.status(200).json(updatedGroup);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 // ---------- Delete Group By ID ----------
 app.post("/delete_group/:group_id", async (req, res) => {
