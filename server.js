@@ -11,10 +11,6 @@ const Comments = require("./models/comments");
 const Groups = require("./models/groups");
 const Logs = require("./models/logs");
 
-
-// Hey this is omer YOU MFS
-
-
 app.use(express.static('assets'));
 const port = 5500;
 
@@ -733,6 +729,3 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
-
-
-  // This is nati you MFS
