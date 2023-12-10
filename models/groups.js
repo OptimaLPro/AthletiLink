@@ -9,6 +9,10 @@ const groupsSchema = mongoose.Schema(
         pic: {
             type: String,
             required: [true, "please enter the group pic"]
+        },
+        status: {
+            type: String,
+            required: [true, "please enter the status"]
         }
     }
 )

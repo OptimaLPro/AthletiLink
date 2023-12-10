@@ -214,5 +214,18 @@ body {
   position: absolute;
   top: 0px;
   right: 0px;
+}
 
+.deleteIconGroups {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+  border: 2px solid #ffffff;
+}
+
+.updateIconGroups {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  border: 2px solid #ffffff;
 }
