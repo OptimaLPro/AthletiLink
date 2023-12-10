@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <title>My Groups</title>
+    <title>Groups Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 
@@ -45,6 +45,7 @@
 </head>
 
 <body>
+    <h1 class="d-flex justify-content-center">Groups Management</h1>
     <div class="search-container input-group mb-3 mt-3">
         <div class="input-group-prepend">
             <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
@@ -71,7 +72,8 @@
             <!-- Groups rendered here! -->
         </div>
         <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
-            <a href="control_panel.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
+            <a href="control_panel.html" style="text-decoration: none;"><span class="fa-stack fa-lg"
+                    style="color:#343a40;">
                     <i class="fa fa-circle fa-stack-2x"></i>
                     <i class="fa fa-times fa-stack-1x fa-inverse"></i>
                 </span></a>
@@ -139,8 +141,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="updateGroupModal" tabindex="-1" role="dialog" aria-labelledby="updateGroupModalModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="updateGroupModal" tabindex="-1" role="dialog"
+        aria-labelledby="updateGroupModalModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -152,7 +154,8 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="group_name_update">Group Name</label>
-                        <input type="text" id="group_name_update" name="group_name_update" class="form-control" required />
+                        <input type="text" id="group_name_update" name="group_name_update" class="form-control"
+                            required />
                     </div>
 
                     <div class="form-group">
@@ -284,6 +287,10 @@
                 var isChecked = group.status == "active" ? true : false;
                 var cardDiv = document.createElement("div");
 
+                var statusDot = document.createElement("div");
+                statusDot.className = "status-dot";
+                statusDot.style.backgroundColor = group.status == "active" ? "green" : "red";
+
                 var deleteIcon = document.createElement("button");
                 deleteIcon.className = "btn btn-danger ml-auto mt-2 mr-2 deleteIconGroups";
                 deleteIcon.style.display = "inline";
@@ -331,33 +338,33 @@
                 cardTitle.textContent = group.group_name;
 
                 var formCheckDiv = document.createElement("div");
-                formCheckDiv.className = "form-check text-center"; // Center the checkbox
+                // formCheckDiv.className = "form-check text-center"; // Center the checkbox
 
-                var checkbox = document.createElement("input");
-                checkbox.className = "form-check-input default-checkboxs";
+                // var checkbox = document.createElement("input");
+                // checkbox.className = "form-check-input default-checkboxs";
 
-                // Add black shadow to the checkbox
-                checkbox.style.boxShadow = "2px 2px 2px black";
+                // // Add black shadow to the checkbox
+                // checkbox.style.boxShadow = "2px 2px 2px black";
 
-                checkbox.type = "checkbox";
-                checkbox.value = "";
-                checkbox.checked = isChecked;
+                // checkbox.type = "checkbox";
+                // checkbox.value = "";
+                // checkbox.checked = isChecked;
 
-                // Toggle checkbox state when the card is clicked
-                card.addEventListener("click", function (event) {
-                    // Check if the click target is the checkbox
-                    if (!event.target.classList.contains('form-check-input')) {
-                        checkbox.checked = !checkbox.checked;
-                    }
-                });
+                // // Toggle checkbox state when the card is clicked
+                // card.addEventListener("click", function (event) {
+                //     // Check if the click target is the checkbox
+                //     if (!event.target.classList.contains('form-check-input')) {
+                //         checkbox.checked = !checkbox.checked;
+                //     }
+                // });
 
-                // Toggle checkbox state when the checkbox is clicked
-                checkbox.addEventListener("click", function (event) {
-                    // Stop the event from propagating to the card click handler
-                    event.stopPropagation();
-                });
+                // // Toggle checkbox state when the checkbox is clicked
+                // checkbox.addEventListener("click", function (event) {
+                //     // Stop the event from propagating to the card click handler
+                //     event.stopPropagation();
+                // });
 
-                formCheckDiv.appendChild(checkbox);
+                // formCheckDiv.appendChild(checkbox);
 
                 cardBody.appendChild(cardTitle);
                 cardBody.appendChild(formCheckDiv);
@@ -367,6 +374,7 @@
                 cardDiv.appendChild(card);
                 cardDiv.appendChild(deleteIcon);
                 cardDiv.appendChild(updateIcon);
+                cardDiv.appendChild(statusDot);
                 container.appendChild(cardDiv);
                 mainContainer.appendChild(container);
             });
