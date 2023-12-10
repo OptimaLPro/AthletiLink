@@ -114,13 +114,13 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="post_id">Group Name</label>
-                        <input type="text" id="post_id" name="user_id" class="form-control" required />
+                        <label for="group_name">Group Name</label>
+                        <input type="text" id="group_name" name="group_name" class="form-control" required />
                     </div>
 
                     <div class="form-group">
-                        <label for="user_id">Image URL</label>
-                        <input type="text" id="user_id" name="user_id" class="form-control" required />
+                        <label for="pic">Image URL</label>
+                        <input type="text" id="pic" name="pic" class="form-control" required />
                     </div>
 
                     <div class="form-group">
@@ -155,23 +155,6 @@
 </html>
 
 <script>
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     var apiUrl = "http://localhost:5500/user_groups";
-    //     fetch(apiUrl)
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             groups = data.user_groups_res;
-    //             groups.forEach(function (group) {
-
-    //                 // group.group is the name of the group
-    //             });
-    //         })
-    //         .catch((error) => {
-    //             console.error("Error fetching data from MongoDB:", error);
-    //         });
-    // });
-
-
     document.addEventListener("DOMContentLoaded", function () {
         let groups;
         fetchGroups();
@@ -196,10 +179,16 @@
         });
 
         $("#AddGroupBtn").on("click", function () {
-            $.post(`http://localhost:5500/create_group`, function (data) {
-                fetchGroups();
-                $('#addGroupModal').modal('hide');
-            });
+            // $.post(`http://localhost:5500/create_group`, function (data) {
+            //     fetchGroups();
+            //     $('#addGroupModal').modal('hide');
+            // });
+
+            const newGroup = {
+                group_name: $("#group_name").val(),
+                pic: $("#pic").val(),
+                status: $("#status").val(),
+            };
 
 
             fetch(`http://localhost:5500/create_group`, {
@@ -207,7 +196,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(updatedComment),
+                body: JSON.stringify(newGroup),
             })
                 .then(response => {
                     if (!response.ok) {
@@ -216,12 +205,12 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log("Comment updated successfully:", data);
-                    fetchComments();
-                    $('#updateCommentModal').modal('hide');
+                    console.log("Group added successfully:", data);
+                    fetchGroups();
+                    $('#addGroupModal').modal('hide');
                 })
                 .catch(error => {
-                    console.error("Error updating comment:", error);
+                    console.error("Error adding group:", error);
                 });
 
         });
