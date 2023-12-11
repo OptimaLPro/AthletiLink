@@ -372,7 +372,6 @@ app.post("/update_group/:group_id", async (req, res) => {
   }
 });
 
-
 // ---------- Delete Group By ID ----------
 app.post("/delete_group/:group_id", async (req, res) => {
   try {
@@ -390,6 +389,27 @@ app.post("/delete_group/:group_id", async (req, res) => {
   } catch (error) {
     console.error("Error deleting group:", error);
     res.status(500).json({ message: "Failed to delete group" });
+  }
+});
+
+// ---------- Group Status By Group Name ----------
+app.get("/group_status/:group_name", async (req, res) => {
+  try {
+    const group_name = req.params.group_name;
+    const group = await Groups.find({ group_name: group_name });
+
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+    console.log(group_name);
+    group_status = group[0].status;
+
+    console.log(group_status);
+
+    res.status(200).json({ group_status });
+  } catch (error) {
+    console.error("Error returning group status:", error);
+    res.status(500).json({ message: "Error returning group status" });
   }
 });
 

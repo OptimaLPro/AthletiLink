@@ -5,6 +5,8 @@ function redirectToCreatePost() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    var user_groups = [];
+
     var adminApiUrl = "http://localhost:5500/user_session";
     fetch(adminApiUrl)
         .then((response) => response.json())
@@ -31,20 +33,76 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
-            var groups = data.user_groups_res;
-            var listGroup = document.querySelector(".list-group");
-            groups.forEach(function (group) {
-                var groupLink = document.createElement("a");
-                groupLink.href = "#";
-                groupLink.className = "list-group-item list-group-item-action";
-                groupLink.textContent = group.group;
+            user_groups = data.user_groups_res;
+            checkStatus(user_groups);
 
-                listGroup.appendChild(groupLink);
-            });
+            // async function getGroupStatus(group) {
+            //     try {
+            //         // console.log("IM HERE" + group.group);
+            //         const response = await fetch(`http://localhost:5500/group_status/${group.group}`);
+            //         // console.log(response);
+            //         const data = await response.json();
+
+            //         console.log(data);
+
+            //         if (data.group_status == "active") {
+            //             console.log("active");
+            //             group_status = "active";
+            //         } else {
+            //             group_status = "inactive";
+            //         }
+            //     } catch (error) {
+            //         console.error("Error fetching group status:", error);
+            //     }
+            // }
         })
         .catch((error) => {
             console.error("Error fetching data from MongoDB:", error);
         });
+
+
+    function checkStatus(user_groups) {
+        user_groups.forEach(function (group) {
+            var listGroup = document.querySelector(".list-group");
+            var group_status = "";
+            // console.log(group.group);
+            // $.post(`http://localhost:5500/group_status/${group.group}`, function (data) {
+            //     console.log(data);
+            //     if (data.status == "active") {
+            //         group_status = "active";
+            //     }
+            //     else {
+            //         group_status = "inactive";
+            //     }
+            // });
+
+            // getGroupStatus(group);
+
+            var statusByGroupApiUrl = `http://localhost:5500/group_status/${group.group}`;
+            fetch(statusByGroupApiUrl)
+                .then((response) => response.json())
+                .then((status) => {
+                    console.log(status);
+                    if (status.group_status == "active") {
+                        console.log("THIS IS !active!");
+                        group_status = "active";
+                    }
+                    else {
+                        group_status = "inactive";
+                    }
+
+                    console.log("AAAAA " + group_status);
+                    if (group_status == "active") {
+                        var groupLink = document.createElement("a");
+                        groupLink.href = "#";
+                        groupLink.className = "list-group-item list-group-item-action";
+                        groupLink.textContent = group.group;
+                        listGroup.appendChild(groupLink);
+                    }
+                });
+
+        });
+    }
 
     var userDetailsApiUrl = "http://localhost:5500/user_details";
     fetch(userDetailsApiUrl)
@@ -229,7 +287,6 @@ function getPostsAndComments(all_posts) {
                     `;
                         card_comment.appendChild(deleteIconComment);
                         collapseElem.appendChild(accordionElem);
-                        // collapseElem.appendChild(deleteIconComment);
                         accordionElem.appendChild(card_comment);
                     });
                 }

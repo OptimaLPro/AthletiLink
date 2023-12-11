@@ -321,9 +321,13 @@
                 // Set background image if available
                 if (group.pic) {
                     card.style.backgroundImage = `url(${group.pic})`;
-                    card.style.backgroundSize = "cover";
-                    card.style.backgroundPosition = "center";
+
                 }
+                else {
+                    card.style.backgroundImage = `url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png')`;
+                }
+                card.style.backgroundSize = "cover";
+                card.style.backgroundPosition = "center";
 
                 var cardBody = document.createElement("div");
                 cardBody.className = "card-body d-flex flex-column align-items-center justify-content-center"; // Center content vertically
