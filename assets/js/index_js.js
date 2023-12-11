@@ -100,7 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         listGroup.appendChild(groupLink);
                     }
                 });
-
         });
     }
 
