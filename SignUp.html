@@ -93,7 +93,7 @@
       <div class="form-group">
         <label for="Date">Date of Birth</label>
         <div class="input-group date">
-          <input type="text" class="form-control" id="datepicker" name="dob" required>
+          <input type="text" class="form-control" id="datepicker" name="dob" value="21/12/2023" required>
           <div class="input-group-addon">
             <span class="glyphicon glyphicon-th"></span>
           </div>
@@ -104,10 +104,19 @@
         <label for="profilePicture">Profile Picture</label>
         <div class="custom-file">
           <input type="file" class="custom-file-input" id="profilePicture" name="profilePicture" accept="image/*"
-            onchange="updateFileName()">
+            onchange="fileChange()" required>
           <label class="custom-file-label" id="profilePictureLabel" for="profilePicture">Choose file</label>
         </div>
       </div>
+      
+      <div class="form-group">
+        <div class="progress" style="margin-top: 10px; display: none;">
+          <div class="progress-bar" role="progressbar" id="uploadProgressBar" style="width: 0%;" aria-valuenow="0"
+            aria-valuemin="0" aria-valuemax="100">0%</div>
+        </div>
+      </div>
+
+      <input type="hidden" id="profilePictureUrl" name="profilePictureUrl">
 
       <!-- The rest of your form remains unchanged -->
 
@@ -128,25 +137,86 @@
   </div>
 
   <script>
-    // // Initialize datepicker
-    // $(document).ready(function () {
-    //   $("#dob").datepicker({
-    //     format: "mm/dd/yyyy",
-    //     autoclose: true
-    //   });
-    // });
+    var uploaded = false;
 
-    // Initialize datepicker
     $(document).ready(function () {
       $('#datepicker').datepicker({
         format: 'dd/mm/yyyy',
         autoclose: true
       });
+
+      // Prevent the form from submitting on its own
+      $("form").submit(function (e) {
+        e.preventDefault();
+        if (uploaded) {
+          $('form')[0].submit();
+        }
+      });
     });
 
-    function updateFileName() {
+    function fileChange() {
       var fileName = $("#profilePicture").val().split("\\").pop();
       $("#profilePictureLabel").text(fileName);
+      var file = document.getElementById('profilePicture');
+      var form = new FormData();
+      form.append("image", file.files[0]);
+
+      var settings = {
+        "url": "https://api.imgbb.com/1/upload?key=7045717abf171aa1e4b75a833e125006",
+        "method": "POST",
+        "timeout": 0,
+        "processData": false,
+        "mimeType": "multipart/form-data",
+        "contentType": false,
+        "data": form,
+        "xhr": function () {
+          var xhr = new window.XMLHttpRequest();
+          xhr.upload.addEventListener("progress", function (evt) {
+            if (evt.lengthComputable) {
+              var percentComplete = evt.loaded / evt.total;
+              percentComplete = parseInt(percentComplete * 100);
+
+              // Update the progress bar
+              $("#uploadProgressBar")
+                .width(percentComplete + '%')
+                .attr('aria-valuenow', percentComplete)
+                .text(percentComplete < 100 ? percentComplete + '%' : 'Processing...');
+            }
+          }, false);
+          return xhr;
+        }
+      }
+
+      $(".progress").show();
+
+      $.ajax(settings).done(function (response) {
+        var response_json = JSON.parse(response);
+        console.log(response_json.data.url);
+        $("#profilePictureUrl").val(response_json.data.url);
+        // After the image is uploaded, submit the form with the image URL
+        uploaded = true;
+        $("#uploadProgressBar").width('0%').attr('aria-valuenow', 0).text('');
+        $(".progress").hide();
+      }).fail(function () {
+        // Handle failures here
+        $("#uploadProgressBar").width('0%').attr('aria-valuenow', 0).text('');
+        $(".progress").hide();
+      });
+    }
+
+
+    function submitForm(imageUrl) {
+      // Add the image URL to a hidden input in the form
+
+
+      // var input = $('<input>')
+      //   .attr('type', 'hidden')
+      //   .attr('name', 'profilePictureUrl')
+      //   .val(imageUrl);
+      // $('form').append($(input));
+
+      // Now submit the form with all the data including the image URL
+
     }
   </script>
 

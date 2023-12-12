@@ -14,20 +14,6 @@ const Logs = require("./models/logs");
 app.use(express.static('assets'));
 const port = 5500;
 
-// ---------- File Upload ----------
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'assets/images/profile-pictures');
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-const upload = multer({ storage: storage });
-
 // ---------- Session ----------
 session.user_id = null;
 session.admin = null;
@@ -77,6 +63,7 @@ const cors = require("cors");
 const { log } = require("console");
 const { create } = require("domain");
 const likes = require("./models/likes");
+const { url } = require("inspector");
 const corsOptions = {
   origin: "*",
   credentials: true,
@@ -95,17 +82,15 @@ app.use(cors(corsOptions));
 // });
 
 // ---------- Create User ----------
-app.post("/user", upload.single('profilePicture'), async (req, res) => {
+app.post("/user", async (req, res) => {
   try {
-    const profilePicture = req.file ? `/assets/images/profile-pictures/${req.file.filename}` : null;
-
     var data = {
       first_name: req.body.firstName,
       last_name: req.body.lastName,
       email: req.body.email,
       password: req.body.password,
       date: req.body.dob,
-      profile_pic: profilePicture,
+      profile_pic: req.body.profilePictureUrl,
       admin: "",
       secret_phrase: req.body.secretPhrase
     };
@@ -266,6 +251,31 @@ app.post("/update_user/:user_id", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// ---------- Update User Profile Picture ----------
+// app.post("/update_profile_picture/:url", async (req, res) => {
+//   const img_url = req.params.url;
+//   try {
+//     var data = {
+//       profile_pic: url.toString(),
+//     };
+
+//     const updatedFields = data;
+
+//     const updatedUser = await Users.findByIdAndUpdate(user_id, updatedFields, {
+//       new: true,
+//     });
+
+//     if (!updatedUser) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     createLog("User Update", `Updated: ${user_id}`, req, updatedUser);
+//     return res.status(200).json(updatedUser);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 // ---------- Get All Posts ----------
 app.get("/posts", async (req, res) => {
