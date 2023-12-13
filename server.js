@@ -10,6 +10,8 @@ const Posts = require("./models/posts");
 const Comments = require("./models/comments");
 const Groups = require("./models/groups");
 const Logs = require("./models/logs");
+const Likes = require("./models/likes");
+const did_it = require("./models/did_it");
 
 app.use(express.static('assets'));
 const port = 5500;
@@ -726,7 +728,7 @@ app.post('/like_posts/:postId', async (req, res) => {
   }
 });
 
-//----------- Get Post By ID -------------
+//----------- Get Like By Post ID -------------
 app.get('/posts_id/:postId', async (req, res) => {
   const post_id = req.params.postId;
   try {
@@ -737,6 +739,19 @@ app.get('/posts_id/:postId', async (req, res) => {
     }
 
     return res.status(200).json({ post: foundPost });
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+app.get('/get_likes/:postId', async (req, res) => {
+  const post_id = req.params.postId;
+  try {
+    const foundPost = await Likes.find({ post_id: post_id, user_id: session.user_id });
+
+    if (!foundPost) {
+      return res.status(404).json({ error: 'not like' });
+    }
+    return res.status(200).json({ message:'like' });
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
