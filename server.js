@@ -651,7 +651,7 @@ app.post("/add_user_group/:user_id/:group_name", async (req, res) => {
 
     var db = mongoose.connection;
     const result = await db.collection("user_groups").insertOne(data); // Use await to wait for the operation to complete
-    createLog("Create User Group", `${post_id}: ${group_name}`, req, result);
+    createLog("Create User Group", `${user_id}: ${group_name}`, req, result);
     res.status(200).json({ message: "New user group added successfully" });
   } catch (error) {
     console.error("Error adding user groups to the database:", error);

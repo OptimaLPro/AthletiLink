@@ -111,7 +111,7 @@
         }
 
         .dark-gray-background {
-            background-color: #767676;
+            background-color: #b9b9b9;
             /* Dark gray color */
         }
 
@@ -445,12 +445,14 @@
                         });
                 });
 
+                var user_groups;
+
                 function fetchUserGroups(userId) {
                     $.get(`http://localhost:5500/user_groups/${userId}`, function (data) {
                         user_groups = data.user_groups_res;
                         console.log(user_groups);
                         populateGroupsList(user_groups);
-                        populateGroupsDropdown();
+                        populateGroupsDropdown(user_groups);
                     });
                 }
 
@@ -478,21 +480,17 @@
                     });
                 }
 
-                // // Add event listeners for the delete buttons
-                // $(".delete-group-btn").on("click", function () {
-                //     const groupId = $(this).data("groupId");
-                //     console.log(`Delete group with ID: ${groupId}`);
-                //     deleteGroup(groupId);
-                //     // remove the selected group from the list
-                //     $(this).parent().remove();
-
-                // });
-
                 $("#userGroupsList").on("click", ".delete-group-btn", function () {
                     const groupId = $(this).val(); // or $(this).attr('value');
+                    const groupName = $(this).closest('li').clone()    // Clone the <li> element
+                        .children('.delete-group-btn').remove() // Remove the delete button from the clone
+                        .end()  // End the current filtering operation
+                        .text().trim(); // Get the text of the clone and trim any whitespace
+
+
                     if (groupId) {
                         console.log(`Delete group with ID: ${groupId}`);
-                        deleteGroup(groupId);
+                        deleteGroup(groupId, groupName);
                         $(this).closest('li').remove(); // Remove the group from the list
                     } else {
                         console.error("GroupId is undefined.");
@@ -502,50 +500,68 @@
                 function fetchAvailableUserGroups() {
                     // Fetch all available groups but remove the ones that the user is already in
                     $.get("http://localhost:5500/groups", function (data) {
-                        // remove the ones that the user is already in
-                        const allGroups = data.groups;
-                        console.log("THIS IS IT:" + allGroups);
-                        const availableGroups = allGroups.filter(group => {
-                            return !user_groups.find(userGroup => userGroup._id === group._id);
-                        });
-                        console.log(availableGroups);
+                        const allGroups = data.groups; // Corrected variable name
+                        console.log(allGroups);
+                        // const groupDropdown = document.getElementById('addGroupDropdown');
+                        // allGroups.forEach(function (group) {
+                        //     // check if the user is already in the group
+                        //     // if (user_groups.find(userGroup => userGroup._id === group._id)) {
+                        //         const option = document.createElement('option');
+                        //         option.value = group.group_name; // Use 'group' instead of data.user_groups_res.group
+                        //         option.text = group.group_name; // Use 'group' instead of data.user_groups_res.group
+                        //         groupDropdown.appendChild(option);
+                        //     // }
+                        // });
+
                     });
                 }
 
-                function populateGroupsDropdown() {
+                function populateGroupsDropdown(user_groups) {
                     const dropdown = $("#addGroupDropdown");
                     // Fetch all available groups and populate the dropdown
-                    fetchAvailableUserGroups().then(allGroups => {
+
+                    $.get("http://localhost:5500/groups", function (data) {
+                        const allGroups = data.groups; // Corrected variable name
                         dropdown.empty();
                         allGroups.forEach(group => {
-                            dropdown.append(`<option value="${group._id}">${group.group}</option>`);
+                            // check if the user is already in the group
+                            if (!user_groups.find(userGroup => userGroup.group === group.group_name)) {
+                                dropdown.append(`<option value="${group._id}">${group.group_name}</option>`);
+                            }
                         });
+
                     });
                 }
 
                 $("#addGroupBtn").on("click", function () {
-                    const groupName = $("#addGroupDropdown").val();
+                    // take the selected group text from the dropdown and add it to the user
+                    const groupName = $("#addGroupDropdown option:selected").text();
                     const userId = $("#user_groups").data('userid');
-                    console.log(`Add group with ID: ${groupId} to user with ID: ${userId}`);
+                    console.log(`Add group ${groupName} to user with ID: ${userId}`);
                     addUserToGroup(userId, groupName);
+                    const dropdown = $("#addGroupDropdown");
+                    // remove the selected group from the dropdown
+                    dropdown.find(`option:contains(${groupName})`).remove();
+                    fetchUserGroups(userId);
+
                 });
 
                 function addUserToGroup(userId, groupName) {
                     $.post(`http://localhost:5500/add_user_group/${userId}/${groupName}`, function (data) {
                         console.log("User added to group successfully:", data);
+                    });
+                }
+
+                function deleteGroup(groupId, groupName) {
+                    $.post(`http://localhost:5500/delete_user_group/${groupId}`, function (data) {
+                        console.log("User Group deleted successfully:", data);
                         // Refresh the list of groups
                         // const userId = fetchUserGroups(userId);
                     });
+                    const dropdown = $("#addGroupDropdown");
+                    dropdown.append(`<option value="${groupId}">${groupName}</option>`);
                 }
             };
-
-            function deleteGroup(groupId) {
-                $.post(`http://localhost:5500/delete_user_group/${groupId}`, function (data) {
-                    console.log("User Group deleted successfully:", data);
-                    // Refresh the list of groups
-                    // const userId = fetchUserGroups(userId);
-                });
-            }
 
             function filterUsers(criteria) {
                 const searchText = $("#searchText").val().toLowerCase();
