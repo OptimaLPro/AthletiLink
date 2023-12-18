@@ -762,7 +762,6 @@ app.get("/signout", async (req, res) => {
 app.post('/like_posts/:postId', async (req, res) => {
   console.log("like post");
   const post_id = req.params.postId;
-  console.log(post_id);
   try {
     const foundPost = await Posts.findById(post_id);
     console.log(foundPost);
@@ -774,7 +773,8 @@ app.post('/like_posts/:postId', async (req, res) => {
     const foundLike = await Likes.findOne({ post_id: post_id, user_id: session.user_id });
     console.log(foundLike);
     let updateLikes;
-
+    console.log("foundLike");
+    console.log(foundLike);
     if (foundLike)
     {
       updateLikes = foundPost.likes - 1;
@@ -851,6 +851,66 @@ app.get('/get_likes/:postId', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+//----------------- Did it API -----------------
+app.post('/did_it/:postId', async (req, res) => {
+  console.log("inside did it Api");
+  const post_id = req.params.postId;
+  console.log(post_id);
+  try {
+    const foundPost = await Posts.findById(post_id);
+
+    if (!foundPost) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    console.log("before foundPost");
+    const foundDid = await did_it.findOne({ post_id: post_id, user_id: session.user_id });
+    let updateDid;
+    console.log("foundDid");
+    console.log(foundDid);
+
+    if (foundDid) {
+      updateDid = foundPost.did - 1;
+      await foundDid.deleteOne();
+    } else {
+      updateDid = foundPost.did + 1;
+      const foundUser = await Users.findById(session.user_id);
+
+      if (!foundUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const did_data = {
+        post_id: post_id,
+        user_id: session.user_id,
+        first_name: foundUser.first_name,
+        last_name: foundUser.last_name
+      }
+
+      const db = mongoose.connection;
+      const results = await db.collection("did_it").insertOne(did_data);
+    }
+
+    const data = {
+      did: updateDid
+    };
+
+    const updatedPost = await Posts.findByIdAndUpdate(post_id, data, {
+      new: true,
+    });
+
+    if (!updatedPost) {
+      return res.status(404).json({ message: "Can't update" });
+    }
+
+    return res.status(200).json({ message: 'Did it updated successfully', post: updatedPost, did: foundDid });
+  } catch (error) {
+    console.error(error); // log the error
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 //----------- add like info -------------
 // app.post('/add_like/:postId', async (req, res) => {

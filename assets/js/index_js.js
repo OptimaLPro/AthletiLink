@@ -229,21 +229,20 @@ function getPostsAndComments(all_posts) {
         cardLables.innerHTML = `
                 <div class="row justify-content-center" style="margin-bottom: 4px;">
                     <div class="col-sm-4 text-center font-weight-bold">
-                        <span id="likeCount1">${post.likes}</span>
+                        <span id="likeCount1${post._id}">${post.likes}</span>
                     </div>
                     <div class="col-sm-4 text-center font-weight-bold">
-                        <span id="didItCount1">${post.did}</span>
+                        <span id="didItCount1${post._id}">${post.did}</span>
                     </div>
                     <div class="col-sm-4 text-center font-weight-bold">
-                        <span id="didItCount1">${post.comments}</span>
+                        <span id="commentsCount1">${post.comments}</span>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-4 text-center"><button class="btn btn-primary btn-sm" onclick="toggleLike('${post._id}')" id="likeButton${post._id}">Like</button>
+                    <div class="col-sm-4 text-center"><button class="btn btn-primary btn-sm" onclick="toggleLike('${post._id}')" id="likeButton${post._id}" >Like</button>
                     </div>
                     <div class="col-sm-4 text-center"><button class="btn btn-success btn-sm"
-                            onclick="return false;">I Did
-                            It!</button></div>
+                    onclick="toggleDidIt('${post._id}')" id="didItButton${post._id}"">I Did It!</button></div>
                     <div class="col-sm-4 text-center"><button class="btn btn-info btn-sm"
                             data-toggle="collapse"
                             data-target="#collapseComments${counter}">Comments</button></div>
@@ -377,7 +376,7 @@ function deleteComment(comment_id, all_posts) {
 
 function toggleLike(postId) {
     // URL for the like_posts API endpoint
-    console.log(postId);
+    
     var likePostsApiUrl = `http://localhost:5500/like_posts/`+postId;
 
     // Make a POST request to the like_posts API
@@ -388,19 +387,54 @@ function toggleLike(postId) {
         .then(data => {
             // Check the response and update the UI accordingly
             if (data && data.post) {
+                console.log(data);
                 var updatedPost = data.post;
                 console.log(updatedPost);
                 var likeButton = document.getElementById(`likeButton${postId}`);
                 var likeCountElement = document.getElementById(`likeCount1${postId}`);
-
-                // Update like count in UI
-                likeCountElement.textContent = updatedPost.likes;
-
                 // Update the button text based on whether the post is liked or not
-                if (likeButton.textContent = 'Unlike') {
+                if (likeButton.textContent === 'Unlike') {
+                    // Update like count in UI
+                    likeCountElement.textContent = updatedPost.likes;
                     likeButton.textContent = 'Like';
                 } else {
+                    // Update like count in UI
+                    likeCountElement.textContent = updatedPost.likes;
                     likeButton.textContent = 'Unlike';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error toggling like:', error);
+        });
+}
+
+function toggleDidIt(postId) {
+    // URL for the like_posts API endpoint
+    var didItPostsApiUrl = `http://localhost:5500/did_it/`+postId;
+
+    // Make a POST request to the like_posts API
+    fetch(didItPostsApiUrl, {
+        method: 'POST',
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Check the response and update the UI accordingly
+            if (data && data.post) {
+                console.log(data);  
+                var updatedPost = data.post;
+                console.log(updatedPost);
+                var didItButton = document.getElementById(`didItButton${postId}`);
+                var didItCountElement = document.getElementById(`didItCount1${postId}`);
+                // Update the button text based on whether the post is liked or not
+                if (didItButton.textContent === "Not really...") {
+                    // Update like count in UI
+                    didItCountElement.textContent = updatedPost.did;
+                    didItButton.textContent = 'I Did It!';
+                } else {
+                    // Update like count in UI
+                    didItCountElement.textContent = updatedPost.did;
+                    didItButton.textContent = "Not really...";
                 }
             }
         })
