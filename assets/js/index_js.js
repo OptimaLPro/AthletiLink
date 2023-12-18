@@ -294,6 +294,24 @@ function getPostsAndComments(all_posts) {
                 console.error("Error fetching comments:", error);
             });
 
+        // Check of post is liked or unliked
+        var likeStatusApiUrl = "http://localhost:5500/get_likes/" + post._id;
+        fetch(likeStatusApiUrl)
+            .then((response) => response.json())
+            .then((like_status) => {
+                console.log("like_status " + like_status);
+                const likeButton = document.getElementById(`likeButton${post._id}`);
+                if (like_status == "Liked") {
+                    likeButton.textContent = 'Unlike';
+                }
+                else if (like_status == "Unliked") {
+                    likeButton.textContent = 'Like';
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching like status:", error);
+            });
+
         cardBody.appendChild(title);
         cardBody.appendChild(cardText);
         cardBody.appendChild(cardLables);
@@ -358,80 +376,39 @@ function deleteComment(comment_id, all_posts) {
 }
 
 function toggleLike(postId) {
-    const likeButton = document.getElementById(`likeButton${postId}`);
+    // URL for the like_posts API endpoint
+    console.log(postId);
+    var likePostsApiUrl = `http://localhost:5500/like_posts/`+postId;
 
-    // Check if the button currently says 'Like' or 'Unlike'
-    const isLiked = likeButton.textContent.trim() === 'Unlike';
-
-    // Perform a fetch request to toggle the like status
-    fetch(`http://localhost:5500/like_posts/${postId}`, {
-        method: isLiked ? 'DELETE' : 'POST', // If it's liked, send DELETE request, else send POST
-        headers: {
-            'Content-Type': 'application/json',
-            // You can add more headers if required (e.g., authorization token)
-        },
-        // You can include a request body if needed for the POST request
-        // body: JSON.stringify({ postId }), 
+    // Make a POST request to the like_posts API
+    fetch(likePostsApiUrl, {
+        method: 'POST',
     })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Failed to toggle like');
-            }
-        })
+        .then(response => response.json())
         .then(data => {
-            // Toggle the button text and style based on the response
-            if (isLiked) {
-                likeButton.textContent = 'Like';
-                // Update button styling or do other UI changes if needed
-            } else {
-                likeButton.textContent = 'Unlike';
-                // Update button styling or do other UI changes if needed
+            // Check the response and update the UI accordingly
+            if (data && data.post) {
+                var updatedPost = data.post;
+                console.log(updatedPost);
+                var likeButton = document.getElementById(`likeButton${postId}`);
+                var likeCountElement = document.getElementById(`likeCount1${postId}`);
+
+                // Update like count in UI
+                likeCountElement.textContent = updatedPost.likes;
+
+                // Update the button text based on whether the post is liked or not
+                if (likeButton.textContent = 'Unlike') {
+                    likeButton.textContent = 'Like';
+                } else {
+                    likeButton.textContent = 'Unlike';
+                }
             }
-            // You can handle additional logic based on the response data if required
         })
         .catch(error => {
-            console.error('Error:', error);
-            // Handle errors or show error messages to the user
+            console.error('Error toggling like:', error);
         });
 }
 
-//-----------------------------------------------------------------------------------------------------------
-// function toggleLike(postId) {
-//     console.log("HEYYYYYYYsdlkfj234o5");
-//     fetch('/toggle-like-endpoint', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ postId: postId }),
-//     })
-//         console.log(postId)
-//         .then(response => response.json())
-//         .then(data => {
-//             if (data.success) {
-//                 // Update the UI based on the new like status
-//                 const likeCountElement = document.getElementById(`likeCount${postId}`);
-//                 const currentLikes = parseInt(likeCountElement.innerText);
-
-//                 if (data.liked) {
-//                     // If the post is now liked, increment the like count
-//                     likeCountElement.innerText = currentLikes + 1;
-//                 } else {
-//                     // If the post is now unliked, decrement the like count
-//                     likeCountElement.innerText = currentLikes - 1;
-//                 }
-
-//                 // Update the button text based on the new like status
-//                 const likeButton = document.getElementById(`likeButton${postId}`);
-//                 likeButton.innerText = data.liked ? 'Unlike' : 'Like';
-//             } else {
-//                 // Handle error
-//                 console.error('Failed to toggle like status');
-//             }
-//         });
-// }
 
 function clearPosts() {
     console.log("clearPosts");

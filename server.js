@@ -702,33 +702,67 @@ app.get("/signout", async (req, res) => {
 
 //----------- Like API -------------
 app.post('/like_posts/:postId', async (req, res) => {
+  console.log("like post");
   const post_id = req.params.postId;
+  console.log(post_id);
   try {
     const foundPost = await Posts.findById(post_id);
+    console.log(foundPost);
 
     if (!foundPost) {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    newLikes = foundPost.likes + 1;
-    data = {
-      likes: newLikes
+    const foundLike = await Likes.findOne({ post_id: post_id, user_id: session.user_id });
+    console.log(foundLike);
+    let updateLikes;
+
+    if (foundLike)
+    {
+      updateLikes = foundPost.likes - 1;
+      await foundLike.deleteOne();
+    } 
+    else
+     {
+      updateLikes = foundPost.likes + 1;
+      const foundUser = await Users.findById(session.user_id);
+
+      if (!foundUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const likes_data = {
+        post_id: post_id,
+        user_id: session.user_id,
+        first_name: foundUser.first_name,
+        last_name: foundUser.last_name
+      }
+      console.log(likes_data);
+      const db = mongoose.connection;
+      const results = await db.collection("likes").insertOne(likes_data);
+      console.log(results);
     }
+
+    const data = {
+      likes: updateLikes
+    };
 
     const updatedPost = await Posts.findByIdAndUpdate(post_id, data, {
       new: true,
     });
+
+    console.log(updatedPost);
     if (!updatedPost) {
-      return res.status(404).json({ message: "post not found" });
+      return res.status(404).json({ message: "Can't update" });
     }
-    console.log(foundPost);
-    return res.status(200).json({ message: 'Likes updated successfully', post: foundPost });
+
+    return res.status(200).json({ message: 'Likes updated successfully', post: updatedPost, like: foundLike });
   } catch (error) {
+    console.error(error); // log the error
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-//----------- Get Like By Post ID -------------
+//----------- Get Post By ID -------------
 app.get('/posts_id/:postId', async (req, res) => {
   const post_id = req.params.postId;
   try {
@@ -743,15 +777,18 @@ app.get('/posts_id/:postId', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+//----------- Get Like By Post ID -------------
 app.get('/get_likes/:postId', async (req, res) => {
   const post_id = req.params.postId;
   try {
     const foundPost = await Likes.find({ post_id: post_id, user_id: session.user_id });
 
-    if (!foundPost) {
-      return res.status(404).json({ error: 'not like' });
+    if (foundPost) {
+      return res.status(200).json({ message: 'Unliked' });
     }
-    return res.status(200).json({ message:'like' });
+
+    return res.status(200).json({ message: 'Liked' });
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
