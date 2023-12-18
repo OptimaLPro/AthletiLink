@@ -109,6 +109,20 @@
         .input-group-text {
             cursor: pointer;
         }
+
+        .dark-gray-background {
+            background-color: #767676;
+            /* Dark gray color */
+        }
+
+        .custom-modal-size {
+            width: 80%;
+            /* Adjust the width as needed */
+            max-width: 800px;
+            /* Maximum width */
+            height: auto;
+            /* Adjust height as needed, 'auto' adapts to content */
+        }
     </style>
 </head>
 
@@ -268,8 +282,8 @@
 
     <div class="modal fade" id="editUserGroupsModal" tabindex="-1" role="dialog"
         aria-labelledby="editUserGroupsModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
+        <div class="modal-dialog custom-modal-size" role="document">
+            <div class="modal-content dark-gray-background">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editUserGroupsModalLabel">Edit User's Groups</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -337,17 +351,6 @@
                 });
             }
 
-            function fetchUserGroups(userId) {
-                $.get(`http://localhost:5500/user_groups/${userId}`, function (data) {
-                    console.log("FETCH GROUP " + userId)
-                    console.log(data);
-                    user_groups = data.user_groups_res;
-                    console.log(user_groups);
-                    console.log("(*@&#$(*&@#($&@#($&))))")
-                    return user_groups;
-                });
-            }
-
             function populateTable(users) {
                 const tableBody = $("#userTable tbody");
                 tableBody.empty();
@@ -392,6 +395,8 @@
             };
 
             window.updateUser = function (userId) {
+                $('#user_groups').data('userid', userId);
+                console.log(`Update user with ID: ${userId}`);
                 const userToUpdate = users.find(user => user._id === userId);
 
                 $("#firstName").val(userToUpdate.first_name);
@@ -440,25 +445,25 @@
                         });
                 });
 
+                function fetchUserGroups(userId) {
+                    $.get(`http://localhost:5500/user_groups/${userId}`, function (data) {
+                        user_groups = data.user_groups_res;
+                        console.log(user_groups);
+                        populateGroupsList(user_groups);
+                        populateGroupsDropdown();
+                    });
+                }
+
                 $("#user_groups").on("click", function () {
+                    const userId = $(this).data('userid');
                     console.log(`Edit groups for user with ID: ${userId}`);
                     $('#editUserGroupsModal').modal('show');
                     openEditGroupsModal(userId);
                 });
 
                 function openEditGroupsModal(userId) {
-                    // Fetch the user's groups from the server
-                    users_groups = fetchUserGroups(userId);
-                    console.log(users_groups);
+                    fetchUserGroups(userId);
                     // Populate the modal with the user's groups
-                    populateGroupsList(users_groups);
-                    // Populate the dropdown with all available groups
-                    populateGroupsDropdown();
-
-
-
-
-
 
                     // Show the modal
                     // $('#editUserGroupsModal').modal('show');
@@ -469,33 +474,78 @@
                     const list = $("#userGroupsList");
                     list.empty();
                     groups.forEach(group => {
-                        list.append(`<li class="list-group-item">${group.name} <button data-groupId="${group.id}" class="btn btn-sm btn-danger float-right delete-group-btn">Delete</button></li>`);
+                        list.append(`<li class="list-group-item">${group.group} <button value="${group._id}" class="btn btn-sm btn-danger float-right delete-group-btn">Delete</button></li>`);
                     });
+                }
 
-                    // Add event listeners for the delete buttons
-                    $(".delete-group-btn").on("click", function () {
-                        const groupId = $(this).data("groupId");
+                // // Add event listeners for the delete buttons
+                // $(".delete-group-btn").on("click", function () {
+                //     const groupId = $(this).data("groupId");
+                //     console.log(`Delete group with ID: ${groupId}`);
+                //     deleteGroup(groupId);
+                //     // remove the selected group from the list
+                //     $(this).parent().remove();
+
+                // });
+
+                $("#userGroupsList").on("click", ".delete-group-btn", function () {
+                    const groupId = $(this).val(); // or $(this).attr('value');
+                    if (groupId) {
+                        console.log(`Delete group with ID: ${groupId}`);
                         deleteGroup(groupId);
+                        $(this).closest('li').remove(); // Remove the group from the list
+                    } else {
+                        console.error("GroupId is undefined.");
+                    }
+                });
+
+                function fetchAvailableUserGroups() {
+                    // Fetch all available groups but remove the ones that the user is already in
+                    $.get("http://localhost:5500/groups", function (data) {
+                        // remove the ones that the user is already in
+                        const allGroups = data.groups;
+                        console.log("THIS IS IT:" + allGroups);
+                        const availableGroups = allGroups.filter(group => {
+                            return !user_groups.find(userGroup => userGroup._id === group._id);
+                        });
+                        console.log(availableGroups);
                     });
                 }
 
                 function populateGroupsDropdown() {
                     const dropdown = $("#addGroupDropdown");
                     // Fetch all available groups and populate the dropdown
-                    fetchAllGroups().then(allGroups => {
+                    fetchAvailableUserGroups().then(allGroups => {
                         dropdown.empty();
                         allGroups.forEach(group => {
-                            dropdown.append(`<option value="${group.id}">${group.name}</option>`);
+                            dropdown.append(`<option value="${group._id}">${group.group}</option>`);
                         });
                     });
                 }
 
                 $("#addGroupBtn").on("click", function () {
-                    const groupId = $("#addGroupDropdown").val();
-                    const userId = // get the user's ID;
-                        addGroupToUser(userId, groupId);
+                    const groupName = $("#addGroupDropdown").val();
+                    const userId = $("#user_groups").data('userid');
+                    console.log(`Add group with ID: ${groupId} to user with ID: ${userId}`);
+                    addUserToGroup(userId, groupName);
                 });
+
+                function addUserToGroup(userId, groupName) {
+                    $.post(`http://localhost:5500/add_user_group/${userId}/${groupName}`, function (data) {
+                        console.log("User added to group successfully:", data);
+                        // Refresh the list of groups
+                        // const userId = fetchUserGroups(userId);
+                    });
+                }
             };
+
+            function deleteGroup(groupId) {
+                $.post(`http://localhost:5500/delete_user_group/${groupId}`, function (data) {
+                    console.log("User Group deleted successfully:", data);
+                    // Refresh the list of groups
+                    // const userId = fetchUserGroups(userId);
+                });
+            }
 
             function filterUsers(criteria) {
                 const searchText = $("#searchText").val().toLowerCase();

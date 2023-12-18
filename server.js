@@ -421,6 +421,26 @@ app.post("/delete_group/:group_id", async (req, res) => {
   }
 });
 
+// ---------- Delete User Group By ID ----------
+app.post("/delete_user_group/:user_group_id", async (req, res) => {
+  try {
+    const user_group_id = req.params.user_group_id;
+    const group = await User_groups.findById(user_group_id);
+
+    if (!group) {
+      return res.status(404).json({ message: "User Group not found" });
+    }
+
+    await group.deleteOne();
+
+    createLog("User Group Deleted", `${user_group_id}`, req);
+    res.status(200).json({ message: "User Group deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting group:", error);
+    res.status(500).json({ message: "Failed to delete group" });
+  }
+});
+
 // ---------- Group Status By Group Name ----------
 app.get("/group_status/:group_name", async (req, res) => {
   try {
@@ -612,6 +632,27 @@ app.post("/add_user_groups", (req, res) => {
     });
 
     res.status(200).json({ message: "New user groups added successfully" });
+  } catch (error) {
+    console.error("Error adding user groups to the database:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Add user groups by User ID and Group Name ----------
+app.post("/add_user_group/:user_id/:group_name", async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const group_name = req.params.group_name;
+
+    var data = {
+      user_id: user_id,
+      group: group_name
+    };
+
+    var db = mongoose.connection;
+    const result = await db.collection("user_groups").insertOne(data); // Use await to wait for the operation to complete
+    createLog("Create User Group", `${post_id}: ${group_name}`, req, result);
+    res.status(200).json({ message: "New user group added successfully" });
   } catch (error) {
     console.error("Error adding user groups to the database:", error);
     res.status(500).json({ message: error.message });
