@@ -106,7 +106,7 @@
             margin: 0 auto;
         }
 
-        .input-group-text{
+        .input-group-text {
             cursor: pointer;
         }
     </style>
@@ -231,13 +231,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="admin">Secret Phrase</label>
-                        <input type="text" id="admin" name="admin" class="form-control" required />
-                    </div>
-                    
-                    <div class="form-group">
                         <label for="admin">Admin</label>
                         <input type="text" id="admin" name="admin" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" id="user_groups" class="form-control btn btn-secondary">Edit User's
+                            Groups</button>
                     </div>
 
                     <div class="form-group">
@@ -257,12 +257,41 @@
             </div>
         </div>
     </div>
-    <div id="close-icon" class="position-fixed effect-fadeIn" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+    <div id="close-icon" class="position-fixed effect-fadeIn"
+        style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
         <a href="control_panel.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-times fa-stack-1x fa-inverse"></i>
             </span></a>
 
+    </div>
+
+    <div class="modal fade" id="editUserGroupsModal" tabindex="-1" role="dialog"
+        aria-labelledby="editUserGroupsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserGroupsModalLabel">Edit User's Groups</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- User's groups will be listed here -->
+                    <ul id="userGroupsList" class="list-group mb-3">
+                        <!-- List items added dynamically -->
+                    </ul>
+                    <!-- Dropdown to add new group -->
+                    <select id="addGroupDropdown" class="form-control mb-2">
+                        <!-- Options added dynamically -->
+                    </select>
+                    <button type="button" class="btn btn-primary" id="addGroupBtn">Add Group</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -305,6 +334,17 @@
                     users = data.users;
                     console.log(users);
                     populateTable(users);
+                });
+            }
+
+            function fetchUserGroups(userId) {
+                $.get(`http://localhost:5500/user_groups/${userId}`, function (data) {
+                    console.log("FETCH GROUP " + userId)
+                    console.log(data);
+                    user_groups = data.user_groups_res;
+                    console.log(user_groups);
+                    console.log("(*@&#$(*&@#($&@#($&))))")
+                    return user_groups;
                 });
             }
 
@@ -399,10 +439,63 @@
                             console.error("Error updating user:", error);
                         });
                 });
+
+                $("#user_groups").on("click", function () {
+                    console.log(`Edit groups for user with ID: ${userId}`);
+                    $('#editUserGroupsModal').modal('show');
+                    openEditGroupsModal(userId);
+                });
+
+                function openEditGroupsModal(userId) {
+                    // Fetch the user's groups from the server
+                    users_groups = fetchUserGroups(userId);
+                    console.log(users_groups);
+                    // Populate the modal with the user's groups
+                    populateGroupsList(users_groups);
+                    // Populate the dropdown with all available groups
+                    populateGroupsDropdown();
+
+
+
+
+
+
+                    // Show the modal
+                    // $('#editUserGroupsModal').modal('show');
+
+                }
+
+                function populateGroupsList(groups) {
+                    const list = $("#userGroupsList");
+                    list.empty();
+                    groups.forEach(group => {
+                        list.append(`<li class="list-group-item">${group.name} <button data-groupId="${group.id}" class="btn btn-sm btn-danger float-right delete-group-btn">Delete</button></li>`);
+                    });
+
+                    // Add event listeners for the delete buttons
+                    $(".delete-group-btn").on("click", function () {
+                        const groupId = $(this).data("groupId");
+                        deleteGroup(groupId);
+                    });
+                }
+
+                function populateGroupsDropdown() {
+                    const dropdown = $("#addGroupDropdown");
+                    // Fetch all available groups and populate the dropdown
+                    fetchAllGroups().then(allGroups => {
+                        dropdown.empty();
+                        allGroups.forEach(group => {
+                            dropdown.append(`<option value="${group.id}">${group.name}</option>`);
+                        });
+                    });
+                }
+
+                $("#addGroupBtn").on("click", function () {
+                    const groupId = $("#addGroupDropdown").val();
+                    const userId = // get the user's ID;
+                        addGroupToUser(userId, groupId);
+                });
             };
-
-
-
 
             function filterUsers(criteria) {
                 const searchText = $("#searchText").val().toLowerCase();
