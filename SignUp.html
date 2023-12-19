@@ -33,7 +33,6 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       max-width: 30%;
       width: 100%;
-      /* hey omer */
     }
   </style>
 </head>
@@ -108,7 +107,7 @@
           <label class="custom-file-label" id="profilePictureLabel" for="profilePicture">Choose file</label>
         </div>
       </div>
-      
+
       <div class="form-group">
         <div class="progress" style="margin-top: 10px; display: none;">
           <div class="progress-bar" role="progressbar" id="uploadProgressBar" style="width: 0%;" aria-valuenow="0"
@@ -117,8 +116,6 @@
       </div>
 
       <input type="hidden" id="profilePictureUrl" name="profilePictureUrl">
-
-      <!-- The rest of your form remains unchanged -->
 
       <div class="form-group">
         <button type="submit" class="btn btn-dark btn-block">
@@ -203,23 +200,7 @@
         $(".progress").hide();
       });
     }
-
-
-    function submitForm(imageUrl) {
-      // Add the image URL to a hidden input in the form
-
-
-      // var input = $('<input>')
-      //   .attr('type', 'hidden')
-      //   .attr('name', 'profilePictureUrl')
-      //   .val(imageUrl);
-      // $('form').append($(input));
-
-      // Now submit the form with all the data including the image URL
-
-    }
   </script>
-
 </body>
 
 </html>

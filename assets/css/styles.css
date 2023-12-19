@@ -128,6 +128,12 @@ body {
 
 .card {
   position: relative;
+  margin-bottom: 2px;
+}
+
+.card-body {
+  padding: 10px;
+  /* margin-bottom: 27px; */
 }
 
 .card-buttons {
@@ -214,6 +220,14 @@ body {
   position: absolute;
   top: 0px;
   right: 0px;
+}
+
+.deleteIconComments {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  height: 30px;
+  width: 30px;
 }
 
 .deleteIconGroups {

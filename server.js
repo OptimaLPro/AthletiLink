@@ -95,6 +95,7 @@ app.post("/user", async (req, res) => {
       profile_pic: req.body.profilePictureUrl,
       admin: "",
       secret_phrase: req.body.secretPhrase
+
     };
     var db = mongoose.connection;
     db.collection("users").insertOne(data, (err, collection) => {
@@ -450,10 +451,8 @@ app.get("/group_status/:group_name", async (req, res) => {
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
     }
-    console.log(group_name);
+    
     group_status = group[0].status;
-
-    console.log(group_status);
 
     res.status(200).json({ group_status });
   } catch (error) {
@@ -635,6 +634,7 @@ app.post("/create_post", async (req, res) => {
     var data = {
       user_id: session.user_id,
       title: req.body.title,
+      pic: req.body.profilePictureUrl,
       host: user.first_name + " " + user.last_name,
       duration: req.body.duration,
       lcoation: req.body.location,
@@ -642,10 +642,11 @@ app.post("/create_post", async (req, res) => {
       likes: 0,
       did: 0,
       comments: 0,
-      group_name: req.body.group_name,
+      group_name: req.body.group,
       date: req.body.date,
       time: req.body.time,
       status: "pending"
+      
     };
 
     var db = mongoose.connection;
