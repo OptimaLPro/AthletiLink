@@ -45,6 +45,8 @@
         .icon-container {
             text-align: center;
             margin-top: 20px;
+            position: relative;
+            display: inline-block;
         }
 
         .icon {
@@ -54,6 +56,24 @@
 
         .icon-title {
             cursor: pointer;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            transform: translate(-50%, -50%);
+            background-color: #ea0000;
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75em;
+            line-height: 1;
+            /* Ensures text is vertically centered */
         }
     </style>
 </head>
@@ -66,6 +86,7 @@
         </div>
         <div class="icon-container">
             <div class="icon" onclick="redirectTo('posts_edit.html')">&#128203;</div>
+            <span id="pendingPostsBadge" class="badge badge-pill badge-warning">0</span>
             <p class="icon-title" onclick="redirectTo('posts_edit.html')">Posts</p>
         </div>
         <div class="icon-container">
@@ -98,6 +119,19 @@
         function redirectTo(page) {
             window.location.href = page;
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Example: Fetch the number of pending posts from an API
+            fetch('http://localhost:5500/get_pendings')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const pendingCount = data.pending_posts_count; // Adjust according to your API response
+                    console.log("pending count: " + pendingCount);
+                    document.getElementById('pendingPostsBadge').textContent = pendingCount;
+                })
+                .catch(error => console.error('Error:', error));
+        });
     </script>
 </body>
 

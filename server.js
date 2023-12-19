@@ -509,6 +509,18 @@ app.get("/comments", async (req, res) => {
   }
 });
 
+// ---------- Get Posts Pending Count ----------
+app.get("/get_pendings", async (req, res) => {
+  try {
+    const pending_posts = await Posts.find({status: "pending"});
+    const pending_posts_count = pending_posts.length;
+    res.status(200).json({ pending_posts_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // ---------- Get Comments By Post ID ----------
 app.get("/comments/:post_id", async (req, res) => {
   try {
@@ -700,7 +712,7 @@ app.post("/remove_user_groups", (req, res) => {
   }
 });
 
-// ---------- Like/Unlike Post - Not working ----------
+// ---------- Delete Post ----------
 // app.post("/like_post/:post_id", async (req, res) => {
 //   try {
 //     const postId = req.params.post_id;

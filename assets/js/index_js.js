@@ -5,6 +5,15 @@ function redirectToCreatePost() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    fetch('http://localhost:5500/get_pendings')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            const pendingCount = data.pending_posts_count; // Adjust according to your API response
+            console.log("pending count: " + pendingCount);
+            document.getElementById('post_badge').textContent = pendingCount;
+        })
+        .catch(error => console.error('Error:', error));
     var user_groups = [];
 
     var adminApiUrl = "http://localhost:5500/user_session";
@@ -373,8 +382,8 @@ function deleteComment(comment_id, all_posts) {
 
 function toggleLike(postId) {
     // URL for the like_posts API endpoint
-    
-    var likePostsApiUrl = `http://localhost:5500/like_posts/`+postId;
+
+    var likePostsApiUrl = `http://localhost:5500/like_posts/` + postId;
 
     // Make a POST request to the like_posts API
     fetch(likePostsApiUrl, {
@@ -408,7 +417,7 @@ function toggleLike(postId) {
 
 function toggleDidIt(postId) {
     // URL for the like_posts API endpoint
-    var didItPostsApiUrl = `http://localhost:5500/did_it/`+postId;
+    var didItPostsApiUrl = `http://localhost:5500/did_it/` + postId;
 
     // Make a POST request to the like_posts API
     fetch(didItPostsApiUrl, {
@@ -418,7 +427,7 @@ function toggleDidIt(postId) {
         .then(data => {
             // Check the response and update the UI accordingly
             if (data && data.post) {
-                console.log(data);  
+                console.log(data);
                 var updatedPost = data.post;
                 console.log(updatedPost);
                 var didItButton = document.getElementById(`didItButton${postId}`);
