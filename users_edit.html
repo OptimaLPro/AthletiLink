@@ -535,7 +535,7 @@
 
                 $("#addGroupBtn").on("click", function () {
                     // take the selected group text from the dropdown and add it to the user
-                    const groupName = $("#addGroupDropdown option:selected").text();
+                    const groupName = $("#addGroupDropdown option:selected").text().toString();
                     const userId = $("#user_groups").data('userid');
                     console.log(`Add group ${groupName} to user with ID: ${userId}`);
                     addUserToGroup(userId, groupName);
@@ -547,6 +547,7 @@
                 });
 
                 function addUserToGroup(userId, groupName) {
+                    console.log(`Add user with ID ${userId} to group ${groupName}`);
                     $.post(`http://localhost:5500/add_user_group/${userId}/${groupName}`, function (data) {
                         console.log("User added to group successfully:", data);
                     });
