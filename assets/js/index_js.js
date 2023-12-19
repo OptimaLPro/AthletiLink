@@ -82,16 +82,13 @@ document.addEventListener("DOMContentLoaded", function () {
             fetch(statusByGroupApiUrl)
                 .then((response) => response.json())
                 .then((status) => {
-                    console.log(status);
                     if (status.group_status == "active") {
-                        console.log("THIS IS !active!");
                         group_status = "active";
                     }
                     else {
                         group_status = "inactive";
                     }
 
-                    console.log("AAAAA " + group_status);
                     if (group_status == "active") {
                         var groupLink = document.createElement("a");
                         groupLink.href = "#";

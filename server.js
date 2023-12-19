@@ -473,6 +473,31 @@ app.get("/posts/:group_name", async (req, res) => {
   }
 });
 
+// ---------- Approve Post ----------
+app.post("/approve_post/:post_id", async (req, res) => {
+  const post_id = req.params.post_id;
+  try {
+    var data = {
+      status: 'approved'
+    };
+
+    const updatedFields = data;
+
+    const updatedPost = await Posts.findByIdAndUpdate(post_id, updatedFields, {
+      new: true,
+    });
+
+    if (!updatedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    createLog("Post Approved", `${post_id}`, req, updatedPost);
+    return res.status(200).json(updatedPost);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // ---------- Get All Comments ----------
 app.get("/comments", async (req, res) => {
   try {
@@ -608,13 +633,13 @@ app.post("/create_post", async (req, res) => {
       group_name: req.body.group_name,
       date: req.body.date,
       time: req.body.time,
-      status: "Pending"
+      status: "pending"
     };
 
     var db = mongoose.connection;
     const result = await db.collection("posts").insertOne(data); // Use await to wait for the operation to complete
     const post_id = result.insertedId;
-    createLog("Create Post", `${post_id}`, req, result);
+    createLog("Post Created", `${post_id}`, req, result);
     return res.redirect("http://127.0.0.1:5500/index.html");
   } catch (error) {
     console.log(error);
@@ -775,13 +800,11 @@ app.post('/like_posts/:postId', async (req, res) => {
     let updateLikes;
     console.log("foundLike");
     console.log(foundLike);
-    if (foundLike)
-    {
+    if (foundLike) {
       updateLikes = foundPost.likes - 1;
       await foundLike.deleteOne();
-    } 
-    else
-     {
+    }
+    else {
       updateLikes = foundPost.likes + 1;
       const foundUser = await Users.findById(session.user_id);
 

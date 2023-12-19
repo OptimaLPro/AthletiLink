@@ -118,6 +118,18 @@
         .input-group-text {
             cursor: pointer;
         }
+
+        .status-dropdown .status-approved {
+            color: green;
+        }
+
+        .status-dropdown .status-pending {
+            color: orange;
+        }
+
+        .status-dropdown .status-rejected {
+            color: red;
+        }
     </style>
 </head>
 
@@ -131,7 +143,7 @@
         <div class="search-container input-group mb-3">
             <div class="input-group-prepend">
                 <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false" value="title" id="dropdownButton">By Title<i class="fa fa-caret-down"
+                    aria-expanded="false" value="title" id="dropdownButton">By Title <i class="fa fa-caret-down"
                         aria-hidden="true"></i></button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" value="title">By Title</a>
@@ -252,7 +264,8 @@
 
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea type="text" id="description" name="description" class="form-control" required style="height: 100px;"></textarea>
+                        <textarea type="text" id="description" name="description" class="form-control" required
+                            style="height: 100px;"></textarea>
                     </div>
 
                     <div class="form-group">
@@ -294,7 +307,11 @@
 
                     <div class="form-group">
                         <label for="status">Status</label>
-                        <input type="text" id="status" name="status" class="form-control" required />
+                        <select id="status" name="status" class="form-control status-dropdown" required>
+                            <option value="approved" class="status-approved">Approved</option>
+                            <option value="pending" class="status-pending">Pending</option>
+                            <option value="rejected" class="status-rejected">Rejected</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -382,7 +399,6 @@
             .catch(error => console.error('Error fetching groups:', error));
 
         $('.dropdown-item').click(function () {
-            console.log($(this).attr('value'));
             var selectedValue = $(this).attr('value');
             $('#dropdownButton').html($(this).text() + ' <i class="fa fa-caret-down" aria-hidden="true"></i>');
             $('#dropdownButton').attr('value', selectedValue);
@@ -413,7 +429,7 @@
         }
 
         function populateTable(posts) {
-            console.log(posts);
+            // console.log(posts);
             const tableBody = $("#userPosts tbody");
             tableBody.empty();
 
@@ -424,6 +440,15 @@
                 const truncatedDescription = post.description.length > 100
                     ? post.description.substring(0, 100) + "..."
                     : post.description;
+
+                let statusElement;
+                if (post.status === 'pending') {
+                    statusElement = `<button class="btn btn-primary btn-sm" onclick="approvePost('${post._id}', this)">Approve</button>`;
+                } else if (post.status === 'rejected') {
+                    statusElement = `<span style="color: red;">Rejected</span>`;
+                } else if (post.status === 'approved') {
+                    statusElement = `<span style="color: green;">Approved</span>`;
+                }
 
                 const row = `
         <tr>
@@ -452,7 +477,7 @@
             <td>${post.group_name}</td>
             <td>${post.date}</td>
             <td>${post.time}</td>
-            <td>${post.status}</td>
+            <td>${statusElement}</td>
             <td>
                 <i onclick="updatePost('${post._id}')" class="fa fa-edit" style="font-size:24px; margin-right: 10px; cursor: pointer"></i>
                 <i onclick="deletePost('${post._id}')" class="fa fa-trash-o" style="font-size:24px;color:red; cursor: pointer"></i>
@@ -468,6 +493,12 @@
                 $('#descriptionModal .modal-body').text(description);
             });
         }
+
+        window.approvePost = function (postId, buttonElement) {
+            $.post(`http://localhost:5500/approve_post/${postId}`, function (data) {
+            });
+            $(buttonElement).replaceWith(`<span style="color: green;">Approved</span>`);
+        };
 
         // Function to delete a user
         window.showUserID = function (user_id) {
@@ -490,7 +521,7 @@
         window.updatePost = function (post_id) {
             console.log(`Update post with ID: ${post_id}`);
             const postsToUpdate = posts.find(post => post._id === post_id);
-            console.log(postsToUpdate);
+            // console.log(postsToUpdate);
             $("#user_id").val(postsToUpdate.user_id);
             $("#title").val(postsToUpdate.title);
             $("#host").val(postsToUpdate.host);
@@ -522,8 +553,6 @@
                     status: $("#status").val(),
                 };
 
-                console.log(updatedPost);
-
                 fetch(`http://localhost:5500/update_post/${post_id}`, {
                     method: 'POST',
                     headers: {
@@ -538,7 +567,7 @@
                         return response.json();
                     })
                     .then(data => {
-                        console.log("Post updated successfully:", data);
+                        console.log("Post updated successfully");
                         fetchPosts();
                         $('#updatePostModal').modal('hide');
                     })
@@ -570,7 +599,7 @@
 
         function filterByText(text, criteria) {
             const lowercaseText = text.toLowerCase();
-            console.log(`Filtering by ${criteria} for ${text}`);
+            // console.log(`Filtering by ${criteria} for ${text}`);
 
             return posts.filter(function (post) {
                 const value = post[criteria].toLowerCase();
