@@ -1,4 +1,4 @@
-import { fetchWeatherApi } from 'openmeteo';
+import weather from "openmeteo";
     
 const params = {
     "latitude": 52.52,
