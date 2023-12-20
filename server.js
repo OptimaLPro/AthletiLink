@@ -73,6 +73,10 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// ****************************** //
+// ********** Session  ********** //
+// ****************************** //
+
 // ---------- Home Page - Redirect By Session  ----------
 // app.get("/", (req, res) => {
 
@@ -112,6 +116,48 @@ app.post("/user", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// ---------- Create SessionID with UserID ----------
+app.get("/SetSessionID/:user_id", async (req, res) => {
+  try {
+    const the_user_id = req.params.user_id;
+
+    if (!the_user_id) {
+      return res.status(404).json({ message: "Invalid Session ID" });
+    }
+    session.user_id = the_user_id;
+    const user = await Users.findById(the_user_id);
+    const admin = user.admin;
+
+    if (admin === "master") {
+      session.admin = "master";
+      console.log("Admin User");
+    }
+
+    createLog("Signin", "", req);
+    res.status(200).json({ the_user_id });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Sign out ---------
+app.get("/signout", async (req, res) => {
+  try {
+    createLog("Signout", "", req);
+    session.user_id = null;
+    session.admin = null;
+    res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ********************************** //
+// ********** Users Model  ********** //
+// ********************************** //
 
 // ---------- Get User By ID ----------
 app.get("/user/:id", async (req, res) => {
@@ -170,42 +216,6 @@ app.get("/getUsers", async (req, res) => {
   }
 });
 
-// ---------- Get All Users Groups By Session ID ----------
-app.get("/user_groups/", async (req, res) => {
-  try {
-    const user_groups_res = await User_groups.find({
-      user_id: session.user_id,
-    });
-
-    if (!user_groups_res) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({ user_groups_res });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ---------- Get All Users Groups By ID ----------
-app.get("/user_groups/:user_id", async (req, res) => {
-  try {
-    const user_groups_res = await User_groups.find({
-      user_id: req.params.user_id,
-    });
-
-    if (!user_groups_res) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({ user_groups_res });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // ---------- Update User ----------
 app.post("/update_user", async (req, res) => {
   try {
@@ -235,6 +245,25 @@ app.post("/update_user", async (req, res) => {
 
     console.log("User Updated Successfully:", updatedUser);
     return res.redirect("http://127.0.0.1:5500/index.html");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Delete User by ID ----------
+app.post("/delete_user/:user_id", async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const deletedUser = await Users.findByIdAndDelete(user_id);
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("User Deleted Successfully:", deletedUser);
+    createLog("Delete User", `${user_id}`, req);
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -272,36 +301,205 @@ app.post("/update_user/:user_id", async (req, res) => {
   }
 });
 
-// ---------- Update User Profile Picture ----------
-// app.post("/update_profile_picture/:url", async (req, res) => {
-//   const img_url = req.params.url;
-//   try {
-//     var data = {
-//       profile_pic: url.toString(),
-//     };
+/*
+---------- Update User Profile Picture ----------
+app.post("/update_profile_picture/:url", async (req, res) => {
+  const img_url = req.params.url;
+  try {
+    var data = {
+      profile_pic: url.toString(),
+    };
 
-//     const updatedFields = data;
+    const updatedFields = data;
 
-//     const updatedUser = await Users.findByIdAndUpdate(user_id, updatedFields, {
-//       new: true,
-//     });
+    const updatedUser = await Users.findByIdAndUpdate(user_id, updatedFields, {
+      new: true,
+    });
 
-//     if (!updatedUser) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     createLog("User Update", `Updated: ${user_id}`, req, updatedUser);
-//     return res.status(200).json(updatedUser);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    createLog("User Update", `Updated: ${user_id}`, req, updatedUser);
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+*/
+
+// **************************************** //
+// ********** User Groups Model  ********** //
+// **************************************** //
+
+// ---------- Get All Users Groups By Session ID ----------
+app.get("/user_groups/", async (req, res) => {
+  try {
+    const user_groups_res = await User_groups.find({
+      user_id: session.user_id,
+    });
+
+    if (!user_groups_res) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ user_groups_res });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Get All Users Groups By ID ----------
+app.get("/user_groups/:user_id", async (req, res) => {
+  try {
+    const user_groups_res = await User_groups.find({
+      user_id: req.params.user_id,
+    });
+
+    if (!user_groups_res) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ user_groups_res });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Delete User Group By ID ----------
+app.post("/delete_user_group/:user_group_id", async (req, res) => {
+  try {
+    const user_group_id = req.params.user_group_id;
+    const group = await User_groups.findById(user_group_id);
+
+    if (!group) {
+      return res.status(404).json({ message: "User Group not found" });
+    }
+
+    await group.deleteOne();
+
+    createLog("User Group Deleted", `${user_group_id}`, req);
+    res.status(200).json({ message: "User Group deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting group:", error);
+    res.status(500).json({ message: "Failed to delete group" });
+  }
+});
+
+// ---------- Add user groups ----------
+app.post("/add_user_groups", (req, res) => {
+  try {
+    const { newSelectedCategories } = req.body;
+
+    newSelectedCategories.forEach(async (category) => {
+      await User_groups.create({ user_id: session.user_id, group: category });
+    });
+
+    res.status(200).json({ message: "New user groups added successfully" });
+  } catch (error) {
+    console.error("Error adding user groups to the database:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Add user groups by User ID and Group Name ----------
+app.post("/add_user_group/:user_id/:group_name", async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const group_name = req.params.group_name;
+
+    var data = {
+      user_id: user_id,
+      group: group_name
+    };
+
+    var db = mongoose.connection;
+    const result = await db.collection("user_groups").insertOne(data); // Use await to wait for the operation to complete
+    createLog("Create User Group", `${user_id}: ${group_name}`, req);
+    res.status(200).json({ message: "New user group added successfully" });
+  } catch (error) {
+    console.error("Error adding user groups to the database:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Remove user groups ----------
+app.post("/remove_user_groups", (req, res) => {
+  try {
+    const { unselectedCategories } = req.body;
+
+    unselectedCategories.forEach(async (category) => {
+      await User_groups.deleteOne({ user_id: session.user_id, group: category });
+    });
+
+    res.status(200).json({ message: "User groups removed successfully" });
+  } catch (error) {
+    console.error("Error removing user groups from the database:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ********************************** //
+// ********** Posts Model  ********** //
+// ********************************** //
 
 // ---------- Get All Posts ----------
 app.get("/posts", async (req, res) => {
   try {
     const posts = await Posts.find({});
     res.status(200).json({ posts });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//----------- Get Post By ID -------------
+app.get('/posts_id/:postId', async (req, res) => {
+  const post_id = req.params.postId;
+  try {
+    const foundPost = await Posts.findById(post_id);
+
+    if (!foundPost) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    return res.status(200).json({ post: foundPost });
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ---------- Create Post ----------
+app.post("/create_post", async (req, res) => {
+  try {
+    const user = await Users.findById(session.user_id);
+
+    var data = {
+      user_id: session.user_id,
+      title: req.body.title,
+      pic: req.body.profilePictureUrl,
+      host: user.first_name + " " + user.last_name,
+      duration: req.body.duration,
+      lcoation: req.body.location,
+      description: req.body.description,
+      likes: 0,
+      did: 0,
+      comments: 0,
+      group_name: req.body.group,
+      date: req.body.date,
+      time: req.body.time,
+      status: "pending"
+
+    };
+
+    var db = mongoose.connection;
+    const result = await db.collection("posts").insertOne(data); // Use await to wait for the operation to complete
+    const post_id = result.insertedId;
+    createLog("Post Created", `${post_id}`, req, result);
+    return res.redirect("http://127.0.0.1:5500/index.html");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -343,6 +541,77 @@ app.post("/update_post/:post_id", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// ---------- Delete Post by ID ----------
+app.post("/delete_post/:post_id", async (req, res) => {
+  try {
+    const post_id = req.params.post_id;
+    const post = await Posts.findById(post_id);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    await post.deleteOne();
+    createLog("Delete Post", `${post_id}`, req);
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    res.status(500).json({ message: "Failed to delete post" });
+  }
+});
+
+// ---------- Get Posts by Group Name ----------
+app.get("/posts/:group_name", async (req, res) => {
+  try {
+    const posts = await Posts.find({ group_name: req.params.group_name });
+    res.status(200).json({ posts });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Approve Post ----------
+app.post("/approve_post/:post_id", async (req, res) => {
+  const post_id = req.params.post_id;
+  try {
+    var data = {
+      status: 'approved'
+    };
+
+    const updatedFields = data;
+
+    const updatedPost = await Posts.findByIdAndUpdate(post_id, updatedFields, {
+      new: true,
+    });
+
+    if (!updatedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    createLog("Post Approved", `${post_id}`, req, updatedPost);
+    return res.status(200).json(updatedPost);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Get Posts Pending Count ----------
+app.get("/get_pendings", async (req, res) => {
+  try {
+    const pending_posts = await Posts.find({ status: "pending" });
+    const pending_posts_count = pending_posts.length;
+    res.status(200).json({ pending_posts_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// *********************************** //
+// ********** Groups Model  ********** //
+// *********************************** //
 
 // ---------- Get All Groups ----------
 app.get("/groups", async (req, res) => {
@@ -422,26 +691,6 @@ app.post("/delete_group/:group_id", async (req, res) => {
   }
 });
 
-// ---------- Delete User Group By ID ----------
-app.post("/delete_user_group/:user_group_id", async (req, res) => {
-  try {
-    const user_group_id = req.params.user_group_id;
-    const group = await User_groups.findById(user_group_id);
-
-    if (!group) {
-      return res.status(404).json({ message: "User Group not found" });
-    }
-
-    await group.deleteOne();
-
-    createLog("User Group Deleted", `${user_group_id}`, req);
-    res.status(200).json({ message: "User Group deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting group:", error);
-    res.status(500).json({ message: "Failed to delete group" });
-  }
-});
-
 // ---------- Group Status By Group Name ----------
 app.get("/group_status/:group_name", async (req, res) => {
   try {
@@ -451,7 +700,7 @@ app.get("/group_status/:group_name", async (req, res) => {
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
     }
-    
+
     group_status = group[0].status;
 
     res.status(200).json({ group_status });
@@ -461,59 +710,15 @@ app.get("/group_status/:group_name", async (req, res) => {
   }
 });
 
-// ---------- Get Posts by Group Name ----------
-app.get("/posts/:group_name", async (req, res) => {
-  try {
-    const posts = await Posts.find({ group_name: req.params.group_name });
-    res.status(200).json({ posts });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ---------- Approve Post ----------
-app.post("/approve_post/:post_id", async (req, res) => {
-  const post_id = req.params.post_id;
-  try {
-    var data = {
-      status: 'approved'
-    };
-
-    const updatedFields = data;
-
-    const updatedPost = await Posts.findByIdAndUpdate(post_id, updatedFields, {
-      new: true,
-    });
-
-    if (!updatedPost) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    createLog("Post Approved", `${post_id}`, req, updatedPost);
-    return res.status(200).json(updatedPost);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
-  }
-});
+// *********************************** //
+// ********** Comments Model  ********** //
+// *********************************** //
 
 // ---------- Get All Comments ----------
 app.get("/comments", async (req, res) => {
   try {
     const comments = await Comments.find({});
     res.status(200).json({ comments });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ---------- Get Posts Pending Count ----------
-app.get("/get_pendings", async (req, res) => {
-  try {
-    const pending_posts = await Posts.find({status: "pending"});
-    const pending_posts_count = pending_posts.length;
-    res.status(200).json({ pending_posts_count });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -601,119 +806,11 @@ app.post("/delete_comment/:comment_id", async (req, res) => {
   }
 });
 
-// ---------- Create SessionID with UserID ----------
-app.get("/SetSessionID/:user_id", async (req, res) => {
-  try {
-    const the_user_id = req.params.user_id;
+// ********************************* //
+// ********** Like Model  ********** //
+// ********************************* //
 
-    if (!the_user_id) {
-      return res.status(404).json({ message: "Invalid Session ID" });
-    }
-    session.user_id = the_user_id;
-    const user = await Users.findById(the_user_id);
-    const admin = user.admin;
-
-    if (admin === "master") {
-      session.admin = "master";
-      console.log("Admin User");
-    }
-
-    createLog("Signin", "", req);
-    res.status(200).json({ the_user_id });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ---------- Create Post ----------
-app.post("/create_post", async (req, res) => {
-  try {
-    const user = await Users.findById(session.user_id);
-
-    var data = {
-      user_id: session.user_id,
-      title: req.body.title,
-      pic: req.body.profilePictureUrl,
-      host: user.first_name + " " + user.last_name,
-      duration: req.body.duration,
-      lcoation: req.body.location,
-      description: req.body.description,
-      likes: 0,
-      did: 0,
-      comments: 0,
-      group_name: req.body.group,
-      date: req.body.date,
-      time: req.body.time,
-      status: "pending"
-      
-    };
-
-    var db = mongoose.connection;
-    const result = await db.collection("posts").insertOne(data); // Use await to wait for the operation to complete
-    const post_id = result.insertedId;
-    createLog("Post Created", `${post_id}`, req, result);
-    return res.redirect("http://127.0.0.1:5500/index.html");
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ---------- Add user groups ----------
-app.post("/add_user_groups", (req, res) => {
-  try {
-    const { newSelectedCategories } = req.body;
-
-    newSelectedCategories.forEach(async (category) => {
-      await User_groups.create({ user_id: session.user_id, group: category });
-    });
-
-    res.status(200).json({ message: "New user groups added successfully" });
-  } catch (error) {
-    console.error("Error adding user groups to the database:", error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ---------- Add user groups by User ID and Group Name ----------
-app.post("/add_user_group/:user_id/:group_name", async (req, res) => {
-  try {
-    const user_id = req.params.user_id;
-    const group_name = req.params.group_name;
-
-    var data = {
-      user_id: user_id,
-      group: group_name
-    };
-
-    var db = mongoose.connection;
-    const result = await db.collection("user_groups").insertOne(data); // Use await to wait for the operation to complete
-    createLog("Create User Group", `${user_id}: ${group_name}`, req);
-    res.status(200).json({ message: "New user group added successfully" });
-  } catch (error) {
-    console.error("Error adding user groups to the database:", error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ---------- Remove user groups ----------
-app.post("/remove_user_groups", (req, res) => {
-  try {
-    const { unselectedCategories } = req.body;
-
-    unselectedCategories.forEach(async (category) => {
-      await User_groups.deleteOne({ user_id: session.user_id, group: category });
-    });
-
-    res.status(200).json({ message: "User groups removed successfully" });
-  } catch (error) {
-    console.error("Error removing user groups from the database:", error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ---------- Delete Post ----------
+// ---------- Like Post ----------
 // app.post("/like_post/:post_id", async (req, res) => {
 //   try {
 //     const postId = req.params.post_id;
@@ -744,57 +841,6 @@ app.post("/remove_user_groups", (req, res) => {
 //     res.status(500).json({ message: "Failed to update like status" });
 //   }
 // });
-
-// ---------- Delete Post by ID ----------
-app.post("/delete_post/:post_id", async (req, res) => {
-  try {
-    const post_id = req.params.post_id;
-    const post = await Posts.findById(post_id);
-
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-
-    await post.deleteOne();
-    createLog("Delete Post", `${post_id}`, req);
-    res.status(200).json({ message: "Post deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting post:", error);
-    res.status(500).json({ message: "Failed to delete post" });
-  }
-});
-
-// ---------- Delete User by ID ----------
-app.post("/delete_user/:user_id", async (req, res) => {
-  try {
-    const user_id = req.params.user_id;
-    const deletedUser = await Users.findByIdAndDelete(user_id);
-
-    if (!deletedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    console.log("User Deleted Successfully:", deletedUser);
-    createLog("Delete User", `${user_id}`, req);
-    res.status(200).json({ message: "User deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ---------- Sign out ---------
-app.get("/signout", async (req, res) => {
-  try {
-    createLog("Signout", "", req);
-    session.user_id = null;
-    session.admin = null;
-    res.status(200).json({ message: "User logged out successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
-  }
-});
 
 //----------- Like API -------------
 app.post('/like_posts/:postId', async (req, res) => {
@@ -856,21 +902,6 @@ app.post('/like_posts/:postId', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
-//----------- Get Post By ID -------------
-app.get('/posts_id/:postId', async (req, res) => {
-  const post_id = req.params.postId;
-  try {
-    const foundPost = await Posts.findById(post_id);
-
-    if (!foundPost) {
-      return res.status(404).json({ error: 'Post not found' });
-    }
-
-    return res.status(200).json({ post: foundPost });
-  } catch (error) {
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 //----------- Get Like By Post ID -------------
 app.get('/get_likes/:postId', async (req, res) => {
@@ -887,6 +918,41 @@ app.get('/get_likes/:postId', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+//----------- add like info -------------
+// app.post('/add_like/:postId', async (req, res) => {
+//   const postId = req.params.postId;
+
+//   try {
+//     const foundPost = await likes.findById(postId);
+
+
+//     if (!foundPost) {
+//       return res.status(404).json({ error: 'Post not found' });
+//     }
+
+//     newLikes = foundPost.likes + 1;
+//     data = {
+//       post_id: postId,
+//       user_id: session.user_id
+//     }
+//     var db = mongoose.connection;
+//     const updatedPost = await likes.findByIdAndUpdate(postId, data, {
+//       new: true, // Return the updated document
+//     });
+//     if (!updatedPost) {
+//       return res.status(404).json({ message: "post not found" });
+//     }
+//     console.log(foundPost); 
+//     return res.status(200).json({ message: 'Likes updated successfully', post: foundPost });
+//   } catch (error) {
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
+// *********************************** //
+// ********** Did it Model  ********** //
+// *********************************** //
 
 //----------------- Did it API -----------------
 app.post('/did_it/:postId', async (req, res) => {
@@ -945,39 +1011,6 @@ app.post('/did_it/:postId', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
-
-//----------- add like info -------------
-// app.post('/add_like/:postId', async (req, res) => {
-//   const postId = req.params.postId;
-
-//   try {
-//     const foundPost = await likes.findById(postId);
-
-
-//     if (!foundPost) {
-//       return res.status(404).json({ error: 'Post not found' });
-//     }
-
-//     newLikes = foundPost.likes + 1;
-//     data = {
-//       post_id: postId,
-//       user_id: session.user_id
-//     }
-//     var db = mongoose.connection;
-//     const updatedPost = await likes.findByIdAndUpdate(postId, data, {
-//       new: true, // Return the updated document
-//     });
-//     if (!updatedPost) {
-//       return res.status(404).json({ message: "post not found" });
-//     }
-//     console.log(foundPost); 
-//     return res.status(200).json({ message: 'Likes updated successfully', post: foundPost });
-//   } catch (error) {
-//     return res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
 
 // ---------- Connect to DB ----------
 mongoose
