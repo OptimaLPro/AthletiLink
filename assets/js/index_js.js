@@ -5,6 +5,17 @@ function redirectToCreatePost() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    fetch('http://localhost:5500/get_pendings')
+        .then(response => response.json())
+        .then(data => {
+            const pendingCount = data.pending_posts_count; // Adjust according to your API response
+            if (pendingCount === 0) {
+                document.getElementById('post_badge').style.display = "none";
+            }
+            console.log("pending count: " + pendingCount);
+            document.getElementById('post_badge').textContent = pendingCount;
+        })
+        .catch(error => console.error('Error:', error));
     var user_groups = [];
 
     var adminApiUrl = "http://localhost:5500/user_session";
@@ -35,26 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((data) => {
             user_groups = data.user_groups_res;
             checkStatus(user_groups);
-
-            // async function getGroupStatus(group) {
-            //     try {
-            //         // console.log("IM HERE" + group.group);
-            //         const response = await fetch(`http://localhost:5500/group_status/${group.group}`);
-            //         // console.log(response);
-            //         const data = await response.json();
-
-            //         console.log(data);
-
-            //         if (data.group_status == "active") {
-            //             console.log("active");
-            //             group_status = "active";
-            //         } else {
-            //             group_status = "inactive";
-            //         }
-            //     } catch (error) {
-            //         console.error("Error fetching group status:", error);
-            //     }
-            // }
         })
         .catch((error) => {
             console.error("Error fetching data from MongoDB:", error);
@@ -65,33 +56,17 @@ document.addEventListener("DOMContentLoaded", function () {
         user_groups.forEach(function (group) {
             var listGroup = document.querySelector(".list-group");
             var group_status = "";
-            // console.log(group.group);
-            // $.post(`http://localhost:5500/group_status/${group.group}`, function (data) {
-            //     console.log(data);
-            //     if (data.status == "active") {
-            //         group_status = "active";
-            //     }
-            //     else {
-            //         group_status = "inactive";
-            //     }
-            // });
-
-            // getGroupStatus(group);
-
             var statusByGroupApiUrl = `http://localhost:5500/group_status/${group.group}`;
             fetch(statusByGroupApiUrl)
                 .then((response) => response.json())
                 .then((status) => {
-                    console.log(status);
                     if (status.group_status == "active") {
-                        console.log("THIS IS !active!");
                         group_status = "active";
                     }
                     else {
                         group_status = "inactive";
                     }
 
-                    console.log("AAAAA " + group_status);
                     if (group_status == "active") {
                         var groupLink = document.createElement("a");
                         groupLink.href = "#";
@@ -134,7 +109,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (targetLink) {
             event.preventDefault(); // Prevent the default link behavior
             var categoryName = targetLink.textContent.trim();
-            console.log(categoryName);
             clearPosts(); // Call the function to clear the posts
 
             contentContainer.classList.add("fade-in");
@@ -166,6 +140,9 @@ function getPostsAndComments(all_posts) {
     var postsContainer = document.getElementById("section");
     var counter = 1;
     all_posts.forEach(function (post) {
+        if (post.status == "pending") {
+            return;
+        }
         // Create the card div
         var cardDiv = document.createElement("div");
         cardDiv.className = "card mb-3";
@@ -278,9 +255,8 @@ function getPostsAndComments(all_posts) {
                         card_comment.className = "card";
                         card_comment.innerHTML = `
                     <div class="card-body">
-                        <h5 class="card-title">${comment.first_name} ${comment.last_name}</h5>
+                        <h6 class="card-title font-weight-bold">${comment.first_name} ${comment.last_name} <small>${comment.date}</small></h6>
                         <p class="card-text">${comment.description}</p>
-                        <span class="font-weight-bold">${comment.date}</span>
                     </div>
                     `;
                         card_comment.appendChild(deleteIconComment);
@@ -376,8 +352,8 @@ function deleteComment(comment_id, all_posts) {
 
 function toggleLike(postId) {
     // URL for the like_posts API endpoint
-    
-    var likePostsApiUrl = `http://localhost:5500/like_posts/`+postId;
+
+    var likePostsApiUrl = `http://localhost:5500/like_posts/` + postId;
 
     // Make a POST request to the like_posts API
     fetch(likePostsApiUrl, {
@@ -421,7 +397,7 @@ function toggleDidIt(postId) {
         .then(data => {
             // Check the response and update the UI accordingly
             if (data && data.post) {
-                console.log(data);  
+                console.log(data);
                 var updatedPost = data.post;
                 console.log(updatedPost);
                 var didItButton = document.getElementById(`didItButton${postId}`);
@@ -445,10 +421,8 @@ function toggleDidIt(postId) {
 
 
 function clearPosts() {
-    console.log("clearPosts");
     var postsContainer = document.getElementById("section");
     postsContainer.innerHTML = ""; // Clear the content inside the section
-    console.log("DONE");
 }
 
 function signout() {

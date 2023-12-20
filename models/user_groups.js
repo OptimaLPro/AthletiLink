@@ -1,15 +1,14 @@
-const { Int32 } = require('mongodb');
 const mongoose = require('mongoose')
 
 const user_goups_Schema = mongoose.Schema(
     {
         user_id: {
             type: String,
-            required: [true, "please enter your first name"]
+            required: [true, "please enter user id"]
         },
         group: {
             type: String,
-            required: [true, "please enter your last name"]
+            required: [true, "please enter group name"]
         }
     }
 )
