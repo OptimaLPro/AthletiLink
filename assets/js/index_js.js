@@ -411,7 +411,7 @@ function toggleLike(postId) {
 
 function toggleDidIt(postId) {
     // URL for the like_posts API endpoint
-    var didItPostsApiUrl = `http://localhost:5500/did_it/`+postId;
+    var didItPostsApiUrl = `http://localhost:5500/did_its/`+postId;
 
     // Make a POST request to the like_posts API
     fetch(didItPostsApiUrl, {
