@@ -164,6 +164,8 @@
                         aria-hidden="true"></i></button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" value="title">By Title</a>
+                    <a class="dropdown-item" value="created">By Created</a>
+                    <a class="dropdown-item" value="type">By Type</a>
                     <a class="dropdown-item" value="host">By Host</a>
                     <a class="dropdown-item" value="duration">By Duration</a>
                     <a class="dropdown-item" value="location">By Location</a>
@@ -190,6 +192,8 @@
                         <th>Picture</th>
                         <th>Post ID</th>
                         <th>User ID</th>
+                        <th>Created</th>
+                        <th>Type</th>
                         <th>Title</th>
                         <th>Host</th>
                         <th>Duration</th>
@@ -245,6 +249,16 @@
                     <div class="form-group">
                         <label for="title">User ID</label>
                         <input type="text" id="user_id" name="user_id" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="created">Created</label>
+                        <input type="text" id="created" name="created" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <input type="text" id="type" name="type" class="form-control" required />
                     </div>
 
                     <div class="form-group">
@@ -490,6 +504,8 @@
                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#showUserIdModal${post.user_id}" onclick="showUserID('${post.user_id}')">Show ID</button>
                 <button type="button" class="btn btn-success copy-btn btn-sm" data-clipboard-text="${post.user_id}" onclick="copyToClipboard('${post.user_id}')">Copy ID</button>
             </td>
+            <td>${post.created}</td>
+            <td>${post.type}</td>
             <td>${post.title}</td>
             <td>${post.host}</td>
             <td>${post.duration}</td>
@@ -560,6 +576,8 @@
             const postsToUpdate = posts.find(post => post._id === post_id);
             // console.log(postsToUpdate);
             $("#user_id").val(postsToUpdate.user_id);
+            $("#created").val(postsToUpdate.created);
+            $("#type").val(postsToUpdate.type);
             $("#title").val(postsToUpdate.title);
             $("#host").val(postsToUpdate.host);
             $("#duration").val(postsToUpdate.duration);
@@ -577,6 +595,8 @@
             $("#saveChangesBtn").off('click').on("click", function () {
                 const updatedPost = {
                     user_id: $("#user_id").val(),
+                    created: $("#created").val(),
+                    type: $("#type").val(),
                     title: $("#title").val(),
                     host: $("#host").val(),
                     duration: $("#duration").val(),

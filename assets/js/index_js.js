@@ -263,6 +263,20 @@ function getPostsAndComments(all_posts) {
                         collapseElem.appendChild(accordionElem);
                         accordionElem.appendChild(card_comment);
                     });
+
+                    // Create comment card
+                    var card_comment = document.createElement("div");
+                    card_comment.className = "card";
+                    card_comment.innerHTML = `
+                    <div class="card-body" style="display: flex; align-items: center;">
+                        <div class="form-group" style="display: flex; width: 100%;">
+                            <input type="text" class="card-title form-control" id="addComment${post._id}" style="flex-grow: 1; margin-right: 10px; height: 38px;">
+                            <button type="button" class="btn btn-primary" id="submitComment${post._id}" style="height: 38px;">Submit</button>
+                        </div>
+                    </div>
+                    `;
+                    collapseElem.appendChild(accordionElem);
+                    accordionElem.appendChild(card_comment);
                 }
             })
             .catch((error) => {
@@ -387,7 +401,7 @@ function toggleLike(postId) {
 
 function toggleDidIt(postId) {
     // URL for the like_posts API endpoint
-    var didItPostsApiUrl = `http://localhost:5500/did_its/`+postId;
+    var didItPostsApiUrl = `http://localhost:5500/did_its/` + postId;
 
     // Make a POST request to the like_posts API
     fetch(didItPostsApiUrl, {

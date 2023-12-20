@@ -512,6 +512,8 @@ app.post("/update_post/:post_id", async (req, res) => {
   try {
     var data = {
       user_id: req.body.firstName,
+      created: req.body.created,
+      type: req.body.type,
       title: req.body.title,
       host: req.body.host,
       duration: req.body.duration,

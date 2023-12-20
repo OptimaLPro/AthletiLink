@@ -6,6 +6,14 @@ const postSchema = mongoose.Schema(
             type: String,
             required: [true, "please enter your first name"]
         },
+        created: {
+            type: String,
+            required: [true, "please enter created date"]
+        },
+        type: {
+            type: String,
+            required: [true, "please enter the type of post"]
+        },
         title: {
             type: String,
             required: [true, "please enter your last name"]
