@@ -43,7 +43,7 @@ const postSchema = mongoose.Schema(
             required: [true, "please enter i did it count"]
         },
         comments: {
-            type: String,
+            type: Number,
             required: [true, "please enter comments"]
         },
         date: {

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile</title>
+    <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <style>
+        /* Additional CSS styles can be added here */
+        /* Customize as per your design requirements */
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="sidebar" class="effect-fadeIn">
+            <aside id="groups-sidebar" class="effect-fadeIn">
+                <div class="text-white" style="font-weight: 500; margin-bottom: 15px; margin-top: 5px;"><img
+                        src="assets/images/circle_logo.png" class="circle_logo">My Groups</div>
+                <a href="index.html" style="margin-bottom: 30px;">Home</a>
+                <!-- All the list group -->
+                <div class="list-group"></div>
+        </div>
+
+        <div id="content">
+            <header id="header" class="effect-fadeIn">
+                <div>
+                    <div class="profile-circle effect-fadeIn" id="profileCircle"
+                        style="display: inline-block; vertical-align: middle;"></div>
+                    <div class="user-name effect-fadeIn" id="user-name"
+                        style="display: inline-block; vertical-align: middle;"></div>
+                </div>
+                <img src="assets/images/only_logo_white.png" alt="Logo"
+                    class="logo effect-fadeIn p-2 d-flex justify-content-center " />
+                <div class="ml-auto">
+                    <script>
+                    </script>
+                    <!-- <button type="submit" class="btn-sm btn-light admin">Admin</button> -->
+                    <button type="submit" class="btn-sm btn-light admin" style="display:none;">Admin <span
+                            id="post_badge" class="badge badge-danger"
+                            style="font-size: small; margin-left: 2px;"></span></button>
+
+                    <button type="submit" class="btn-sm btn-light" onclick="redirectToCreatePost()"
+                        style="outline: none;">Create
+                        Post</button>
+                    <button type="button" class="btn btn-primary-outline dropdown-toggle effect-fadeIn"
+                        data-toggle="dropdown">
+                        <!-- Here is the text for the button -->
+                        <a href="javascript:void(0);">
+                            <!-- Changing the default icon with toggle-->
+                            <i class="fa fa-bell whitecolor icon" aria-hidden="true"></i>
+                        </a>
+                    </button>
+                    <button type="button" class="btn btn-primary-outline dropdown-toggle effect-fadeIn"
+                        data-toggle="dropdown">
+                        <!-- Here is the text for the button -->
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-cog whitecolor"></i>
+                        </a>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="signin.html">Login</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="UserGroups.html">My Groups</a>
+                        <a class="dropdown-item" href="Update.html">Update</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" onclick="signout()">Sign out</a>
+                    </div>
+                </div>
+            </header>
+            <section id="section">
+                <!-- Profile information -->
+                <div class="container mt-4">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="path_to_profile_image.jpg" alt="Profile Image" class="img-fluid rounded-circle" />
+                        </div>
+                        <div class="col-md-8">
+                            <h2>User's Name</h2>
+                            <p>Email: user@example.com</p>
+                            <!-- Add more profile information here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div id="footer">
+                <!-- Footer content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Modals content goes here -->
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

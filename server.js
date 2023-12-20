@@ -472,7 +472,7 @@ app.get('/posts_id/:postId', async (req, res) => {
   }
 });
 
-// ---------- Create Post ----------
+// ---------- Create Post ----------   
 app.post("/create_post", async (req, res) => {
   try {
     const user = await Users.findById(session.user_id);
@@ -713,6 +713,53 @@ app.get("/group_status/:group_name", async (req, res) => {
 // *********************************** //
 // ********** Comments Model  ********** //
 // *********************************** //
+//----------- Add Comment API -------------
+const now = new Date();
+const currentDate = now.toLocaleDateString(); // Get current date
+const currentTime = now.toLocaleTimeString(); // Get current time
+
+app.post('/add_comment/:postId', async (req, res) => {
+  const postId = req.params.postId;
+  const sessionUserId = session.user_id;
+  console.log(postId);
+  try {
+    const foundPost = await Posts.findById(postId);
+    console.log(foundPost);
+
+    if (!foundPost) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    console.log("comments counter = "+foundPost.comments);
+    CountComments = foundPost.comments + 1;
+    const foundUser = await Users.findById(sessionUserId);
+
+      if (!foundUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+    data = {
+      post_id: postId,
+      user_id: sessionUserId,
+      first_name: foundUser.firstName,
+      last_name: foundUser.last_name,
+      description: req.body.description,
+      date: currentDate,
+      time: currentTime,
+    }
+    var db = mongoose.connection;
+    const results = await db.collection("comments").insertOne(data);
+    console.log(results);
+    const updatedPost = await Posts.findByIdAndUpdate(postId, { comments: CountComments }, {
+      new: true, // Return the updated document
+    });
+    if (!updatedPost) {
+      return res.status(404).json({ message: "post not found" });
+    }
+    console.log(foundPost);
+    return res.status(200).json({ message: 'Comments updated successfully', post: foundPost });
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // ---------- Get All Comments ----------
 app.get("/comments", async (req, res) => {
@@ -1011,6 +1058,9 @@ app.post('/did_it/:postId', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
 
 // ---------- Connect to DB ----------
 mongoose
