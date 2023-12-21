@@ -123,16 +123,46 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    var postsApiUrl = "http://localhost:5500/posts";
-    fetch(postsApiUrl)
-        .then((response) => response.json())
-        .then((posts) => {
-            var all_posts = posts.posts;
-            getPostsAndComments(all_posts);
+    var userGroupCount = 0;
+    fetch('http://localhost:5500/count_user_groups')
+        .then(response => response.json())
+        .then(data => {
+            userGroupCount = data.user_groups_count;
+            fetchingPosts(userGroupCount);
         })
         .catch((error) => {
-            console.error("Error fetching posts:", error);
+            console.error("Error fetching counter user groups:", error);
         });
+
+    function fetchingPosts(userGroupCount) {
+        console.log("userGroupCount: " + userGroupCount);
+        updateUIForNewUser(userGroupCount)
+
+        if (userGroupCount != 0) {
+            var postsApiUrl = "http://localhost:5500/posts";
+            fetch(postsApiUrl)
+                .then((response) => response.json())
+                .then((posts) => {
+                    var all_posts = posts.posts;
+                    getPostsAndComments(all_posts);
+                })
+                .catch((error) => {
+                    console.error("Error fetching posts:", error);
+                });
+        }
+    }
+
+    function updateUIForNewUser(userGroupCount) {
+        const noGroupsContent = document.getElementById('noGroupsContent');
+        console.log("userGroupCount INSIDE UPDATEUI: " + userGroupCount);
+
+        if (userGroupCount == 0) {
+            console.log('User has no groups');
+            // User has no groups, show the new user content
+            noGroupsContent.classList.add("fade-in");
+            noGroupsContent.style.display = 'block';
+        }
+    }
 });
 
 // Render the posts and comments

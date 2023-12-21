@@ -40,44 +40,38 @@
         <!-- Main Content -->
         <div id="content" class="effect-fadeIn">
             <header id="header" class="effect-fadeIn">
-                <div>
-                    <div class="profile-circle effect-fadeIn" id="profileCircle"
-                        style="display: inline-block; vertical-align: middle;"></div>
-                    <div class="user-name effect-fadeIn" id="user-name"
-                        style="display: inline-block; vertical-align: middle;"></div>
+                <!-- Profile Picture and Name -->
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="profile-circle effect-fadeIn" id="profileCircle"></div>
+                    <div class="user-name effect-fadeIn" id="user-name"></div>
                 </div>
-                <img src="assets/images/only_logo_white.png" alt="Logo"
-                    class="logo effect-fadeIn p-2 d-flex justify-content-center " />
-                <div class="ml-auto">
-                    <script>
-                    </script>
-                    <!-- <button type="submit" class="btn-sm btn-light admin">Admin</button> -->
+
+                <!-- Logo Image -->
+                <div class="col-md-4 d-flex justify-content-center">
+                    <img src="assets/images/only_logo_white.png" alt="Logo" class="logo effect-fadeIn p-2" />
+                </div>
+
+                <!-- Admin and Create Post Buttons -->
+                <div class="col-md-4 d-flex align-items-center justify-content-end">
                     <button type="submit" class="btn-sm btn-light admin" style="display:none;">Admin <span
                             id="post_badge" class="badge badge-danger"
                             style="font-size: small; margin-left: 2px;"></span></button>
-
                     <button type="submit" class="btn-sm btn-light" onclick="redirectToCreatePost()"
-                        style="outline: none;">Create
-                        Post</button>
+                        style="outline: none;">Create Post</button>
+                    <!-- Notification and Settings Buttons -->
                     <button type="button" class="btn btn-primary-outline dropdown-toggle effect-fadeIn"
                         data-toggle="dropdown">
-                        <!-- Here is the text for the button -->
-                        <a href="javascript:void(0);">
-                            <!-- Changing the default icon with toggle-->
-                            <i class="fa fa-bell whitecolor icon" aria-hidden="true"></i>
-                        </a>
+                        <i class="fa fa-bell whitecolor icon" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="btn btn-primary-outline dropdown-toggle effect-fadeIn"
                         data-toggle="dropdown">
-                        <!-- Here is the text for the button -->
-                        <a href="javascript:void(0);">
-                            <i class="fa fa-cog whitecolor"></i>
-                        </a>
+                        <i class="fa fa-cog whitecolor"></i>
                     </button>
+                    <!-- Dropdown Menu -->
                     <div class="dropdown-menu" aria-labelledby="userDropdown">
                         <a class="dropdown-item" href="signin.html">Login</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="UserGroups.html">My Groups</a>
+                        <a class="dropdown-item" href="user_groups.html">My Groups</a>
                         <a class="dropdown-item" href="Update.html">Update</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" onclick="signout()">Sign out</a>
@@ -85,6 +79,57 @@
                 </div>
             </header>
             <section id="section">
+                <!-- This div will be shown only if the user has no groups -->
+                <div id="noGroupsContent" style="height: 100%; display: none;">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="text-center" style="width: 47%; margin-top: 5px; margin-left: 15px;">
+                            <div class="welcome-section">
+                                <!-- <h2 style="font-weight:bold ">Join Our Fitness Community at AthletiLink!</h2> -->
+                                <p><h2><strong>🌟 Welcome to AthletiLink</strong></h2>The vibrant social media platform dedicated
+                                    to
+                                    fitness enthusiasts like you! Whether you're a seasoned athlete or just starting
+                                    your
+                                    fitness journey, our community is here to inspire, motivate, and connect.</p>
+                                <br>
+
+                                <!-- <h3>🌟 Welcome to AthletiLink</h3>
+                                <p>the vibrant social media platform dedicated to fitness enthusiasts like you! Whether
+                                    you're a seasoned athlete or just starting your fitness journey, our community is
+                                    here to inspire, motivate, and connect.</p> -->
+
+                                <h3>🏋️ Dive into a World of Sports</h3>
+                                <p>From yoga to weightlifting, running to cycling, explore a diverse range of sports
+                                    activities.
+                                    <br>AthletiLink is your go-to destination for all things fitness.</p>
+
+                                <h3>🤝 Connect and Train Together</h3>
+                                <p>Why train alone when you can join forces? Find local sports enthusiasts, make new
+                                    friends, and enjoy group workouts. Share your passion for sports and fitness with
+                                    like-minded individuals.</p>
+
+                                <h3>📖 Share and Discover Training Plans</h3>
+                                <p>Got a workout routine that works wonders? Share it with our community! Or if you're
+                                    looking for new ideas, browse personal training plans shared by others. It's
+                                    all
+                                    about giving and gaining fitness inspiration.</p>
+
+                                <h3>🌍 Real Life, Real Connections</h3>
+                                <p>AthletiLink isn't just about virtual connections. We encourage members to meet up and
+                                    train together, bringing the spirit of fitness to life in the real world.</p>
+
+                                <p><strong>So, lace up your sneakers, grab your gear, and let's get moving! Join AthletiLink
+                                    today
+                                    and be a part of a community that's fitness-focused and fun-filled. Together, let's
+                                    achieve our fitness goals!</strong></p>
+                            </div>
+                            <br>
+                            <button onclick="window.location.href='user_groups.html'"
+                                class="btn btn-primary btn-lg animated-button">
+                                Click here to enter some sport groups!
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <!-- Rendered post -->
             </section>
 

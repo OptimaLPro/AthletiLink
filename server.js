@@ -93,7 +93,7 @@ app.post("/user", async (req, res) => {
     var data = {
       first_name: req.body.firstName,
       last_name: req.body.lastName,
-      email: req.body.email,
+      email: (req.body.email).toLocaleLowerCase(),
       password: req.body.password,
       date: req.body.dob,
       profile_pic: req.body.profilePictureUrl,
@@ -194,10 +194,12 @@ app.get("/user_details", async (req, res) => {
   }
 });
 
-// ---------- Get User By Email ----------
+// ---------- Get User By Email - Sign In ----------
 app.get("/getUserByMail/:email", async (req, res) => {
   try {
-    const users = await Users.findOne({ email: req.params.email });
+    //make the email with all lower case
+    const email = (req.params.email).toLocaleLowerCase();
+    const users = await Users.findOne({ email: email });
     res.status(200).json({ users });
   } catch (error) {
     console.log(error);
@@ -437,6 +439,18 @@ app.post("/remove_user_groups", (req, res) => {
     res.status(200).json({ message: "User groups removed successfully" });
   } catch (error) {
     console.error("Error removing user groups from the database:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Count user groups ----------
+app.get("/count_user_groups", async (req, res) => {
+  try {
+    const user_groups = await User_groups.find({ user_id: session.user_id });
+    const user_groups_count = user_groups.length;
+    res.status(200).json({ user_groups_count });
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -731,13 +745,13 @@ app.post('/add_comment/:postId', async (req, res) => {
     if (!foundPost) {
       return res.status(404).json({ error: 'Post not found' });
     }
-    console.log("comments counter = "+foundPost.comments);
+    console.log("comments counter = " + foundPost.comments);
     CountComments = foundPost.comments + 1;
     const foundUser = await Users.findById(sessionUserId);
 
-      if (!foundUser) {
-        return res.status(404).json({ error: 'User not found' });
-      }
+    if (!foundUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     data = {
       post_id: postId,
       user_id: sessionUserId,

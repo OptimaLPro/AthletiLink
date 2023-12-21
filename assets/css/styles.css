@@ -73,6 +73,7 @@ body {
   height: 100vh;
   padding: 20px;
   overflow-y: auto;
+  border-right: 2px solid #d5d5d5;
 }
 
 #content {
@@ -255,3 +256,80 @@ body {
   margin-right: 10px;
 }
 
+
+/* Welcome Page no groups effect */
+
+.welcome-text {
+  animation: fadeInUp 2s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animated-button {
+  font-size: 20px;
+  padding: 10px 30px;
+  color: white;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px #1c7430;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.animated-button:hover {
+  background-color: #218838;
+}
+
+.animated-button:active {
+  background-color: #1e7e34;
+  box-shadow: 0 2px #1c7430;
+  transform: translateY(2px);
+}
+
+/* Animated Button Styles */
+.welcome-text {
+  font-size: 30px;
+  color: #4a90e2;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px #aaa;
+  animation: fadeInUp 2s ease-in-out;
+}
+
+/* Rookie Text Animation with Delay */
+.rookie-text {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  opacity: 0;
+  /* Initially hidden */
+  animation: fadeInUp 2s ease-in-out 2s;
+  /* Delay of 2 seconds */
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.welcome-section h2,
+.welcome-section h3 {
+  text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+}
