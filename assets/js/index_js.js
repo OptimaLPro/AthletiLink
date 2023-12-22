@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((response) => response.json())
         .then((data) => {
             user_groups = data.user_groups_res;
+            console.log(user_groups);
             checkStatus(user_groups);
         })
         .catch((error) => {
@@ -134,12 +135,18 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error fetching counter user groups:", error);
         });
 
-    function fetchingPosts(userGroupCount) {
+    function fetchingPosts(userGroupCount = 1) {
         console.log("userGroupCount: " + userGroupCount);
         updateUIForNewUser(userGroupCount)
 
+        var user_groups_list = user_groups.map(function (group) {
+            return group.group;
+        });
+
+        console.log("user_groups_list: " + user_groups_list);
+
         if (userGroupCount != 0) {
-            var postsApiUrl = "http://localhost:5500/posts";
+            var postsApiUrl = `http://localhost:5500/posts?groups=${encodeURIComponent(JSON.stringify(user_groups_list))}`;
             fetch(postsApiUrl)
                 .then((response) => response.json())
                 .then((posts) => {
@@ -357,16 +364,7 @@ function deletePost(post_id, all_posts) {
         console.log(`Delete post with ID: ${post_id}`);
         $.post(`http://localhost:5500/delete_post/${post_id}`, function (data) {
             clearPosts();
-            var postsApiUrl = "http://localhost:5500/posts";
-            fetch(postsApiUrl)
-                .then((response) => response.json())
-                .then((posts) => {
-                    var all_posts = posts.posts;
-                    getPostsAndComments(all_posts);
-                })
-                .catch((error) => {
-                    console.error("Error fetching posts:", error);
-                });
+            fetchingPosts();
             $('#deletePostModal').modal('hide');
         });
     });
@@ -379,16 +377,7 @@ function deleteComment(comment_id, all_posts) {
         console.log(`Delete comment with ID: ${comment_id}`);
         $.post(`http://localhost:5500/delete_comment/${comment_id}`, function (data) {
             clearPosts();
-            var postsApiUrl = "http://localhost:5500/posts";
-            fetch(postsApiUrl)
-                .then((response) => response.json())
-                .then((posts) => {
-                    var all_posts = posts.posts;
-                    getPostsAndComments(all_posts);
-                })
-                .catch((error) => {
-                    console.error("Error fetching posts:", error);
-                });
+            fetchingPosts();
             $('#deletePostModal').modal('hide');
         });
     });
