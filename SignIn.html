@@ -39,13 +39,13 @@
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control" value="forish.nati@gmail.com"
+                <input type="email" id="email" name="email" class="form-control" value="testingg@gmail.com"
                     required />
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" value="654321" required />
+                <input type="password" id="password" name="password" class="form-control" value="123456" required />
             </div>
 
             <div class="form-group">
@@ -68,9 +68,10 @@
                 Invalid Email or Password.
             </div>
         </form>
-        
+
     </div>
-    <div id="close-icon" class="position-fixed effect-fadeIn" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+    <div id="close-icon" class="position-fixed effect-fadeIn"
+        style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
         <a href="welcome.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-times fa-stack-1x fa-inverse"></i>
@@ -105,28 +106,36 @@
                         return response.json();
                     })
                     .then(data => {
-                        if (data.users.password === password) {
-                            user_id = data.users._id;
-                            is_logged_in = true;
-                            console.log("Session User: " + user_id);
-                            var sessionApiUrl = "http://localhost:5500/SetSessionID/" + user_id;
-                            fetch(sessionApiUrl)
-                                .then((response) => response.json())
-                                .then((data) => {
-                                    window.location.href = 'index.html';
-                                })
-                                .catch((error) => {
-                                    console.error("Error fetching session ID:", error);
-                                });
-
-
-                        } else {
+                        if (data.users === null) {
                             console.error('Invalid Email or Password.');
                             const errorMessage = document.getElementById('errorMessage');
                             errorMessage.classList.remove('d-none'); // Show the error message
                             // Reset the form to clear the input fields after showing the error message
                             form.reset();
-                        }
+                        } else
+
+                        if (data.users.password === password) {
+                                user_id = data.users._id;
+                                is_logged_in = true;
+                                console.log("Session User: " + user_id);
+                                var sessionApiUrl = "http://localhost:5500/SetSessionID/" + user_id;
+                                fetch(sessionApiUrl)
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                        window.location.href = 'index.html';
+                                    })
+                                    .catch((error) => {
+                                        console.error("Error fetching session ID:", error);
+                                    });
+
+
+                            } else {
+                                console.error('Invalid Email or Password.');
+                                const errorMessage = document.getElementById('errorMessage');
+                                errorMessage.classList.remove('d-none'); // Show the error message
+                                // Reset the form to clear the input fields after showing the error message
+                                form.reset();
+                            }
                     })
                     .catch(error => {
                         console.error('There was a problem with the fetch operation:', error);

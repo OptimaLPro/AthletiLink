@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((response) => response.json())
         .then((data) => {
             user_groups = data.user_groups_res;
+            console.log(user_groups);
             checkStatus(user_groups);
         })
         .catch((error) => {
@@ -123,16 +124,52 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    var postsApiUrl = "http://localhost:5500/posts";
-    fetch(postsApiUrl)
-        .then((response) => response.json())
-        .then((posts) => {
-            var all_posts = posts.posts;
-            getPostsAndComments(all_posts);
+    var userGroupCount = 0;
+    fetch('http://localhost:5500/count_user_groups')
+        .then(response => response.json())
+        .then(data => {
+            userGroupCount = data.user_groups_count;
+            fetchingPosts(userGroupCount);
         })
         .catch((error) => {
-            console.error("Error fetching posts:", error);
+            console.error("Error fetching counter user groups:", error);
         });
+
+    function fetchingPosts(userGroupCount = 1) {
+        console.log("userGroupCount: " + userGroupCount);
+        updateUIForNewUser(userGroupCount)
+
+        var user_groups_list = user_groups.map(function (group) {
+            return group.group;
+        });
+
+        console.log("user_groups_list: " + user_groups_list);
+
+        if (userGroupCount != 0) {
+            var postsApiUrl = `http://localhost:5500/posts?groups=${encodeURIComponent(JSON.stringify(user_groups_list))}`;
+            fetch(postsApiUrl)
+                .then((response) => response.json())
+                .then((posts) => {
+                    var all_posts = posts.posts;
+                    getPostsAndComments(all_posts);
+                })
+                .catch((error) => {
+                    console.error("Error fetching posts:", error);
+                });
+        }
+    }
+
+    function updateUIForNewUser(userGroupCount) {
+        const noGroupsContent = document.getElementById('noGroupsContent');
+        console.log("userGroupCount INSIDE UPDATEUI: " + userGroupCount);
+
+        if (userGroupCount == 0) {
+            console.log('User has no groups');
+            // User has no groups, show the new user content
+            noGroupsContent.classList.add("fade-in");
+            noGroupsContent.style.display = 'block';
+        }
+    }
 });
 
 // Render the posts and comments
@@ -263,6 +300,20 @@ function getPostsAndComments(all_posts) {
                         collapseElem.appendChild(accordionElem);
                         accordionElem.appendChild(card_comment);
                     });
+
+                    // Create comment card
+                    var card_comment = document.createElement("div");
+                    card_comment.className = "card";
+                    card_comment.innerHTML = `
+                    <div class="card-body" style="display: flex; align-items: center;">
+                        <div class="form-group" style="display: flex; width: 100%;">
+                            <input type="text" class="card-title form-control" id="addComment${post._id}" style="flex-grow: 1; margin-right: 10px; height: 38px;">
+                            <button type="button" class="btn btn-primary" id="submitComment${post._id}" style="height: 38px;">Submit</button>
+                        </div>
+                    </div>
+                    `;
+                    collapseElem.appendChild(accordionElem);
+                    accordionElem.appendChild(card_comment);
                 }
             })
             .catch((error) => {
@@ -313,16 +364,7 @@ function deletePost(post_id, all_posts) {
         console.log(`Delete post with ID: ${post_id}`);
         $.post(`http://localhost:5500/delete_post/${post_id}`, function (data) {
             clearPosts();
-            var postsApiUrl = "http://localhost:5500/posts";
-            fetch(postsApiUrl)
-                .then((response) => response.json())
-                .then((posts) => {
-                    var all_posts = posts.posts;
-                    getPostsAndComments(all_posts);
-                })
-                .catch((error) => {
-                    console.error("Error fetching posts:", error);
-                });
+            fetchingPosts();
             $('#deletePostModal').modal('hide');
         });
     });
@@ -335,16 +377,7 @@ function deleteComment(comment_id, all_posts) {
         console.log(`Delete comment with ID: ${comment_id}`);
         $.post(`http://localhost:5500/delete_comment/${comment_id}`, function (data) {
             clearPosts();
-            var postsApiUrl = "http://localhost:5500/posts";
-            fetch(postsApiUrl)
-                .then((response) => response.json())
-                .then((posts) => {
-                    var all_posts = posts.posts;
-                    getPostsAndComments(all_posts);
-                })
-                .catch((error) => {
-                    console.error("Error fetching posts:", error);
-                });
+            fetchingPosts();
             $('#deletePostModal').modal('hide');
         });
     });
@@ -387,7 +420,7 @@ function toggleLike(postId) {
 
 function toggleDidIt(postId) {
     // URL for the like_posts API endpoint
-    var didItPostsApiUrl = `http://localhost:5500/did_its/`+postId;
+    var didItPostsApiUrl = `http://localhost:5500/did_its/` + postId;
 
     // Make a POST request to the like_posts API
     fetch(didItPostsApiUrl, {

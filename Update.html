@@ -13,23 +13,27 @@
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
   <link rel="stylesheet" href="assets/css/styles.css" />
+  <script src="assets/js/image_upload.js"></script>
   <style>
     body {
       font-family: "Roboto", sans-serif;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
       background-color: #f1f1f1;
+      padding-top: 20px;
+      padding-bottom: 20px;
     }
+
     .container {
-      background-color: #fff;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      max-width: 50%;
+      border-radius: 20px;
+      max-width: 600px;
       width: 100%;
+      margin: auto;
     }
 
     .form-group {
@@ -50,26 +54,18 @@
       from {
         opacity: 0;
       }
+
       to {
         opacity: 1;
       }
-    }
-
-    /* Add the styles for the form container from signup.html */
-    .container {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      max-width: 50%;
-      width: 100%;
     }
   </style>
 </head>
 
 <body>
   <div class="container mt-5 effect-fadeIn">
-    <form action="http://localhost:5500/update_user" method="post" class="bg-white p-4 shadow rounded" id="settingsForm">
+    <form action="http://localhost:5500/update_user" method="post" class="bg-white p-4 shadow rounded"
+      id="settingsForm">
       <h2 class="text-center mb-4">Settings</h2>
 
       <div class="form-group">
@@ -105,29 +101,54 @@
       <div class="form-group">
         <label for="profilePicture">Profile Picture</label>
         <div class="custom-file">
-          <input type="file" class="custom-file-input" id="profilePicture" name="profilePicture" accept="image/*" onchange="updateFileName()">
+          <input type="file" class="custom-file-input" id="profilePicture" name="profilePicture" accept="image/*"
+            onchange="fileChange()">
           <label class="custom-file-label" id="profilePictureLabel" for="profilePicture">Choose file</label>
         </div>
       </div>
+
+      <div class="form-group">
+        <div class="progress" style="margin-top: 10px; display: none;">
+          <div class="progress-bar" role="progressbar" id="uploadProgressBar" style="width: 0%;" aria-valuenow="0"
+            aria-valuemin="0" aria-valuemax="100">0%</div>
+        </div>
+      </div>
+
+      <input type="hidden" id="profilePictureUrl" name="profilePictureUrl" value="">
 
       <div class="form-group">
         <button type="submit" class="btn btn-dark btn-block">
           Save Changes
         </button>
       </div>
+
+      <div class="alert alert-danger d-none" id="errorMessage" role="alert">
+        The passwords are not match.
+      </div>
     </form>
+  </div>
+
+  <div id="close-icon" class="position-fixed effect-fadeIn"
+    style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+    <a href="index.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+      </span></a>
+
   </div>
 
   <!-- Bootstrap and datepicker scripts -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
   <script>
+    var uploaded = false;
     $(document).ready(function () {
       // Initialize datepicker for the settings page
       $('#datepicker').datepicker({
-        format: 'mm/dd/yyyy', // Change format if necessary
+        format: 'dd/mm/yyyy',
         autoclose: true
       });
 
@@ -147,11 +168,21 @@
         });
     });
 
-    // Function to update file name in the profile picture input
-    function updateFileName() {
-      var fileName = $("#profilePicture").val().split("\\").pop();
-      $("#profilePictureLabel").text(fileName);
-    }
+    document.getElementById('settingsForm').onsubmit = function (e) {
+      var newPassword = document.getElementById('newpassword').value;
+      var confirmNewPassword = document.getElementById('confirmnewPassword').value;
+
+      if (newPassword !== confirmNewPassword) {
+        // Show error message
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.classList.remove('d-none'); // Show the error message
+        e.preventDefault(); // Prevent form submission
+      } else {
+        // Hide error message
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.classList.add('d-none'); // Hide the error message
+      }
+    };
   </script>
 </body>
 

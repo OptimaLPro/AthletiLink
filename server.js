@@ -97,7 +97,7 @@ app.post("/user", async (req, res) => {
     var data = {
       first_name: req.body.firstName,
       last_name: req.body.lastName,
-      email: req.body.email,
+      email: (req.body.email).toLocaleLowerCase(),
       password: req.body.password,
       date: req.body.dob,
       profile_pic: req.body.profilePictureUrl,
@@ -198,10 +198,12 @@ app.get("/user_details", async (req, res) => {
   }
 });
 
-// ---------- Get User By Email ----------
+// ---------- Get User By Email - Sign In ----------
 app.get("/getUserByMail/:email", async (req, res) => {
   try {
-    const users = await Users.findOne({ email: req.params.email });
+    //make the email with all lower case
+    const email = (req.params.email).toLocaleLowerCase();
+    const users = await Users.findOne({ email: email });
     res.status(200).json({ users });
   } catch (error) {
     console.log(error);
@@ -223,22 +225,21 @@ app.get("/getUsers", async (req, res) => {
 // ---------- Update User ----------
 app.post("/update_user", async (req, res) => {
   try {
-    if (req.body.newpassword == "") {
-      var data = {
-        first_name: req.body.firstName,
-        last_name: req.body.lastName,
-        date: req.body.dob,
-      };
-    } else {
-      var data = {
-        first_name: req.body.firstName,
-        last_name: req.body.lastName,
-        password: req.body.newpassword,
-        date: req.body.dob,
-      };
+    const { firstName, lastName, newpassword, dob, profilePictureUrl } = req.body;
+    const updatedFields = {
+      first_name: firstName,
+      last_name: lastName,
+      date: dob,
+    };
+
+    if (newpassword != "") {
+      updatedFields.password = newpassword;
     }
 
-    const updatedFields = data;
+    if (profilePictureUrl != "") {
+      updatedFields.profile_pic = profilePictureUrl;
+    }
+
     const updatedUser = await Users.findByIdAndUpdate(session.user_id, updatedFields, {
       new: true, // Return the updated document
     });
@@ -445,6 +446,18 @@ app.post("/remove_user_groups", (req, res) => {
   }
 });
 
+// ---------- Count user groups ----------
+app.get("/count_user_groups", async (req, res) => {
+  try {
+    const user_groups = await User_groups.find({ user_id: session.user_id });
+    const user_groups_count = user_groups.length;
+    res.status(200).json({ user_groups_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // ********************************** //
 // ********** Posts Model  ********** //
 // ********************************** //
@@ -452,7 +465,23 @@ app.post("/remove_user_groups", (req, res) => {
 // ---------- Get All Posts ----------
 app.get("/posts", async (req, res) => {
   try {
-    const posts = await Posts.find({});
+    // Example: Retrieve user's groups from the query parameters
+    // You might get this information differently, depending on your setup
+    let userGroups = req.query.groups;
+    var posts = {};
+    if (userGroups) {
+      // Assuming userGroups is passed as a JSON string
+      console.log("userGroups passed");
+      userGroups = JSON.parse(userGroups);
+      posts = await Posts.find({ group_name: { $in: userGroups } });
+    } else {
+      console.log("userGroups not passed");
+      // Default to an empty array if no groups are specified
+      posts = await Posts.find({});
+    }
+
+    // Modify the query to filter based on the user's groups
+
     res.status(200).json({ posts });
   } catch (error) {
     console.log(error);
@@ -516,6 +545,8 @@ app.post("/update_post/:post_id", async (req, res) => {
   try {
     var data = {
       user_id: req.body.firstName,
+      created: req.body.created,
+      type: req.body.type,
       title: req.body.title,
       host: req.body.host,
       duration: req.body.duration,
@@ -729,13 +760,13 @@ app.post('/add_comment/:postId', async (req, res) => {
     if (!foundPost) {
       return res.status(404).json({ error: 'Post not found' });
     }
-    console.log("comments counter = "+foundPost.comments);
+    console.log("comments counter = " + foundPost.comments);
     CountComments = foundPost.comments + 1;
     const foundUser = await Users.findById(sessionUserId);
 
-      if (!foundUser) {
-        return res.status(404).json({ error: 'User not found' });
-      }
+    if (!foundUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     data = {
       post_id: postId,
       user_id: sessionUserId,
