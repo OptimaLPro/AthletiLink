@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const did_itSchema = mongoose.Schema(
+const didSchema = mongoose.Schema(
     {
         post_id: {
             type: String,
@@ -21,7 +21,7 @@ const did_itSchema = mongoose.Schema(
     }
 )
 
-const did_it = mongoose.model('did_it', did_itSchema);
+const did_it = mongoose.model('did_its',didSchema);
 
 module.exports = did_it;
 

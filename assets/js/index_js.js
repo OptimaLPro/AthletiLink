@@ -314,6 +314,11 @@ function getPostsAndComments(all_posts) {
                     `;
                     collapseElem.appendChild(accordionElem);
                     accordionElem.appendChild(card_comment);
+
+                    var submitButton = document.getElementById(`submitComment${post._id}`);
+                    submitButton.addEventListener('click', function () {
+                        addComment(post._id); // Call addComment function when the submit button is clicked
+                    });
                 }
             })
             .catch((error) => {
@@ -368,6 +373,65 @@ function deletePost(post_id, all_posts) {
             $('#deletePostModal').modal('hide');
         });
     });
+}
+
+function addComment(post_id) {
+    var commentInput = document.getElementById(`addComment${post_id}`);
+    var userComment = commentInput.value.trim(); // Get the comment input by the user
+
+    if (userComment !== '') {
+        var addCommentApiUrl = `http://localhost:5500/add_comment/${post_id}`;
+        fetch(addCommentApiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ description: userComment }) // Sending the comment as JSON in the request body
+        })
+        .then(response => {
+            if (response.ok) {
+                // If the comment was successfully added, clear the input field
+                commentInput.value = '';
+                // Fetch and append the new comment to the UI
+                fetch(`http://localhost:5500/comments/${post_id}`)
+                    .then(response => response.json())
+                    .then(comments => {
+                        if (comments && comments.comments_res && comments.comments_res.length > 0) {
+                            const newComment = comments.comments_res[comments.comments_res.length - 1];
+                            appendNewCommentToUI(post_id, newComment);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching new comment:', error);
+                    });
+            } else {
+                console.error('Failed to add comment:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('Error adding comment:', error);
+        });
+    } else {
+        console.error('Empty comment. Please enter a comment to add.');
+    }
+}
+function appendNewCommentToUI(post_id, comment) {
+    var commentsContainer = document.getElementById(`accordionComments${post_id}`);
+
+    if (commentsContainer) {
+        var card_comment = document.createElement("div");
+        card_comment.className = "card";
+
+        card_comment.innerHTML = `
+            <div class="card-body">
+                <h6 class="card-title font-weight-bold">${comment.first_name} ${comment.last_name} <small>${comment.date}</small></h6>
+                <p class="card-text">${comment.description}</p>
+            </div>
+        `;
+
+        // Append the new comment to the comments container
+        commentsContainer.appendChild(card_comment);
+    }
 }
 
 function deleteComment(comment_id, all_posts) {
@@ -436,14 +500,14 @@ function toggleDidIt(postId) {
                 var didItButton = document.getElementById(`didItButton${postId}`);
                 var didItCountElement = document.getElementById(`didItCount1${postId}`);
                 // Update the button text based on whether the post is liked or not
-                if (didItButton.textContent === "Not really...") {
+                if (didItButton.textContent === "Not yet...") {
                     // Update like count in UI
                     didItCountElement.textContent = updatedPost.did;
                     didItButton.textContent = 'I Did It!';
                 } else {
                     // Update like count in UI
                     didItCountElement.textContent = updatedPost.did;
-                    didItButton.textContent = "Not really...";
+                    didItButton.textContent = "Not yet...";
                 }
             }
         })

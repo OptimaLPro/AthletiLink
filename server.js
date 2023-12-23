@@ -755,7 +755,6 @@ app.post('/add_comment/:postId', async (req, res) => {
   console.log(postId);
   try {
     const foundPost = await Posts.findById(postId);
-    console.log(foundPost);
 
     if (!foundPost) {
       return res.status(404).json({ error: 'Post not found' });
@@ -774,19 +773,20 @@ app.post('/add_comment/:postId', async (req, res) => {
       last_name: foundUser.last_name,
       description: req.body.description,
       date: currentDate,
-      time: currentTime,
+      time: currentTime
     }
     var db = mongoose.connection;
     const results = await db.collection("comments").insertOne(data);
-    console.log(results);
+    console.log("comments data:"+data.description);
     const updatedPost = await Posts.findByIdAndUpdate(postId, { comments: CountComments }, {
       new: true, // Return the updated document
+
     });
     if (!updatedPost) {
       return res.status(404).json({ message: "post not found" });
     }
     console.log(foundPost);
-    return res.status(200).json({ message: 'Comments updated successfully', post: foundPost });
+    return res.status(200).json({ message: 'Comments updated successfully', post: results });
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -1033,28 +1033,30 @@ app.get('/get_likes/:postId', async (req, res) => {
 // *********************************** //
 
 //----------------- Did it API -----------------
-app.post('/did_it/:postId', async (req, res) => {
-  console.log("inside did it Api");
+app.post('/did_its/:postId', async (req, res) => {
+  console.log("did it");
   const post_id = req.params.postId;
-  console.log(post_id);
+  const sessionUserId = session.user_id;
   try {
     const foundPost = await Posts.findById(post_id);
 
     if (!foundPost) {
       return res.status(404).json({ error: 'Post not found' });
     }
-    console.log("before foundPost");
-    const foundDid = await did_it.findOne({ post_id: post_id, user_id: session.user_id });
+
+    const foundDid = await did_it.findOne({ post_id: post_id, user_id: sessionUserId});
     let updateDid;
     console.log("foundDid");
     console.log(foundDid);
 
     if (foundDid) {
       updateDid = foundPost.did - 1;
+      console.log("inside delete did");
       await foundDid.deleteOne();
-    } else {
+    }
+    else {
       updateDid = foundPost.did + 1;
-      const foundUser = await Users.findById(session.user_id);
+      const foundUser = await Users.findById(sessionUserId);
 
       if (!foundUser) {
         return res.status(404).json({ error: 'User not found' });
@@ -1062,13 +1064,13 @@ app.post('/did_it/:postId', async (req, res) => {
 
       const did_data = {
         post_id: post_id,
-        user_id: session.user_id,
+        user_id: sessionUserId,
         first_name: foundUser.first_name,
         last_name: foundUser.last_name
       }
-
       const db = mongoose.connection;
-      const results = await db.collection("did_it").insertOne(did_data);
+      const results = await db.collection('did_its').insertOne(did_data);
+      console.log(results);
     }
 
     const data = {
@@ -1083,15 +1085,32 @@ app.post('/did_it/:postId', async (req, res) => {
       return res.status(404).json({ message: "Can't update" });
     }
 
-    return res.status(200).json({ message: 'Did it updated successfully', post: updatedPost, did: foundDid });
+    return res.status(200).json({ message: 'Did its updated successfully', post: updatedPost, did: foundDid });
   } catch (error) {
     console.error(error); // log the error
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+//----------------- Get Did it By Post ID -----------------
+app.get('/get_did_its/:postId', async (req, res) => {
+  const post_id = req.params.postId;
+  try {
+    const foundDid = await did_it.find({ post_id: post_id, user_id: session.user_id });
+    console.log(post_id);
+    console.log(session.user_id);
+    console.log(foundDid);
 
-
+    if (foundDid && foundDid.length > 0) {
+      return res.status(200).json({ message: foundDid });
+    } else {
+      return res.status(404).json({ message: 'No matching records found' });
+    }
+  } catch (error) {
+    console.error(error); // Log the specific error for debugging purposes
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // ---------- Connect to DB ----------
 mongoose
