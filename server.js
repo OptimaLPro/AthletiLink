@@ -13,6 +13,10 @@ const Logs = require("./models/logs");
 const Likes = require("./models/likes");
 const did_it = require("./models/did_it");
 
+const now = new Date();
+const currentDate = now.toLocaleDateString(); // Get current date
+const currentTime = now.toLocaleTimeString(); // Get current time
+
 app.use(express.static('assets'));
 const port = 5500;
 
@@ -714,10 +718,6 @@ app.get("/group_status/:group_name", async (req, res) => {
 // ********** Comments Model  ********** //
 // *********************************** //
 //----------- Add Comment API -------------
-const now = new Date();
-const currentDate = now.toLocaleDateString(); // Get current date
-const currentTime = now.toLocaleTimeString(); // Get current time
-
 app.post('/add_comment/:postId', async (req, res) => {
   const postId = req.params.postId;
   const sessionUserId = session.user_id;
@@ -739,7 +739,7 @@ app.post('/add_comment/:postId', async (req, res) => {
     data = {
       post_id: postId,
       user_id: sessionUserId,
-      first_name: foundUser.firstName,
+      first_name: foundUser.first_name,
       last_name: foundUser.last_name,
       description: req.body.description,
       date: currentDate,
