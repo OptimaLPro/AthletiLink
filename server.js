@@ -504,6 +504,8 @@ app.post("/create_post", async (req, res) => {
 
     var data = {
       user_id: session.user_id,
+      created: currentDate,
+      type: "event",
       title: req.body.title,
       pic: req.body.profilePictureUrl,
       host: user.first_name + " " + user.last_name,
@@ -769,7 +771,8 @@ app.post('/add_comment/:postId', async (req, res) => {
     }
     var db = mongoose.connection;
     const results = await db.collection("comments").insertOne(data);
-    console.log("comments data:"+data.description);
+    console.log("comments data:" + data.description);
+    console.log(results);
     const updatedPost = await Posts.findByIdAndUpdate(postId, { comments: CountComments }, {
       new: true, // Return the updated document
 
@@ -777,8 +780,8 @@ app.post('/add_comment/:postId', async (req, res) => {
     if (!updatedPost) {
       return res.status(404).json({ message: "post not found" });
     }
-    console.log(foundPost);
-    return res.status(200).json({ message: 'Comments updated successfully', post: results });
+    console.log(data);
+    return res.status(200).json({ message: 'Comments updated successfully', comment: data, comment_id: results.insertedId });
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -1036,7 +1039,7 @@ app.post('/did_its/:postId', async (req, res) => {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    const foundDid = await did_it.findOne({ post_id: post_id, user_id: sessionUserId});
+    const foundDid = await did_it.findOne({ post_id: post_id, user_id: sessionUserId });
     let updateDid;
     console.log("foundDid");
     console.log(foundDid);
