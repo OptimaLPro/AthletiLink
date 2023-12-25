@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // console.log("after sort:" + all_posts)
 
         var postsContainer = document.getElementById("section");
-        var counter = 1;
+        // var counter = 1;
         all_posts.forEach(function (post) {
             if (post.status == "pending") {
                 return;
@@ -276,15 +276,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         onclick="toggleDidIt('${post._id}')" id="didItButton${post._id}"">I Did It!</button></div>
                         <div class="col-sm-4 text-center"><button class="btn btn-info btn-sm"
                                 data-toggle="collapse"
-                                data-target="#collapseComments${counter}">Comments</button></div>
+                                data-target="#collapseComments${post._id}">Comments</button></div>
                     </div>
                     `;
 
             var collapseElem = document.createElement("div");
             collapseElem.className = "collapse mt-3";
-            collapseElem.id = "collapseComments" + counter;
+            collapseElem.id = "collapseComments" + post._id;
             var accordionElem = document.createElement("div");
-            accordionElem.id = "accordionComments" + counter;
+            accordionElem.id = "accordionComments" + post._id;
             accordionElem.style = "margin-bottom: 70px";
             var commentsApiUrl = "http://localhost:5500/comments/" + post._id;
             fetch(commentsApiUrl)
@@ -342,7 +342,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         var submitButton = document.getElementById(`submitComment${post._id}`);
                         submitButton.addEventListener('click', function () {
-                            addComment(post._id, counter); // Call addComment function when the submit button is clicked
+                            // console.log("ORIGINAL the counter  is: " + counter)
+                            addComment(post._id); // Call addComment function when the submit button is clicked
                         });
                     }
                 })
@@ -383,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Append the card to the container
             postsContainer.appendChild(cardDiv);
 
-            counter++;
+            // counter++;
         });
 
         // setTimeout(function () {
@@ -408,9 +409,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function addComment(post_id, counter) {
-        console.log("The Counter: " + counter)
-        var commentInput = document.getElementById(`addComment${counter}`);
+    function addComment(post_id) {
+        var commentInput = document.getElementById(`addComment${post_id}`);
         var userComment = commentInput.value.trim(); // Get the comment input by the user
 
         if (userComment !== '') {
@@ -453,14 +453,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     function appendNewCommentToUI(comment, comment_id, post_id) {
-        // Find the comments section for the specific post
         var commentsContainer = document.getElementById(`accordionComments${post_id}`);
         if (commentsContainer) {
-            // Create a new comment card
             var card_comment = document.createElement("div");
             card_comment.className = "card";
 
-            // Add the delete icon for the comment
             var deleteIconComment = document.createElement("button");
             deleteIconComment.className = "btn btn-danger ml-auto mt-2 mr-2 deleteIcon";
             deleteIconComment.style.display = admin === "master" ? "inline" : "none";
@@ -469,23 +466,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 deleteComment(comment_id);
             });
 
-            // Set the inner HTML of the comment card
             card_comment.innerHTML = `
                 <div class="card-body">
                     <h6 class="card-title font-weight-bold">${comment.first_name} ${comment.last_name} <small>${comment.date}</small></h6>
                     <p class="card-text">${comment.description}</p>
                 </div>
             `;
-
-            // Append the delete icon to the comment card
             card_comment.appendChild(deleteIconComment);
 
-            // Append the new comment card to the comments container
-            commentsContainer.appendChild(card_comment);
+            // Find the comment input card to insert the new comment before it
+            var commentInputCard = document.querySelector(`#accordionComments${post_id} > .card:last-child`);
+            if (commentInputCard) {
+                commentsContainer.insertBefore(card_comment, commentInputCard);
+            } else {
+                // If no comment input card is found, append at the end (fallback)
+                commentsContainer.appendChild(card_comment);
+            }
         } else {
             console.error('Comments container not found for post_id:', post_id);
         }
     }
+
 
 
     function deleteComment(comment_id, all_posts) {
