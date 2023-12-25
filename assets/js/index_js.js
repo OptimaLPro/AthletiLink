@@ -258,15 +258,15 @@ document.addEventListener("DOMContentLoaded", function () {
             var cardLables = document.createElement("div");
             cardLables.className = "card-buttons";
             cardLables.innerHTML = `
-                    <div class="row justify-content-center" style="margin-bottom: 4px;">
+                    <div class="row justify-content-center">
                         <div class="col-sm-4 text-center font-weight-bold">
-                            <span id="likeCount1${post._id}">${post.likes}</span>
+                            <span id="likeCount${post._id}">${post.likes}</span>
                         </div>
                         <div class="col-sm-4 text-center font-weight-bold">
-                            <span id="didItCount1${post._id}">${post.did}</span>
+                            <span id="didItCount${post._id}">${post.did}</span>
                         </div>
                         <div class="col-sm-4 text-center font-weight-bold">
-                            <span id="commentsCount1">${post.comments}</span>
+                            <span id="commentsCount${post._id}">${post.comments}</span>
                         </div>
                     </div>
                     <div class="row">
@@ -320,6 +320,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         // Create comment card
                         var card_comment = document.createElement("div");
                         card_comment.className = "card";
+                        card_comment.style.border = "none"; // Add this line to remove the border
+
 
                         // <div class="card-body" style="display: flex; align-items: center;">
                         //     <div class="form-group" style="display: flex; width: 100%;">
@@ -330,13 +332,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         card_comment.innerHTML = `
     
-                        <div class="card-body" style="display: flex; align-items: center;">
+                        <div class="card-body card-body-submit" style="display: flex; align-items: center;">
                             <div class="form-group" style="display: flex; width: 100%;">
-                                <input type="text" class="form-control" id="addComment${post._id}" placeholder="Add a comment..." style="flex-grow: 1; padding-right: 30px; border-radius: 20px; position: relative;">
-                                <i class="fa fa-paper-plane" aria-hidden="true" id="submitComment${post._id}" style="position: absolute; right: 10px; top: 10px; cursor: pointer;"></i>
+                                <input type="text" class="form-control" id="addComment${post._id}" placeholder="Add a comment..." style="flex-grow: 1; padding-right: 30px; border-radius: 20px; position: relative; box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);">
+                                <i class="fa fa-paper-plane" aria-hidden="true" id="submitComment${post._id}" style="position: absolute;right: 10px;top: 10px;cursor: pointer;margin-top: 1.3%;margin-right: 2%;"></i>
                             </div>
                         </div>
                         `;
+
+                        // var inputField = document.getElementById(`addComment${post._id}`);
+                        // inputField.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)"; // Adjust values as needed
+
                         collapseElem.appendChild(accordionElem);
                         accordionElem.appendChild(card_comment);
 
@@ -344,6 +350,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         submitButton.addEventListener('click', function () {
                             // console.log("ORIGINAL the counter  is: " + counter)
                             addComment(post._id); // Call addComment function when the submit button is clicked
+                        });
+
+                        document.getElementById(`addComment${post._id}`).addEventListener('keypress', function (e) {
+                            console.log("B4 Enter pressed");
+                            if (e.key === 'Enter') {
+                                console.log("Enter pressed");
+                                addComment(post._id);
+                            }
                         });
                     }
                 })
@@ -458,6 +472,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var card_comment = document.createElement("div");
             card_comment.className = "card";
 
+
             var deleteIconComment = document.createElement("button");
             deleteIconComment.className = "btn btn-danger ml-auto mt-2 mr-2 deleteIcon";
             deleteIconComment.style.display = admin === "master" ? "inline" : "none";
@@ -482,12 +497,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 // If no comment input card is found, append at the end (fallback)
                 commentsContainer.appendChild(card_comment);
             }
+
+            var commentCountElement = document.getElementById(`commentsCount${post_id}`);
+            var commentCount = parseInt(commentCountElement.textContent);
+            console.log("commentCount" + commentCount);
+            commentCountElement.textContent = commentCount + 1;
+            console.log("commentCount" + commentCount);
         } else {
             console.error('Comments container not found for post_id:', post_id);
         }
     }
-
-
 
     function deleteComment(comment_id, all_posts) {
         $('#deletePostModal').modal('show');
@@ -519,7 +538,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     var updatedPost = data.post;
                     console.log(updatedPost);
                     var likeButton = document.getElementById(`likeButton${postId}`);
-                    var likeCountElement = document.getElementById(`likeCount1${postId}`);
+                    var likeCountElement = document.getElementById(`likeCount${postId}`);
                     // Update the button text based on whether the post is liked or not
                     if (likeButton.textContent === 'Unlike') {
                         // Update like count in UI
@@ -553,7 +572,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     var updatedPost = data.post;
                     console.log(updatedPost);
                     var didItButton = document.getElementById(`didItButton${postId}`);
-                    var didItCountElement = document.getElementById(`didItCount1${postId}`);
+                    var didItCountElement = document.getElementById(`didItCount${postId}`);
                     // Update the button text based on whether the post is liked or not
                     if (didItButton.textContent === "Not yet...") {
                         // Update like count in UI

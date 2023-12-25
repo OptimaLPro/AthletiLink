@@ -137,10 +137,16 @@ body {
   /* margin-bottom: 27px; */
 }
 
+.card-body-submit {
+  border: 0px;
+  
+}
+
 .card-buttons {
   position: absolute;
   bottom: 10px;
   left: 10px;
+  width: 300px;
 }
 
 #groups-sidebar,
