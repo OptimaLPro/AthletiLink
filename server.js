@@ -461,22 +461,14 @@ app.get("/count_user_groups", async (req, res) => {
 // ---------- Get All Posts ----------
 app.get("/posts", async (req, res) => {
   try {
-    // Example: Retrieve user's groups from the query parameters
-    // You might get this information differently, depending on your setup
     let userGroups = req.query.groups;
     var posts = {};
     if (userGroups) {
-      // Assuming userGroups is passed as a JSON string
-      console.log("userGroups passed");
       userGroups = JSON.parse(userGroups);
       posts = await Posts.find({ group_name: { $in: userGroups } });
     } else {
-      console.log("userGroups not passed");
-      // Default to an empty array if no groups are specified
       posts = await Posts.find({});
     }
-
-    // Modify the query to filter based on the user's groups
 
     res.status(200).json({ posts });
   } catch (error) {

@@ -5,19 +5,6 @@ function redirectToCreatePost() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    fetch('http://localhost:5500/get_pendings')
-        .then(response => response.json())
-        .then(data => {
-            const pendingCount = data.pending_posts_count; // Adjust according to your API response
-            if (pendingCount === 0) {
-                document.getElementById('post_badge').style.display = "none";
-            }
-            console.log("pending count: " + pendingCount);
-            document.getElementById('post_badge').textContent = pendingCount;
-        })
-        .catch(error => console.error('Error:', error));
-    var user_groups = [];
-
     var adminApiUrl = "http://localhost:5500/user_session";
     fetch(adminApiUrl)
         .then((response) => response.json())
@@ -39,6 +26,18 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch((error) => {
             console.error("Error fetching data from MongoDB:", error);
         });
+
+    fetch('http://localhost:5500/get_pendings')
+        .then(response => response.json())
+        .then(data => {
+            const pendingCount = data.pending_posts_count; // Adjust according to your API response
+            if (pendingCount === 0) {
+                document.getElementById('post_badge').style.display = "none";
+            }
+            document.getElementById('post_badge').textContent = pendingCount;
+        })
+        .catch(error => console.error('Error:', error));
+    var user_groups = [];
 
     var apiUrl = "http://localhost:5500/user_groups";
     fetch(apiUrl)
@@ -83,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(userDetailsApiUrl)
         .then((response) => response.json())
         .then((data) => {
-            console.log(data);
             var profile_pic = data.users.profile_pic;
             var user_first_name = data.users.first_name;
             var user_last_name = data.users.last_name;
@@ -136,21 +134,23 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     function fetchingPosts(userGroupCount = 1) {
-        console.log("userGroupCount: " + userGroupCount);
+        console.log("Inside fetchingPosts")
         updateUIForNewUser(userGroupCount)
 
         var user_groups_list = user_groups.map(function (group) {
             return group.group;
         });
 
-        console.log("user_groups_list: " + user_groups_list);
-
         if (userGroupCount != 0) {
             var postsApiUrl = `http://localhost:5500/posts?groups=${encodeURIComponent(JSON.stringify(user_groups_list))}`;
             fetch(postsApiUrl)
                 .then((response) => response.json())
                 .then((posts) => {
+                    console.log("API success")
                     var all_posts = posts.posts;
+                    if (all_posts.length === 0) {
+                        fetchingPosts();
+                    }
                     getPostsAndComments(all_posts);
                 })
                 .catch((error) => {
@@ -161,7 +161,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateUIForNewUser(userGroupCount) {
         const noGroupsContent = document.getElementById('noGroupsContent');
-        console.log("userGroupCount INSIDE UPDATEUI: " + userGroupCount);
 
         if (userGroupCount == 0) {
             console.log('User has no groups');
@@ -174,6 +173,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Render the posts and comments
 function getPostsAndComments(all_posts) {
+    console.log("Inside getPostsAndComments")
+    console.log(all_posts)
+
+    function parseDate(dateString) {
+        console.log("DATE STR: " + dateString)
+        var parts = dateString.split("/");
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+
+    // Sort the posts by date
+    all_posts.sort((a, b) => {
+        let dateA = parseDate(a.created);
+        let dateB = parseDate(b.created);
+        
+        return dateA - dateB; // Sort in ascending order
+    });
+
+    console.log("after sort:" + all_posts)
+
     var postsContainer = document.getElementById("section");
     var counter = 1;
     all_posts.forEach(function (post) {
@@ -269,7 +287,6 @@ function getPostsAndComments(all_posts) {
         var accordionElem = document.createElement("div");
         accordionElem.id = "accordionComments" + counter;
         accordionElem.style = "margin-bottom: 70px";
-
         var commentsApiUrl = "http://localhost:5500/comments/" + post._id;
         fetch(commentsApiUrl)
             .then((response) => response.json())
@@ -304,11 +321,20 @@ function getPostsAndComments(all_posts) {
                     // Create comment card
                     var card_comment = document.createElement("div");
                     card_comment.className = "card";
+
+                    // <div class="card-body" style="display: flex; align-items: center;">
+                    //     <div class="form-group" style="display: flex; width: 100%;">
+                    //         <input type="text" class="card-title form-control" id="addComment${post._id}" style="flex-grow: 1; margin-right: 10px; height: 38px;">
+                    //         <button type="button" class="btn btn-primary" id="submitComment${post._id}" style="height: 38px;">Submit</button>
+                    //     </div>
+                    // </div>
+                    
                     card_comment.innerHTML = `
+
                     <div class="card-body" style="display: flex; align-items: center;">
                         <div class="form-group" style="display: flex; width: 100%;">
-                            <input type="text" class="card-title form-control" id="addComment${post._id}" style="flex-grow: 1; margin-right: 10px; height: 38px;">
-                            <button type="button" class="btn btn-primary" id="submitComment${post._id}" style="height: 38px;">Submit</button>
+                            <input type="text" class="form-control" id="addComment${post._id}" placeholder="Add a comment..." style="flex-grow: 1; padding-right: 30px; border-radius: 20px; position: relative;">
+                            <i class="fa fa-paper-plane" aria-hidden="true" id="submitComment${post._id}" style="position: absolute; right: 10px; top: 10px; cursor: pointer;"></i>
                         </div>
                     </div>
                     `;
@@ -325,7 +351,7 @@ function getPostsAndComments(all_posts) {
         fetch(likeStatusApiUrl)
             .then((response) => response.json())
             .then((like_status) => {
-                console.log("like_status " + like_status);
+                // console.log("like_status " + like_status);
                 const likeButton = document.getElementById(`likeButton${post._id}`);
                 if (like_status == "Liked") {
                     likeButton.textContent = 'Unlike';
@@ -355,6 +381,14 @@ function getPostsAndComments(all_posts) {
 
         counter++;
     });
+
+    // setTimeout(function () {
+    //     var cards = document.getElementsByClassName("card");
+    //     if (cards.length === 0) {
+    //         console.log("No cards found. Retrying...");
+    //         fetchingPosts();
+    //     }
+    // }, 3000);
 }
 
 function deletePost(post_id, all_posts) {
