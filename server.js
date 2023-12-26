@@ -11,7 +11,7 @@ const Comments = require("./models/comments");
 const Groups = require("./models/groups");
 const Logs = require("./models/logs");
 const Likes = require("./models/likes");
-const did_it = require("./models/did_it");
+const Did_it = require("./models/did_it");
 
 const now = new Date();
 const currentDate = now.toLocaleDateString(); // Get current date
@@ -950,10 +950,10 @@ app.post('/like_posts/:postId', async (req, res) => {
         first_name: foundUser.first_name,
         last_name: foundUser.last_name
       }
-      console.log(likes_data);
+      // console.log(likes_data);
       const db = mongoose.connection;
       const results = await db.collection("likes").insertOne(likes_data);
-      console.log(results);
+      // console.log(results);
     }
 
     const data = {
@@ -980,48 +980,21 @@ app.post('/like_posts/:postId', async (req, res) => {
 app.get('/get_likes/:postId', async (req, res) => {
   const post_id = req.params.postId;
   try {
-    const foundPost = await Likes.find({ post_id: post_id, user_id: session.user_id });
+    const foundPost = await Likes.findOne({ post_id: post_id, user_id: session.user_id });
+
+    if (foundPost == [] || foundPost == null || foundPost == undefined)
+
+      return res.status(200).json({ message: 'Unliked' });
 
     if (foundPost) {
-      return res.status(200).json({ message: 'Unliked' });
+      return res.status(200).json({ message: 'Liked' });
     }
 
-    return res.status(200).json({ message: 'Liked' });
+
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-//----------- add like info -------------
-// app.post('/add_like/:postId', async (req, res) => {
-//   const postId = req.params.postId;
-
-//   try {
-//     const foundPost = await likes.findById(postId);
-
-
-//     if (!foundPost) {
-//       return res.status(404).json({ error: 'Post not found' });
-//     }
-
-//     newLikes = foundPost.likes + 1;
-//     data = {
-//       post_id: postId,
-//       user_id: session.user_id
-//     }
-//     var db = mongoose.connection;
-//     const updatedPost = await likes.findByIdAndUpdate(postId, data, {
-//       new: true, // Return the updated document
-//     });
-//     if (!updatedPost) {
-//       return res.status(404).json({ message: "post not found" });
-//     }
-//     console.log(foundPost); 
-//     return res.status(200).json({ message: 'Likes updated successfully', post: foundPost });
-//   } catch (error) {
-//     return res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
 
 // *********************************** //
 // ********** Did it Model  ********** //
@@ -1039,7 +1012,7 @@ app.post('/did_its/:postId', async (req, res) => {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    const foundDid = await did_it.findOne({ post_id: post_id, user_id: sessionUserId });
+    const foundDid = await Did_it.findOne({ post_id: post_id, user_id: sessionUserId });
     let updateDid;
     console.log("foundDid");
     console.log(foundDid);
@@ -1091,18 +1064,18 @@ app.post('/did_its/:postId', async (req, res) => {
 app.get('/get_did_its/:postId', async (req, res) => {
   const post_id = req.params.postId;
   try {
-    const foundDid = await did_it.find({ post_id: post_id, user_id: session.user_id });
-    console.log(post_id);
-    console.log(session.user_id);
-    console.log(foundDid);
+    const foundPost = await Did_it.findOne({ post_id: post_id, user_id: session.user_id });
 
-    if (foundDid && foundDid.length > 0) {
-      return res.status(200).json({ message: foundDid });
-    } else {
-      return res.status(404).json({ message: 'No matching records found' });
+    if (foundPost == [] || foundPost == null || foundPost == undefined)
+
+      return res.status(200).json({ message: 'Not yet...' });
+
+    if (foundPost) {
+      return res.status(200).json({ message: 'I Did It!' });
     }
+
+
   } catch (error) {
-    console.error(error); // Log the specific error for debugging purposes
     return res.status(500).json({ error: 'Internal server error' });
   }
 });

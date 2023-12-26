@@ -53,16 +53,14 @@
 
                 <!-- Admin and Create Post Buttons -->
                 <div class="col-md-4 d-flex align-items-center justify-content-end">
-                    <button type="submit" class="btn-sm btn-light admin" style="display:none;">Admin <span
+                    <button type="submit" class="btn-sm btn-light admin" style="display:none; margin-right: 7px;">Admin <span
                             id="post_badge" class="badge badge-danger"
                             style="font-size: small; margin-left: 2px;"></span></button>
                     <button type="submit" class="btn-sm btn-light" onclick="redirectToCreatePost()"
-                        style="outline: none;">Create Post</button>
-                    <!-- Notification and Settings Buttons -->
-                    <button type="button" class="btn btn-primary-outline dropdown-toggle effect-fadeIn"
-                        data-toggle="dropdown">
-                        <i class="fa fa-bell whitecolor icon" aria-hidden="true"></i>
-                    </button>
+                        style="outline: none; margin-right: 8px;">Create Post</button>
+                    <!-- Search Button -->
+                    <i class="fa fa-search whitecolor icon btn btn-primary-outline effect-fadeIn search-icon" id="searchIcon"
+                        aria-hidden="true"></i>
                     <button type="button" class="btn btn-primary-outline dropdown-toggle effect-fadeIn"
                         data-toggle="dropdown">
                         <i class="fa fa-cog whitecolor"></i>
@@ -78,6 +76,30 @@
                     </div>
                 </div>
             </header>
+            <div id="searchContainer" style="width: 100%; display: none; background: none; margin-top: 15px;">
+                <div class="search-container input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false" value="name" id="dropdownButton">By Name <i
+                                class="fa fa-caret-down" aria-hidden="true"></i></button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" value="name">By Name</a>
+                            <a class="dropdown-item" value="_id">By ID</a>
+                            <a class="dropdown-item" value="email" href="#">By Email</a>
+                            <a class="dropdown-item" value="secret_phrase" href="#">By Secret Phrase</a>
+                            <a class="dropdown-item" value="password" href="#">By Password</a>
+                            <a class="dropdown-item" value="date" href="#">By Birthdate</a>
+                            <a class="dropdown-item" value="admin" href="#">By Admin Status</a>
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" id="searchText" placeholder="Search everything...">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="clearSearch">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
             <section id="section">
                 <!-- This div will be shown only if the user has no groups -->
                 <div id="noGroupsContent" style="height: 100%; display: none;">
@@ -195,5 +217,29 @@
         .then(response => response.json())
         .then(data => console.log(data))
         .catch(err => console.log(err))
+
+    document.getElementById('searchIcon').addEventListener('click', function () {
+        var searchContainer = document.getElementById('searchContainer');
+        if (searchContainer.style.display === 'none' || !searchContainer.style.display) {
+            searchContainer.style.display = 'block';
+            searchContainer.style.animation = 'slideDownAndUp 0.5s ease forwards';
+        } else {
+            searchContainer.style.display = 'none';
+        }
+    });
+
+    document.getElementById('searchButton').addEventListener('click', function () {
+        var searchTerm = document.getElementById('searchInput').value.trim();
+        if (searchTerm) {
+            searchPosts(searchTerm);
+        }
+    });
+
+    function searchPosts(searchTerm) {
+        // Implement your search logic here
+        // For example, you can fetch posts that match the search term and display them
+        console.log('Searching for:', searchTerm);
+        // Add code to fetch and display posts
+    }
 
 </script>

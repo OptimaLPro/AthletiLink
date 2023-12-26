@@ -21,7 +21,7 @@ const didSchema = mongoose.Schema(
     }
 )
 
-const did_it = mongoose.model('did_its',didSchema);
+const Did_it = mongoose.model('did_its',didSchema);
 
-module.exports = did_it;
+module.exports = Did_it;
 

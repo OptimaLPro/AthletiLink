@@ -370,13 +370,31 @@ document.addEventListener("DOMContentLoaded", function () {
             fetch(likeStatusApiUrl)
                 .then((response) => response.json())
                 .then((like_status) => {
-                    // console.log("like_status " + like_status);
+                    // console.log("like_status " + like_status.message + " for post " + post._id);
                     const likeButton = document.getElementById(`likeButton${post._id}`);
-                    if (like_status == "Liked") {
+                    if (like_status.message == "Liked") {
                         likeButton.textContent = 'Unlike';
                     }
-                    else if (like_status == "Unliked") {
+                    else if (like_status.message == "Unliked") {
                         likeButton.textContent = 'Like';
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching like status:", error);
+                });
+
+            // Check of post is did it or not yet
+            var didsStatusApiUrl = "http://localhost:5500/get_did_its/" + post._id;
+            fetch(didsStatusApiUrl)
+                .then((response) => response.json())
+                .then((did_status) => {
+                    // console.log("did_status " + did_status.message + " for post " + post._id);
+                    const didButton = document.getElementById(`didItButton${post._id}`);
+                    if (did_status.message == "Not yet...") {
+                        didButton.textContent = 'I Did It!';
+                    }
+                    else if (did_status.message == "I Did It!") {
+                        didButton.textContent = 'Not yet...';
                     }
                 })
                 .catch((error) => {
@@ -399,6 +417,8 @@ document.addEventListener("DOMContentLoaded", function () {
             postsContainer.appendChild(cardDiv);
 
             // counter++;
+
+
         });
 
         // setTimeout(function () {
@@ -521,74 +541,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function toggleLike(postId) {
-        // URL for the like_posts API endpoint
 
-        var likePostsApiUrl = `http://localhost:5500/like_posts/` + postId;
-
-        // Make a POST request to the like_posts API
-        fetch(likePostsApiUrl, {
-            method: 'POST',
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Check the response and update the UI accordingly
-                if (data && data.post) {
-                    console.log(data);
-                    var updatedPost = data.post;
-                    console.log(updatedPost);
-                    var likeButton = document.getElementById(`likeButton${postId}`);
-                    var likeCountElement = document.getElementById(`likeCount${postId}`);
-                    // Update the button text based on whether the post is liked or not
-                    if (likeButton.textContent === 'Unlike') {
-                        // Update like count in UI
-                        likeCountElement.textContent = updatedPost.likes;
-                        likeButton.textContent = 'Like';
-                    } else {
-                        // Update like count in UI
-                        likeCountElement.textContent = updatedPost.likes;
-                        likeButton.textContent = 'Unlike';
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error toggling like:', error);
-            });
-    }
-
-    function toggleDidIt(postId) {
-        // URL for the like_posts API endpoint
-        var didItPostsApiUrl = `http://localhost:5500/did_its/` + postId;
-
-        // Make a POST request to the like_posts API
-        fetch(didItPostsApiUrl, {
-            method: 'POST',
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Check the response and update the UI accordingly
-                if (data && data.post) {
-                    console.log(data);
-                    var updatedPost = data.post;
-                    console.log(updatedPost);
-                    var didItButton = document.getElementById(`didItButton${postId}`);
-                    var didItCountElement = document.getElementById(`didItCount${postId}`);
-                    // Update the button text based on whether the post is liked or not
-                    if (didItButton.textContent === "Not yet...") {
-                        // Update like count in UI
-                        didItCountElement.textContent = updatedPost.did;
-                        didItButton.textContent = 'I Did It!';
-                    } else {
-                        // Update like count in UI
-                        didItCountElement.textContent = updatedPost.did;
-                        didItButton.textContent = "Not yet...";
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error toggling like:', error);
-            });
-    }
 
 
     function clearPosts() {
@@ -596,21 +549,92 @@ document.addEventListener("DOMContentLoaded", function () {
         postsContainer.innerHTML = ""; // Clear the content inside the section
     }
 
-    function signout() {
-        fetch('http://localhost:5500/signout', {
-            method: 'GET',
-        })
-            .then(response => {
-                if (response.ok) {
-                    window.location.href = 'welcome.html';
-                } else {
-                    console.error('Sign out failed:', response.statusText);
-                }
-            })
-            .catch(error => {
-                console.error('Sign out failed:', error);
-            });
-    }
+
 });
+
+function toggleLike(postId) {
+    // URL for the like_posts API endpoint
+
+    var likePostsApiUrl = `http://localhost:5500/like_posts/` + postId;
+
+    // Make a POST request to the like_posts API
+    fetch(likePostsApiUrl, {
+        method: 'POST',
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Check the response and update the UI accordingly
+            if (data && data.post) {
+                console.log(data);
+                var updatedPost = data.post;
+                console.log(updatedPost);
+                var likeButton = document.getElementById(`likeButton${postId}`);
+                var likeCountElement = document.getElementById(`likeCount${postId}`);
+                // Update the button text based on whether the post is liked or not
+                if (likeButton.textContent === 'Unlike') {
+                    // Update like count in UI
+                    likeCountElement.textContent = updatedPost.likes;
+                    likeButton.textContent = 'Like';
+                } else {
+                    // Update like count in UI
+                    likeCountElement.textContent = updatedPost.likes;
+                    likeButton.textContent = 'Unlike';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error toggling like:', error);
+        });
+}
+
+function toggleDidIt(postId) {
+    // URL for the like_posts API endpoint
+    var didItPostsApiUrl = `http://localhost:5500/did_its/` + postId;
+
+    // Make a POST request to the like_posts API
+    fetch(didItPostsApiUrl, {
+        method: 'POST',
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Check the response and update the UI accordingly
+            if (data && data.post) {
+                console.log(data);
+                var updatedPost = data.post;
+                console.log(updatedPost);
+                var didItButton = document.getElementById(`didItButton${postId}`);
+                var didItCountElement = document.getElementById(`didItCount${postId}`);
+                // Update the button text based on whether the post is liked or not
+                if (didItButton.textContent === "Not yet...") {
+                    // Update like count in UI
+                    didItCountElement.textContent = updatedPost.did;
+                    didItButton.textContent = 'I Did It!';
+                } else {
+                    // Update like count in UI
+                    didItCountElement.textContent = updatedPost.did;
+                    didItButton.textContent = "Not yet...";
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error toggling like:', error);
+        });
+}
+
+function signout() {
+    fetch('http://localhost:5500/signout', {
+        method: 'GET',
+    })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = 'welcome.html';
+            } else {
+                console.error('Sign out failed:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('Sign out failed:', error);
+        });
+}
 
 // Render the posts and comments
