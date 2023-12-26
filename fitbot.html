@@ -1,0 +1,87 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .user {
+        color: blue;
+        text-align: left;
+    }
+
+    .bot {
+        color: green;
+        text-align: right;
+    }
+</style>
+
+<body>
+    <!-- Chat Input -->
+    <form id="chat-form">
+        <input type="text" id="chat-input" placeholder="Ask something...">
+        <button type="submit">Send</button>
+    </form>
+
+    <!-- Chat Display -->
+    <div id="chat-display" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+        <!-- Chat messages will be displayed here -->
+    </div>
+
+
+</body>
+
+</html>
+
+<script>
+    // Enhancing the client-side JavaScript
+    document.getElementById('chat-form').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevents the form from submitting traditionally
+        sendChatMessage();
+    });
+
+    async function sendChatMessage() {
+        const inputField = document.getElementById('chat-input');
+        const message = inputField.value.trim();
+
+        if (message) {
+            displayMessage('You: ' + message, 'user');
+            try {
+                const response = await fetch('http://localhost:5500/sendToOpenAI', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                if (data.reply) {
+                    displayMessage('Bot: ' + data.reply, 'bot');
+                }
+            } catch (error) {
+                displayMessage('Error: Could not reach the server.', 'bot');
+                console.error('Fetch error:', error);
+            }
+            inputField.value = ''; // Clear the input field
+        }
+    }
+
+    function displayMessage(message, sender) {
+        const chatDisplay = document.getElementById('chat-display');
+        const messageElement = document.createElement('p');
+        messageElement.textContent = message;
+        messageElement.className = sender;
+        chatDisplay.appendChild(messageElement);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+    }
+
+
+
+</script>

@@ -510,7 +510,7 @@ app.post("/create_post", async (req, res) => {
       pic: req.body.profilePictureUrl,
       host: user.first_name + " " + user.last_name,
       duration: req.body.duration,
-      lcoation: req.body.location,
+      location: req.body.location,
       description: req.body.description,
       likes: 0,
       did: 0,
@@ -1079,6 +1079,45 @@ app.get('/get_did_its/:postId', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// *********************************** //
+// ********** FitBot Model  ********** //
+// *********************************** //
+// Server-Side Node.js
+app.post('/sendToOpenAI', async (req, res) => {
+  const userMessage = req.body.message;
+  const apiKey = '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'; // Replace with your actual API key
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [{ "role": "user", "content": userMessage }],
+        temperature: 0.7
+      })
+    });
+
+    if (!response.ok) {
+      console.error(`OpenAI API error: Response status: ${response.status}`);
+      const errorDetails = await response.text();
+      console.error(`OpenAI API error details: ${errorDetails}`);
+      return res.status(500).json({ message: 'Error processing your request' });
+    }
+
+    const data = await response.json();
+    res.status(200).json({ reply: data.choices[0].text });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Error processing your request' });
+  }
+});
+
+
 
 // ---------- Connect to DB ----------
 mongoose

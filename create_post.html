@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="assets/css/styles.css" />
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5WBEiQ8kMwK1exenCukskr8HCiERvjT0&libraries=places"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="assets/js/image_upload.js"></script>
     <style>
         body {
@@ -147,9 +148,7 @@
             </div>
         </form>
     </div>
-
-    <div id="close-icon" class="position-fixed effect-fadeIn"
-        style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+    <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
         <a href="index.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-times fa-stack-1x fa-inverse"></i>
@@ -157,88 +156,111 @@
 
     </div>
 
-
-    <script>
-        var uploaded = false;
-        // Initialize datepicker
-        $(document).ready(function () {
-            $('#datepicker').datepicker({
-                format: 'dd/mm/yyyy',
-                autoclose: true
-            });
-
-            var input = document.getElementById('location');
-            var autocomplete = new google.maps.places.Autocomplete(input);
-
-            autocomplete.addListener('place_changed', function () {
-                var place = autocomplete.getPlace();
-                if (!place.geometry) {
-                    // User entered the name of a Place that was not suggested and pressed the Enter key, or the Place Details request failed.
-                    console.log("No details available for input: '" + place.name + "'");
-                    return;
-                }
-                // Update the input value with the place name or address
-                input.value = place.name || place.formatted_address;
-            });
-
-            $("form").submit(function (e) {
-                e.preventDefault();
-                if (uploaded) {
-                    $('form')[0].submit();
-                }
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('http://localhost:5500/user_groups/')
-                .then(response => response.json())
-                .then(data => {
-                    const allGroups = data.user_groups_res; // Corrected variable name
-                    const groupDropdown = document.getElementById('group');
-                    allGroups.forEach(function (group) {
-                        const option = document.createElement('option');
-                        option.value = group.group; // Use 'group' instead of data.user_groups_res.group
-                        option.text = group.group; // Use 'group' instead of data.user_groups_res.group
-                        groupDropdown.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching groups:', error));
+    <div class="alert alert-danger fade show" id="locationAlert" role="alert"
+        style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;">
+        Invalid location. Please select a location from the suggestions.
+    </div>
 
 
-            var timeDropdown = document.getElementById('time');
-
-            // Loop through all 24 hours and add options with 15-minute intervals
-            for (var hour = 0; hour < 24; hour++) {
-                for (var minute = 0; minute < 60; minute += 15) {
-                    // Format the hour and minute to HH:MM format
-                    var formattedHour = hour.toString().padStart(2, '0');
-                    var formattedMinute = minute.toString().padStart(2, '0');
-
-                    // Create an option element
-                    var option = document.createElement('option');
-                    option.value = formattedHour + ':' + formattedMinute;
-                    option.text = formattedHour + ':' + formattedMinute;
-
-                    // Append the option to the dropdown
-                    timeDropdown.appendChild(option);
-                }
-            }
-            timeDropdown.value = "18:00";
-        });
-
-
-        // function getCurrentDateTime() {
-        //   const now = new Date();
-        //   const currentDate = now.toLocaleDateString(); // Get current date
-        //   const currentTime = now.toLocaleTimeString(); // Get current time
-
-        //   return `Current Date: ${currentDate}, Current Time: ${currentTime}`;
-        // }
-
-        // // Call the function to get the current date and time
-        // const currentDateTime = getCurrentDateTime();
-        // console.log(currentDateTime);
-    </script>
 </body>
 
 </html>
+
+<script>
+    var validLocationSelected = false; // Variable to track if a valid location is selected
+    var uploaded = false;
+    // Initialize datepicker
+    $(document).ready(function () {
+        $('#datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+    });
+
+    var input = document.getElementById('location');
+    var autocomplete = new google.maps.places.Autocomplete(input);
+    var locationAlert = $('#locationAlert');
+
+    autocomplete.addListener('place_changed', function () {
+        var place = autocomplete.getPlace();
+
+        if (!place.geometry) {
+            // No valid place selected
+            validLocationSelected = false;
+            showAlert(locationAlert); // Show the alert
+        } else {
+            // Valid place selected
+            validLocationSelected = true;
+            locationAlert.hide(); // Hide the alert
+            input.value = place.formatted_address;
+        }
+    });
+
+    $("form").submit(function (e) {
+        e.preventDefault();
+        if (validLocationSelected) {
+            if (uploaded) {
+                this.submit();
+            }
+        } else {
+            showAlert(locationAlert); // Show the alert
+        }
+    });
+
+    function showAlert(alertElement) {
+        alertElement.show(); // Show the alert
+        setTimeout(function () {
+            alertElement.fadeOut(); // Fade out the alert after 4 seconds
+        }, 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('http://localhost:5500/user_groups/')
+            .then(response => response.json())
+            .then(data => {
+                const allGroups = data.user_groups_res; // Corrected variable name
+                const groupDropdown = document.getElementById('group');
+                allGroups.forEach(function (group) {
+                    const option = document.createElement('option');
+                    option.value = group.group; // Use 'group' instead of data.user_groups_res.group
+                    option.text = group.group; // Use 'group' instead of data.user_groups_res.group
+                    groupDropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching groups:', error));
+
+
+        var timeDropdown = document.getElementById('time');
+
+        // Loop through all 24 hours and add options with 15-minute intervals
+        for (var hour = 0; hour < 24; hour++) {
+            for (var minute = 0; minute < 60; minute += 15) {
+                // Format the hour and minute to HH:MM format
+                var formattedHour = hour.toString().padStart(2, '0');
+                var formattedMinute = minute.toString().padStart(2, '0');
+
+                // Create an option element
+                var option = document.createElement('option');
+                option.value = formattedHour + ':' + formattedMinute;
+                option.text = formattedHour + ':' + formattedMinute;
+
+                // Append the option to the dropdown
+                timeDropdown.appendChild(option);
+            }
+        }
+        timeDropdown.value = "18:00";
+    });
+
+
+    // function getCurrentDateTime() {
+    //   const now = new Date();
+    //   const currentDate = now.toLocaleDateString(); // Get current date
+    //   const currentTime = now.toLocaleTimeString(); // Get current time
+
+    //   return `Current Date: ${currentDate}, Current Time: ${currentTime}`;
+    // }
+
+    // // Call the function to get the current date and time
+    // const currentDateTime = getCurrentDateTime();
+    // console.log(currentDateTime);
+</script>

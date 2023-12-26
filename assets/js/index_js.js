@@ -250,10 +250,27 @@ document.addEventListener("DOMContentLoaded", function () {
                         </span><span>${post.duration} min'</span>
                         <br>
                         <span class="font-weight-bold" style="margin-bottom: 100px;">Location:
-                        </span><span>${post.location}</span>
+                        </span><span id="locationSpan${post._id}" style="cursor: pointer; color: blue">${post.location}</span>
                     </div>
                     <p style="margin-bottom: 60px;">${post.description}</p>
                     `;
+
+            // Defer the attachment of event listener
+            setTimeout(function () {
+                var locationSpan = document.getElementById(`locationSpan${post._id}`);
+                if (locationSpan) {
+                    locationSpan.addEventListener('click', function () {
+                        openGoogleMaps(post.location);
+                    });
+                }
+            }, 0); 
+
+            // Add the function to open Google Maps
+            function openGoogleMaps(location) {
+                var encodedLocation = encodeURIComponent(location);
+                var googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedLocation}`;
+                window.open(googleMapsUrl, '_blank'); // Opens in a new tab
+            }
 
             var cardLables = document.createElement("div");
             cardLables.className = "card-buttons";
