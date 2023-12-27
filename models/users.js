@@ -28,7 +28,7 @@ const usersSchema = mongoose.Schema(
         },
         admin: {
             type: String,
-            required: [true, "please enter your admin status"]
+            required: [false, "please enter your admin status"]
         },
         secret_phrase: {
             type: String,

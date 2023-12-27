@@ -19,6 +19,7 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5WBEiQ8kMwK1exenCukskr8HCiERvjT0&libraries=places"></script>
+    <script src="assets/js/image_upload.js"></script>
     <style>
         body {
             font-family: "Roboto", sans-serif;
@@ -340,6 +341,25 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="profilePicture">Cover Picture</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="profilePicture" name="profilePicture"
+                                accept="image/*" onchange="fileChange()" required>
+                            <label class="custom-file-label" id="profilePictureLabel" for="profilePicture">Choose
+                                file</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="progress" style="margin-top: 10px; display: none;">
+                            <div class="progress-bar" role="progressbar" id="uploadProgressBar" style="width: 0%;"
+                                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="profilePictureUrl" name="profilePictureUrl">
+
+                    <div class="form-group">
                         <label for="status">Status</label>
                         <select id="status" name="status" class="form-control status-dropdown" required>
                             <option value="approved" class="status-approved">Approved</option>
@@ -404,10 +424,18 @@
 </body>
 
 <script>
+    var uploaded = false;
     $(document).ready(function () {
         $('#datepicker').datepicker({
             format: 'dd/mm/yyyy',
             autoclose: true
+        });
+
+        $("form").submit(function (e) {
+            e.preventDefault();
+            if (uploaded) {
+                this.submit();
+            }
         });
 
         var input = document.getElementById('location');
@@ -415,7 +443,7 @@
             strictBounds: true
         });
 
-        let posts;;
+        let posts;
         fetchPosts();
 
         fetch('http://localhost:5500/groups/')
@@ -588,6 +616,7 @@
             $("#groupName").val(postsToUpdate.group_name);
             $("#datepicker").val(postsToUpdate.date);
             $("#time").val(postsToUpdate.time);
+            $("#profilePictureUrl").val(postsToUpdate.pic);
             $("#status").val(postsToUpdate.status);
 
             $('#updatePostModal').modal('show');
@@ -607,6 +636,7 @@
                     did: $("#did").val(),
                     date: $("#datepicker").val(),
                     time: $("#time").val(),
+                    pic: $("#profilePictureUrl").val(),
                     status: $("#status").val(),
                 };
 

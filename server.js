@@ -159,6 +159,28 @@ app.get("/signout", async (req, res) => {
   }
 });
 
+// ---------- Password Reset ---------
+app.post("/reset_password", async (req, res) => {
+  try {
+    const { email, password, secret_phrase, date } = req.body;
+    console.log(req.body);
+
+    const user = await Users.findOne({ email, secret_phrase, date });
+
+    if (!user) {
+      return res.status(404).json({ message: "Invalid credentials" });
+    }
+
+    user.password = password;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // ********************************** //
 // ********** Users Model  ********** //
 // ********************************** //
@@ -289,7 +311,17 @@ app.post("/update_user/:user_id", async (req, res) => {
       admin: req.body.admin,
     };
 
+    console.log(req.body);
+    profile_pic_url = req.body.profilePictureUrl;
+
+    console.log(profile_pic_url);
+
+    if (req.body.profilePictureUrl != "") {
+      data.profile_pic = req.body.profilePictureUrl;
+    }
+
     const updatedFields = data;
+    console.log(updatedFields);
 
     const updatedUser = await Users.findByIdAndUpdate(user_id, updatedFields, {
       new: true,
@@ -298,6 +330,8 @@ app.post("/update_user/:user_id", async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
+
+
     createLog("User Update", `Updated: ${user_id}`, req, updatedUser);
     return res.status(200).json(updatedUser);
   } catch (error) {
@@ -554,7 +588,17 @@ app.post("/update_post/:post_id", async (req, res) => {
       status: req.body.status
     };
 
+    console.log(req.body);
+    cover_pic_url = req.body.pic;
+
+    console.log(cover_pic_url);
+
+    if (cover_pic_url != "") {
+      data.pic = cover_pic_url;
+    }
+
     const updatedFields = data;
+    console.log(updatedFields);
 
     const updatedPost = await Posts.findByIdAndUpdate(post_id, updatedFields, {
       new: true,
@@ -1087,6 +1131,7 @@ app.get('/get_did_its/:postId', async (req, res) => {
 app.post('/sendToOpenAI', async (req, res) => {
   const userMessage = req.body.message;
   const apiKey = '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'; // Replace with your actual API key
+  const fitBotContext = `FitBot is a versatile fitness advisor on the AthletiLink social media platform, designed to provide users with guidance on fitness, workouts, nutrition, and general wellness. FitBot avoids giving medical advice and encourages consulting health professionals for specific concerns. The tone is friendly and motivational, aligned with AthletiLink's supportive nature. Talk only on these subject, not on everything the user is saying writing. please use emojis to express emotions.`;
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -1097,7 +1142,10 @@ app.post('/sendToOpenAI', async (req, res) => {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        messages: [{ "role": "user", "content": userMessage }],
+        messages: [
+          { "role": "system", "content": fitBotContext },
+          { "role": "user", "content": userMessage }
+        ],
         temperature: 0.7
       })
     });
@@ -1110,7 +1158,8 @@ app.post('/sendToOpenAI', async (req, res) => {
     }
 
     const data = await response.json();
-    res.status(200).json({ reply: data.choices[0].text });
+    console.log(data.choices[0].message);
+    res.status(200).json({ reply: data.choices[0].message.content });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Error processing your request' });

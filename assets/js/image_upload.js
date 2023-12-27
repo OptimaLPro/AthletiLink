@@ -1,6 +1,13 @@
 function fileChange() {
     var fileName = $("#profilePicture").val().split("\\").pop();
+
+    // Truncate the filename if it's longer than 50 characters
+    if (fileName.length > 50) {
+        fileName = fileName.substring(0, 47) + '...';
+    }
+
     $("#profilePictureLabel").text(fileName);
+
     var file = document.getElementById('profilePicture');
     var form = new FormData();
     form.append("image", file.files[0]);
