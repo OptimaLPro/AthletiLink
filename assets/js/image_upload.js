@@ -1,7 +1,7 @@
 function fileChange() {
     var fileName = $("#profilePicture").val().split("\\").pop();
 
-    // Truncate the filename if it's longer than 50 characters
+    // if filename longer than 50 characters, replace the rest with '...'
     if (fileName.length > 50) {
         fileName = fileName.substring(0, 47) + '...';
     }
@@ -12,45 +12,97 @@ function fileChange() {
     var form = new FormData();
     form.append("image", file.files[0]);
 
-    var settings = {
-        "url": "https://api.imgbb.com/1/upload?key=7045717abf171aa1e4b75a833e125006",
-        "method": "POST",
-        "timeout": 0,
-        "processData": false,
-        "mimeType": "multipart/form-data",
-        "contentType": false,
-        "data": form,
-        "xhr": function () {
-            var xhr = new window.XMLHttpRequest();
-            xhr.upload.addEventListener("progress", function (evt) {
-                if (evt.lengthComputable) {
-                    var percentComplete = evt.loaded / evt.total;
-                    percentComplete = parseInt(percentComplete * 100);
+    fetch('http://localhost:5500/uploadImage')
+        .then(response => response.json())
+        .then(data => {
+            var apiKey = data.apiKey;
+            console.log(apiKey);
 
-                    // Update the progress bar
-                    $("#uploadProgressBar")
-                        .width(percentComplete + '%')
-                        .attr('aria-valuenow', percentComplete)
-                        .text(percentComplete < 100 ? percentComplete + '%' : 'Processing...');
+            var settings = {
+                "url": `https://api.imgbb.com/1/upload?key=${apiKey}`,
+                "method": "POST",
+                "timeout": 0,
+                "processData": false,
+                "mimeType": "multipart/form-data",
+                "contentType": false,
+                "data": form,
+                "xhr": function () {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function (evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            percentComplete = parseInt(percentComplete * 100);
+
+                            // Update the progress bar
+                            $("#uploadProgressBar")
+                                .width(percentComplete + '%')
+                                .attr('aria-valuenow', percentComplete)
+                                .text(percentComplete < 100 ? percentComplete + '%' : 'Processing...');
+                        }
+                    }, false);
+                    return xhr;
                 }
-            }, false);
-            return xhr;
-        }
-    }
+            }
 
-    $(".progress").show();
+            $(".progress").show();
 
-    $.ajax(settings).done(function (response) {
-        var response_json = JSON.parse(response);
-        console.log(response_json.data.url);
-        $("#profilePictureUrl").val(response_json.data.url);
-        // After the image is uploaded, submit the form with the image URL
-        uploaded = true;
-        $("#uploadProgressBar").width('0%').attr('aria-valuenow', 0).text('');
-        $(".progress").hide();
-    }).fail(function () {
-        // Handle failures here
-        $("#uploadProgressBar").width('0%').attr('aria-valuenow', 0).text('');
-        $(".progress").hide();
-    });
+            $.ajax(settings).done(function (response) {
+                var response_json = JSON.parse(response);
+                console.log(response_json.data.url);
+                $("#profilePictureUrl").val(response_json.data.url);
+                // After the image is uploaded, submit the form with the image URL
+                uploaded = true;
+                $("#uploadProgressBar").width('0%').attr('aria-valuenow', 0).text('');
+                $(".progress").hide();
+            }).fail(function () {
+                // Handle failures here
+                $("#uploadProgressBar").width('0%').attr('aria-valuenow', 0).text('');
+                $(".progress").hide();
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+    // var settings = {
+    //     "url": `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}}`,
+    //     "method": "POST",
+    //     "timeout": 0,
+    //     "processData": false,
+    //     "mimeType": "multipart/form-data",
+    //     "contentType": false,
+    //     "data": form,
+    //     "xhr": function () {
+    //         var xhr = new window.XMLHttpRequest();
+    //         xhr.upload.addEventListener("progress", function (evt) {
+    //             if (evt.lengthComputable) {
+    //                 var percentComplete = evt.loaded / evt.total;
+    //                 percentComplete = parseInt(percentComplete * 100);
+
+    //                 // Update the progress bar
+    //                 $("#uploadProgressBar")
+    //                     .width(percentComplete + '%')
+    //                     .attr('aria-valuenow', percentComplete)
+    //                     .text(percentComplete < 100 ? percentComplete + '%' : 'Processing...');
+    //             }
+    //         }, false);
+    //         return xhr;
+    //     }
+    // }
+
+    // $(".progress").show();
+
+    // $.ajax(settings).done(function (response) {
+    //     var response_json = JSON.parse(response);
+    //     console.log(response_json.data.url);
+    //     $("#profilePictureUrl").val(response_json.data.url);
+    //     // After the image is uploaded, submit the form with the image URL
+    //     uploaded = true;
+    //     $("#uploadProgressBar").width('0%').attr('aria-valuenow', 0).text('');
+    //     $(".progress").hide();
+    // }).fail(function () {
+    //     // Handle failures here
+    //     $("#uploadProgressBar").width('0%').attr('aria-valuenow', 0).text('');
+    //     $(".progress").hide();
+    // });
 }

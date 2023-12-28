@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const crypto = require("crypto");
 var session = require("express-session");
@@ -1130,7 +1131,7 @@ app.get('/get_did_its/:postId', async (req, res) => {
 // Server-Side Node.js
 app.post('/sendToOpenAI', async (req, res) => {
   const userMessage = req.body.message;
-  const apiKey = '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'; // Replace with your actual API key
+  const apiKey = process.env.OPENAI_API_KEY;
   const fitBotContext = `FitBot is a versatile fitness advisor on the AthletiLink social media platform, designed to provide users with guidance on fitness, workouts, nutrition, and general wellness. FitBot avoids giving medical advice and encourages consulting health professionals for specific concerns. The tone is friendly and motivational, aligned with AthletiLink's supportive nature. Talk only on these subject, not on everything the user is saying writing. please use emojis to express emotions.`;
 
   try {
@@ -1164,6 +1165,12 @@ app.post('/sendToOpenAI', async (req, res) => {
     console.error('Error:', error);
     res.status(500).json({ message: 'Error processing your request' });
   }
+});
+
+app.get('/uploadImage', async (req, res) => {
+  // Handle file upload here using the environment variable for API key
+  const apiKey = process.env.IMGBB_API_KEY;
+  return res.status(200).json({ apiKey: apiKey });
 });
 
 
