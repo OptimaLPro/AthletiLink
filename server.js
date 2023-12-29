@@ -25,6 +25,20 @@ const port = 5500;
 session.user_id = null;
 session.admin = null;
 
+const checkSession = (user_type) => {
+  if (user_type == "admin") {
+    if (session.admin === null) {
+      return false;
+    }
+  }
+  else
+    if (session.user_id === null) {
+      return false;
+    }
+
+  return true;
+};
+
 const generateRandomString = () => {
   return crypto.randomBytes(32).toString("hex");
 };
@@ -82,15 +96,7 @@ app.use(cors(corsOptions));
 // ********** Session  ********** //
 // ****************************** //
 
-// ---------- Home Page - Redirect By Session  ----------
-// app.get("/", (req, res) => {
-
-//   if (session.user_id) {
-//     res.sendFile(__dirname + "/index.html");
-//   } else {
-//     res.redirect("signin.html");
-//   }
-// });
+// 
 
 // ---------- Create User ----------
 app.post("/user", async (req, res) => {
@@ -149,6 +155,7 @@ app.get("/SetSessionID/:user_id", async (req, res) => {
 
 // ---------- Sign out ---------
 app.get("/signout", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     createLog("Signout", "", req);
     session.user_id = null;
@@ -199,6 +206,7 @@ app.get("/user/:id", async (req, res) => {
 
 // ---------- Get User By Session ----------
 app.get("/user_session", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const user_id = session.user_id;
     const admin = session.admin;
@@ -211,6 +219,7 @@ app.get("/user_session", async (req, res) => {
 
 // ---------- Get User By ID ----------
 app.get("/user_details", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const users = await Users.findById(session.user_id);
     // console.log(users)
@@ -236,6 +245,7 @@ app.get("/getUserByMail/:email", async (req, res) => {
 
 // ---------- Get All Users ----------
 app.get("/getUsers", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const users = await Users.find({});
     res.status(200).json({ users });
@@ -247,6 +257,7 @@ app.get("/getUsers", async (req, res) => {
 
 // ---------- Update User ----------
 app.post("/update_user", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const { firstName, lastName, newpassword, dob, profilePictureUrl } = req.body;
     const updatedFields = {
@@ -282,6 +293,7 @@ app.post("/update_user", async (req, res) => {
 // ---------- Delete User by ID ----------
 app.post("/delete_user/:user_id", async (req, res) => {
   try {
+    if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
     const user_id = req.params.user_id;
     const deletedUser = await Users.findByIdAndDelete(user_id);
 
@@ -300,6 +312,7 @@ app.post("/delete_user/:user_id", async (req, res) => {
 
 // ---------- Update User By ID ----------
 app.post("/update_user/:user_id", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   const user_id = req.params.user_id;
   try {
     var data = {
@@ -374,6 +387,7 @@ app.post("/update_profile_picture/:url", async (req, res) => {
 
 // ---------- Get All Users Groups By Session ID ----------
 app.get("/user_groups/", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const user_groups_res = await User_groups.find({
       user_id: session.user_id,
@@ -392,6 +406,7 @@ app.get("/user_groups/", async (req, res) => {
 
 // ---------- Get All Users Groups By ID ----------
 app.get("/user_groups/:user_id", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const user_groups_res = await User_groups.find({
       user_id: req.params.user_id,
@@ -410,6 +425,7 @@ app.get("/user_groups/:user_id", async (req, res) => {
 
 // ---------- Delete User Group By ID ----------
 app.post("/delete_user_group/:user_group_id", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const user_group_id = req.params.user_group_id;
     const group = await User_groups.findById(user_group_id);
@@ -430,6 +446,7 @@ app.post("/delete_user_group/:user_group_id", async (req, res) => {
 
 // ---------- Add user groups ----------
 app.post("/add_user_groups", (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const { newSelectedCategories } = req.body;
 
@@ -446,6 +463,7 @@ app.post("/add_user_groups", (req, res) => {
 
 // ---------- Add user groups by User ID and Group Name ----------
 app.post("/add_user_group/:user_id/:group_name", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const user_id = req.params.user_id;
     const group_name = req.params.group_name;
@@ -467,6 +485,7 @@ app.post("/add_user_group/:user_id/:group_name", async (req, res) => {
 
 // ---------- Remove user groups ----------
 app.post("/remove_user_groups", (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const { unselectedCategories } = req.body;
 
@@ -483,6 +502,7 @@ app.post("/remove_user_groups", (req, res) => {
 
 // ---------- Count user groups ----------
 app.get("/count_user_groups", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const user_groups = await User_groups.find({ user_id: session.user_id });
     const user_groups_count = user_groups.length;
@@ -499,6 +519,7 @@ app.get("/count_user_groups", async (req, res) => {
 
 // ---------- Get All Posts ----------
 app.get("/posts", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     let userGroups = req.query.groups;
     var posts = {};
@@ -518,6 +539,7 @@ app.get("/posts", async (req, res) => {
 
 //----------- Get Post By ID -------------
 app.get('/posts_id/:postId', async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   const post_id = req.params.postId;
   try {
     const foundPost = await Posts.findById(post_id);
@@ -534,6 +556,7 @@ app.get('/posts_id/:postId', async (req, res) => {
 
 // ---------- Create Post ----------   
 app.post("/create_post", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const user = await Users.findById(session.user_id);
 
@@ -570,6 +593,7 @@ app.post("/create_post", async (req, res) => {
 
 // ---------- Update Post By ID ----------
 app.post("/update_post/:post_id", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   const post_id = req.params.post_id;
   try {
     var data = {
@@ -618,6 +642,7 @@ app.post("/update_post/:post_id", async (req, res) => {
 
 // ---------- Delete Post by ID ----------
 app.post("/delete_post/:post_id", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const post_id = req.params.post_id;
     const post = await Posts.findById(post_id);
@@ -637,6 +662,7 @@ app.post("/delete_post/:post_id", async (req, res) => {
 
 // ---------- Get Posts by Group Name ----------
 app.get("/posts/:group_name", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const posts = await Posts.find({ group_name: req.params.group_name });
     res.status(200).json({ posts });
@@ -648,6 +674,7 @@ app.get("/posts/:group_name", async (req, res) => {
 
 // ---------- Approve Post ----------
 app.post("/approve_post/:post_id", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   const post_id = req.params.post_id;
   try {
     var data = {
@@ -673,6 +700,7 @@ app.post("/approve_post/:post_id", async (req, res) => {
 
 // ---------- Get Posts Pending Count ----------
 app.get("/get_pendings", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const pending_posts = await Posts.find({ status: "pending" });
     const pending_posts_count = pending_posts.length;
@@ -689,6 +717,7 @@ app.get("/get_pendings", async (req, res) => {
 
 // ---------- Get All Groups ----------
 app.get("/groups", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const groups = await Groups.find({});
     res.status(200).json({ groups });
@@ -700,6 +729,7 @@ app.get("/groups", async (req, res) => {
 
 // ---------- Create a Group ----------
 app.post("/create_group", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   group_name = req.body.group_name;
   try {
     var data = {
@@ -720,6 +750,7 @@ app.post("/create_group", async (req, res) => {
 
 // ---------- Update Group By ID ----------
 app.post("/update_group/:group_id", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   const group_id = req.params.group_id;
   try {
     var data = {
@@ -747,6 +778,7 @@ app.post("/update_group/:group_id", async (req, res) => {
 
 // ---------- Delete Group By ID ----------
 app.post("/delete_group/:group_id", async (req, res) => {
+  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const group_id = req.params.group_id;
     const group = await Groups.findById(group_id);
@@ -767,6 +799,7 @@ app.post("/delete_group/:group_id", async (req, res) => {
 
 // ---------- Group Status By Group Name ----------
 app.get("/group_status/:group_name", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const group_name = req.params.group_name;
     const group = await Groups.find({ group_name: group_name });
@@ -789,6 +822,7 @@ app.get("/group_status/:group_name", async (req, res) => {
 // *********************************** //
 //----------- Add Comment API -------------
 app.post('/add_comment/:postId', async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   const postId = req.params.postId;
   const sessionUserId = session.user_id;
   console.log(postId);
@@ -834,6 +868,7 @@ app.post('/add_comment/:postId', async (req, res) => {
 
 // ---------- Get All Comments ----------
 app.get("/comments", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const comments = await Comments.find({});
     res.status(200).json({ comments });
@@ -845,6 +880,7 @@ app.get("/comments", async (req, res) => {
 
 // ---------- Get Comments By Post ID ----------
 app.get("/comments/:post_id", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const comments_res = await Comments.find({ post_id: req.params.post_id });
 
@@ -860,6 +896,7 @@ app.get("/comments/:post_id", async (req, res) => {
 
 // ---------- Update Comment By ID ----------
 app.post("/update_comment/:comment_id", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   const comment_id = req.params.comment_id;
   try {
     var data = {
@@ -891,6 +928,7 @@ app.post("/update_comment/:comment_id", async (req, res) => {
 
 // ---------- Delete Comment By ID ----------
 app.post("/delete_comment/:comment_id", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const comment_id = req.params.comment_id;
     const comment = await Comments.findById(comment_id);
@@ -962,6 +1000,7 @@ app.post("/delete_comment/:comment_id", async (req, res) => {
 
 //----------- Like API -------------
 app.post('/like_posts/:postId', async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   console.log("like post");
   const post_id = req.params.postId;
   try {
@@ -1023,6 +1062,7 @@ app.post('/like_posts/:postId', async (req, res) => {
 
 //----------- Get Like By Post ID -------------
 app.get('/get_likes/:postId', async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   const post_id = req.params.postId;
   try {
     const foundPost = await Likes.findOne({ post_id: post_id, user_id: session.user_id });
@@ -1047,6 +1087,7 @@ app.get('/get_likes/:postId', async (req, res) => {
 
 //----------------- Did it API -----------------
 app.post('/did_its/:postId', async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   console.log("did it");
   const post_id = req.params.postId;
   const sessionUserId = session.user_id;
@@ -1107,6 +1148,7 @@ app.post('/did_its/:postId', async (req, res) => {
 
 //----------------- Get Did it By Post ID -----------------
 app.get('/get_did_its/:postId', async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   const post_id = req.params.postId;
   try {
     const foundPost = await Did_it.findOne({ post_id: post_id, user_id: session.user_id });
@@ -1129,6 +1171,7 @@ app.get('/get_did_its/:postId', async (req, res) => {
 // ********** FitBot Model  ********** //
 // *********************************** //
 app.post('/sendToOpenAI', async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   const userMessage = req.body.message;
   const apiKey = process.env.OPENAI_API_KEY;
   const fitBotContext = `FitBot is a versatile fitness advisor on the AthletiLink social media platform, designed to provide users with guidance on fitness, workouts, nutrition, and general wellness. FitBot avoids giving medical advice and encourages consulting health professionals for specific concerns. The tone is friendly and motivational, aligned with AthletiLink's supportive nature. Talk only on these subject, not on everything the user is saying writing. please use emojis to express emotions.`;
@@ -1170,6 +1213,7 @@ app.post('/sendToOpenAI', async (req, res) => {
 // ********** API Key for imgbb API ********** //
 // ******************************************* //
 app.get('/uploadImage', async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   // Handle file upload here using the environment variable for API key
   const apiKey = process.env.IMGBB_API_KEY;
   return res.status(200).json({ apiKey: apiKey });

@@ -18,6 +18,19 @@
     <!-- Custom JS -->
     <script src="assets/js/index_js.js"></script>
     <!-- <script type="module" src="assets/js/weather.js"></script> -->
+
+    <script>
+        fetch('http://localhost:5500//user_session')
+            .then(response => {
+                if (response.status === 401) {
+                    redirectToSignin();
+                }
+            })
+            .then(data => {
+            })
+            .catch(error => {
+            });
+    </script>
 </head>
 
 <body>
@@ -98,15 +111,15 @@
                     </div>
                     <input type="text" class="form-control" id="searchText" placeholder="Search everything...">
                     <div class="input-group-append">
-                        <button class="input-group-text btn btn-light dropdown-toggle" type="button" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false" id="sortButton">
+                        <button class="input-group-text btn btn-light dropdown-toggle" type="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="sortButton">
                             <i class="fa fa-sort" aria-hidden="true"></i>
                         </button>
                         <div class="dropdown-menu" id="sort_dropdown">
-                            <a class="dropdown-item" value="created-older">Created - Older</a>
-                            <a class="dropdown-item" value="created-newer">Created - Newer</a>
                             <a class="dropdown-item" value="when-closest">When - Closest</a>
                             <a class="dropdown-item" value="when-farest">When - Farest</a>
+                            <a class="dropdown-item" value="created-newer">Created - Newer</a>
+                            <a class="dropdown-item" value="created-older">Created - Older</a>
                         </div>
                         <span class="input-group-text" id="clearSearch">
                             <i class="fa fa-times" aria-hidden="true"></i>
@@ -229,7 +242,6 @@
 </html>
 
 <script>
-    // fetch this url:https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m
     fetch('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m')
         .then(response => response.json())
         .then(data => console.log(data))
@@ -277,6 +289,10 @@
     var admin = "";
 
     let posts;
+
+    function redirectToSignin() {
+        window.location.href = 'signin.html';
+    }
 
     function redirectToCreatePost() {
         window.location.href = 'create_post.html';
@@ -472,12 +488,12 @@
             }
 
             // Sort the posts by date
-            all_posts.sort((a, b) => {
-                let dateA = parseDate(a.created);
-                let dateB = parseDate(b.created);
+            // all_posts.sort((a, b) => {
+            //     let dateA = parseDate(a.created);
+            //     let dateB = parseDate(b.created);
 
-                return dateA - dateB; // Sort in ascending order
-            });
+            //     return dateA - dateB; // Sort in ascending order
+            // });
 
             // console.log("after sort:" + all_posts)
 
@@ -929,21 +945,36 @@
             switch (sortType) {
                 case 'created-older':
                     console.log("Sorting by created-older");
-                    posts.sort((a, b) => parseDate(b.created) - parseDate(a.created));
-                    posts.reverse();
+                    posts.sort((a, b) => {
+                        const dateA = parseDate(a.created);
+                        const dateB = parseDate(b.created);
+                        return dateA - dateB;
+                    });
                     break;
                 case 'created-newer':
                     console.log("Sorting by created-newer");
-                    posts.sort((a, b) => parseDate(b.created) - parseDate(a.created));
+                    posts.sort((a, b) => {
+                        const dateA = parseDate(a.created);
+                        const dateB = parseDate(b.created);
+                        return dateB - dateA;
+                    });
+                    // posts.reverse(); // Reverse the posts list
                     break;
                 case 'when-closest':
                     console.log("Sorting by when-closest");
-                    posts.sort((a, b) => parseDate(b.date) - parseDate(a.date));
-                    posts.reverse();
+                    posts.sort((a, b) => {
+                        const dateA = parseDate(a.date);
+                        const dateB = parseDate(b.date);
+                        return dateA - dateB;
+                    });
                     break;
                 case 'when-farest':
                     console.log("Sorting by when-farest");
-                    posts.sort((a, b) => parseDate(b.date) - parseDate(a.date));
+                    posts.sort((a, b) => {
+                        const dateA = parseDate(a.date);
+                        const dateB = parseDate(b.date);
+                        return dateB - dateA;
+                    });
                     break;
                 // Handle other sort cases if needed
             }
