@@ -165,12 +165,14 @@
                         .then((response) => response.json())
                         .then((data) => {
                             var groups = data.groups;
-
+                            console.log(groups)
                             groups.forEach(function (group) {
-                                var sport = group.group_name;
-                                var backgroundImage = group.pic;
+                                if (group.status == "active") {
+                                    var sport = group.group_name;
+                                    var backgroundImage = group.pic;
 
-                                allCategories.push({ sport, backgroundImage });
+                                    allCategories.push({ sport, backgroundImage });
+                                }
                             });
 
                             // Now that both sets of data are available, create the cards

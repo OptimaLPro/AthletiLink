@@ -25,7 +25,7 @@ const port = 5500;
 session.user_id = null;
 session.admin = null;
 
-const checkSession = (user_type) => {
+const checkSession = (user_type = 0) => {
   if (user_type == "admin") {
     if (session.admin === null) {
       return false;
@@ -110,8 +110,8 @@ app.post("/user", async (req, res) => {
       profile_pic: req.body.profilePictureUrl,
       admin: "",
       secret_phrase: req.body.secretPhrase
-
     };
+
     var db = mongoose.connection;
     db.collection("users").insertOne(data, (err, collection) => {
       if (err) {
@@ -122,6 +122,23 @@ app.post("/user", async (req, res) => {
     });
 
     return res.redirect("http://127.0.0.1:5500/SignupRedirect.html");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ------- Check existing email -------- 
+app.get("/check_email/:email", async (req, res) => {
+  try {
+    const email = (req.params.email).toLocaleLowerCase();
+    const user = await Users.findOne({ email: email });
+    if (user) {
+      return res.status(200).json({ message: "Exists" });
+    }
+    else {
+      return res.status(200).json({ message: "Not Exist" });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -1213,7 +1230,6 @@ app.post('/sendToOpenAI', async (req, res) => {
 // ********** API Key for imgbb API ********** //
 // ******************************************* //
 app.get('/uploadImage', async (req, res) => {
-  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   // Handle file upload here using the environment variable for API key
   const apiKey = process.env.IMGBB_API_KEY;
   return res.status(200).json({ apiKey: apiKey });

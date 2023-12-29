@@ -290,10 +290,12 @@
                 var statusDot = document.createElement("div");
                 statusDot.className = "status-dot";
                 statusDot.style.backgroundColor = group.status == "active" ? "green" : "red";
+                statusDot.style.zIndex = "100";
 
                 var deleteIcon = document.createElement("button");
                 deleteIcon.className = "btn btn-danger ml-auto mt-2 mr-2 deleteIconGroups";
                 deleteIcon.style.display = "inline";
+                deleteIcon.style.zIndex = "100";
                 deleteIcon.innerHTML = '<i class="fa fa-times"></i>';
                 deleteIcon.addEventListener("click", function () {
                     console.log(group._id);
@@ -303,6 +305,7 @@
                 var updateIcon = document.createElement("button");
                 updateIcon.className = "btn btn-info ml-auto mt-2 mr-2 updateIconGroups";
                 updateIcon.style.display = "inline";
+                updateIcon.style.zIndex = "100";
                 updateIcon.innerHTML = '<i class="fa fa-pencil fa-xs"></i>';
                 updateIcon.addEventListener("click", function () {
                     updateGroup(group._id);
