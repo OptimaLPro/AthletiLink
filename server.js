@@ -111,7 +111,7 @@ app.post("/user", async (req, res) => {
       if (err) {
         throw err;
       }
-      session.user_id = collection.insertedId;
+      session.user_id = (collection.insertedId).toString();
       console.log("User Created Successfully");
     });
 
@@ -1128,7 +1128,6 @@ app.get('/get_did_its/:postId', async (req, res) => {
 // *********************************** //
 // ********** FitBot Model  ********** //
 // *********************************** //
-// Server-Side Node.js
 app.post('/sendToOpenAI', async (req, res) => {
   const userMessage = req.body.message;
   const apiKey = process.env.OPENAI_API_KEY;
@@ -1167,13 +1166,14 @@ app.post('/sendToOpenAI', async (req, res) => {
   }
 });
 
+// ******************************************* //
+// ********** API Key for imgbb API ********** //
+// ******************************************* //
 app.get('/uploadImage', async (req, res) => {
   // Handle file upload here using the environment variable for API key
   const apiKey = process.env.IMGBB_API_KEY;
   return res.status(200).json({ apiKey: apiKey });
 });
-
-
 
 // ---------- Connect to DB ----------
 mongoose
