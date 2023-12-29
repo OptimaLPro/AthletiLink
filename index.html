@@ -594,13 +594,17 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-4 text-center"><button class="btn btn-primary btn-sm" onclick="toggleLike('${post._id}')" id="likeButton${post._id}" >Like</button>
+                        <div class="col-sm-4 text-center">
+                            <i class="fa fa-thumbs-up fa-2x" aria-hidden="true" onclick="toggleLike('${post._id}')" id="likeButton${post._id}" ></i>
                         </div>
-                        <div class="col-sm-4 text-center"><button class="btn btn-success btn-sm"
-                        onclick="toggleDidIt('${post._id}')" id="didItButton${post._id}"">I Did It!</button></div>
-                        <div class="col-sm-4 text-center"><button class="btn btn-info btn-sm"
-                                data-toggle="collapse"
-                                data-target="#collapseComments${post._id}">Comments</button></div>
+                        <div class="col-sm-4 text-center">
+                            <i class="fa fa-check fa-2x" aria-hidden="true" onclick="toggleDidIt('${post._id}')" id="didItButton${post._id}"></i>
+                        </div>
+                        <div class="col-sm-4 text-center">
+                            <i class="fa fa-comment fa-2x" aria-hidden="true" data-toggle="collapse"
+                                data-target="#collapseComments${post._id}"></i>
+                        </div>
+                        
                     </div>
                     `;
 
@@ -715,10 +719,10 @@
                         // console.log("did_status " + did_status.message + " for post " + post._id);
                         const didButton = document.getElementById(`didItButton${post._id}`);
                         if (did_status.message == "Not yet...") {
-                            didButton.textContent = 'I Did It!';
+                            didButton.style = "color: #000000;";
                         }
                         else if (did_status.message == "I Did It!") {
-                            didButton.textContent = 'Not yet...';
+                            didButton.style = "color: #59ba52;";
                         }
                     })
                     .catch((error) => {
@@ -1037,14 +1041,16 @@
                     var didItButton = document.getElementById(`didItButton${postId}`);
                     var didItCountElement = document.getElementById(`didItCount${postId}`);
                     // Update the button text based on whether the post is liked or not
+                    console.log(didItButton.textContent)
                     if (didItButton.textContent === "Not yet...") {
                         // Update like count in UI
                         didItCountElement.textContent = updatedPost.did;
-                        didItButton.textContent = 'I Did It!';
+                        console.log("CHANING COLOR BACK TO BLACK")
+                        didItButton.style = "color: #a1a1a1;";
                     } else {
                         // Update like count in UI
                         didItCountElement.textContent = updatedPost.did;
-                        didItButton.textContent = "Not yet...";
+                        didItButton.style = "color: #59ba52;";
                     }
                 }
             })
