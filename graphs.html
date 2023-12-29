@@ -55,19 +55,27 @@
     <div id="graph"></div>
 
     <script>
-        // Enhanced example data with sections and subsections
-        
-        const data = [
-            //{ section: 'Users', category: 'Regular Users', value: 100 },
-            //{ section: 'Users', category: 'Admins', value: 10 },
-            // { section: 'Groups', category: 'Count', value: 15 },
-            //{ section: 'UserGroups', category: 'Active', value: 5 },
-            //{ section: 'UserGroups', category: 'Inactive', value: 5 },
-            //{ section: 'Posts', category: 'Count', value: 200 },
-            { section: 'Posts', category: 'Total Likes', value: getLikesCount() },
-            { section: 'Posts', category: 'Total Did-It', value: getDidItsCount().then(data => console.log('Did Its Count:', data.did_its_count)) },
-            { section: 'Posts', category: 'Total Comments', value: getCommentsCount().then(data => console.log('Comments Count:', data.comments_count)) },
-        ];
+        // Function to asynchronously fetch all counts
+        async function fetchAllCounts() {
+            try {
+                const likesCount = await getLikesCount() || 0; // Default to 0 if null
+                const didItsCount = await getDidItsCount() || 0; // Default to 0 if null
+                const commentsCount = await getCommentsCount() || 0; // Default to 0 if null
+
+                const data = [
+                    { section: 'Posts', category: 'Total Likes', value: likesCount },
+                    { section: 'Posts', category: 'Total Did-It', value: didItsCount },
+                    { section: 'Posts', category: 'Total Comments', value: commentsCount },
+                ];
+
+                createGraph(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Call the function to fetch all counts and create the graph
+        fetchAllCounts();
 
         function createGraph(data) {
             const margin = { top: 60, right: 20, bottom: 100, left: 60 },
@@ -164,13 +172,13 @@
                 .text(d => d);
         }
 
-        createGraph(data);
 
         // Function to fetch likes count
         async function getLikesCount() {
             try {
                 const response = await fetch('http://localhost:5500/get_likes_count');
                 const data = await response.json();
+                console.log(data.likes_count);
                 return data.likes_count; // Return only the likes_count value
             } catch (error) {
                 console.error('Error fetching likes count:', error);
@@ -184,7 +192,8 @@
             try {
                 const response = await fetch('http://localhost:5500/get_did_its_count');
                 const data = await response.json();
-                return data;
+                console.log(data.did_its_count);
+                return data.did_its_count;
             } catch (error) {
                 console.error('Error fetching did its count:', error);
                 return null;
@@ -196,7 +205,8 @@
             try {
                 const response = await fetch('http://localhost:5500/get_comments_count');
                 const data = await response.json();
-                return data;
+                console.log(data.comments_count);
+                return data.comments_count;
             } catch (error) {
                 console.error('Error fetching comments count:', error);
                 return null;
