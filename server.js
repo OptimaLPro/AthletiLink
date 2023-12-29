@@ -1174,6 +1174,89 @@ app.get('/uploadImage', async (req, res) => {
   const apiKey = process.env.IMGBB_API_KEY;
   return res.status(200).json({ apiKey: apiKey });
 });
+// ******************************************* //
+// ********** General API'S Data ********** //
+// ******************************************* //
+
+// ---------- Get Did it counts ----------
+app.get(/get_did_its_count/, async (req, res) => {
+  try {
+    const did_its = await Did_it.find({});
+    const did_its_count = did_its.length;
+    res.status(200).json({ did_its_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Get Likes counts ----------
+app.get(/get_likes_count/, async (req, res) => {
+  try {
+    const likes = await Likes.find({});
+    const likes_count = likes.length;
+    res.status(200).json({ likes_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+// ---------- Get Comments counts ----------
+app.get(/get_comments_count/, async (req, res) => {
+  try {
+    const comments = await Comments.find({});
+    const comments_count = comments.length;
+    res.status(200).json({ comments_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+// ---------- Get Posts counts ----------
+app.get(/get_posts_count/, async (req, res) => {
+  try {
+    const posts = await Posts.find({});
+    const posts_count = posts.length;
+    res.status(200).json({ posts_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+// ---------- Get Users counts ----------
+app.get(/get_users_count/, async (req, res) => {
+  try {
+    const users = await Users.find({});
+    const users_count = users.length;
+    res.status(200).json({ users_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+// ---------- Get Groups counts ----------
+app.get(/get_groups_count/, async (req, res) => {
+  try {
+    const groups = await Groups.find({});
+    const groups_count = groups.length;
+    res.status(200).json({ groups_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+// ---------- Get User Groups counts ----------
+app.get(/get_user_groups_count/, async (req, res) => {
+  try {
+    const user_groups = await User_groups.find({});
+    const user_groups_count = user_groups.length;
+    res.status(200).json({ user_groups_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 // ---------- Connect to DB ----------
 mongoose
