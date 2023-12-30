@@ -20,7 +20,7 @@
     <!-- <script type="module" src="assets/js/weather.js"></script> -->
 
     <script>
-        fetch('http://localhost:5500//user_session')
+        fetch('http://localhost:5500/user_session')
             .then(response => {
                 if (response.status === 401) {
                     redirectToSignin();
@@ -595,13 +595,13 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4 text-center">
-                            <i class="fa fa-thumbs-up fa-2x" aria-hidden="true" onclick="toggleLike('${post._id}')" id="likeButton${post._id}" ></i>
+                            <i class="fa fa-thumbs-up fa-2x cursor" aria-hidden="true" onclick="toggleLike('${post._id}')" id="likeButton${post._id}" ></i>
                         </div>
                         <div class="col-sm-4 text-center">
-                            <i class="fa fa-check fa-2x" aria-hidden="true" onclick="toggleDidIt('${post._id}')" id="didItButton${post._id}"></i>
+                            <i class="fa fa-check fa-2x cursor" aria-hidden="true" onclick="toggleDidIt('${post._id}')" id="didItButton${post._id}"></i>
                         </div>
                         <div class="col-sm-4 text-center">
-                            <i class="fa fa-comment fa-2x" aria-hidden="true" data-toggle="collapse"
+                            <i class="fa fa-comment fa-2x cursor" aria-hidden="true" data-toggle="collapse"
                                 data-target="#collapseComments${post._id}"></i>
                         </div>
                         
@@ -635,11 +635,11 @@
 
                                 card_comment.className = "card";
                                 card_comment.innerHTML = `
-                            <div class="card-body">
-                                <h6 class="card-title font-weight-bold">${comment.first_name} ${comment.last_name} <small>${comment.date}</small></h6>
-                                <p class="card-text">${comment.description}</p>
-                            </div>
-                        `;
+                                <div class="card-body">
+                                    <h6 class="card-title font-weight-bold">${comment.first_name} ${comment.last_name} <small>${comment.date}</small></h6>
+                                    <p class="card-text">${comment.description}</p>
+                                </div>
+                                `;
                                 card_comment.appendChild(deleteIconComment);
                                 collapseElem.appendChild(accordionElem);
                                 accordionElem.appendChild(card_comment);
@@ -701,10 +701,11 @@
                         // console.log("like_status " + like_status.message + " for post " + post._id);
                         const likeButton = document.getElementById(`likeButton${post._id}`);
                         if (like_status.message == "Liked") {
-                            likeButton.textContent = 'Unlike';
+                            likeButton.style = "color: #016afb;";
+                            likeButton.classList.add("liked");
                         }
                         else if (like_status.message == "Unliked") {
-                            likeButton.textContent = 'Like';
+                            likeButton.style = "color: #000000;";
                         }
                     })
                     .catch((error) => {
@@ -723,6 +724,7 @@
                         }
                         else if (did_status.message == "I Did It!") {
                             didButton.style = "color: #59ba52;";
+                            didButton.classList.add("didIt");
                         }
                     })
                     .catch((error) => {
@@ -740,21 +742,10 @@
                 cardDiv.appendChild(rowDiv);
                 cardDiv.appendChild(deleteIcon);
 
-
                 // Append the card to the container
                 postsContainer.appendChild(cardDiv);
 
-                // counter++;
-
-
             });
-            // setTimeout(function () {
-            //     var cards = document.getElementsByClassName("card");
-            //     if (cards.length === 0) {
-            //         console.log("No cards found. Retrying...");
-            //         fetchingPosts();
-            //     }
-            // }, 3000);
         }
 
         function deletePost(post_id, all_posts) {
@@ -790,18 +781,6 @@
                             // If the comment was successfully added, clear the input field
                             commentInput.value = '';
                             appendNewCommentToUI(data.comment, data.comment_id, post_id);
-                            // Fetch and append the new comment to the UI
-                            // fetch(`http://localhost:5500/comments/${post_id}`)
-                            //     .then(response => response.json())
-                            //     .then(comments => {
-                            //         if (comments && comments.comments_res && comments.comments_res.length > 0) {
-                            //             const newComment = comments.comments_res[comments.comments_res.length - 1];
-                            //             appendNewCommentToUI(post_id, newComment);
-                            //         }
-                            //     })
-                            //     .catch(error => {
-                            //         console.error('Error fetching new comment:', error);
-                            //     });
                         } else {
                             console.error('Failed to add comment:', data.statusText);
                         }
@@ -1007,14 +986,18 @@
                     var likeButton = document.getElementById(`likeButton${postId}`);
                     var likeCountElement = document.getElementById(`likeCount${postId}`);
                     // Update the button text based on whether the post is liked or not
-                    if (likeButton.textContent === 'Unlike') {
+                    if (likeButton.classList.contains('liked')) {
+                        
                         // Update like count in UI
                         likeCountElement.textContent = updatedPost.likes;
-                        likeButton.textContent = 'Like';
+                        likeButton.style = "color: #000000;";
+                        likeButton.classList.remove('liked');
+                        
                     } else {
                         // Update like count in UI
                         likeCountElement.textContent = updatedPost.likes;
-                        likeButton.textContent = 'Unlike';
+                        likeButton.style = "color: #016afb;";
+                        likeButton.classList.add('liked');
                     }
                 }
             })
@@ -1024,7 +1007,6 @@
     }
 
     function toggleDidIt(postId) {
-        // URL for the like_posts API endpoint
         var didItPostsApiUrl = `http://localhost:5500/did_its/` + postId;
 
         // Make a POST request to the like_posts API
@@ -1033,24 +1015,18 @@
         })
             .then(response => response.json())
             .then(data => {
-                // Check the response and update the UI accordingly
                 if (data && data.post) {
-                    console.log(data);
                     var updatedPost = data.post;
-                    console.log(updatedPost);
                     var didItButton = document.getElementById(`didItButton${postId}`);
                     var didItCountElement = document.getElementById(`didItCount${postId}`);
-                    // Update the button text based on whether the post is liked or not
-                    console.log(didItButton.textContent)
-                    if (didItButton.textContent === "Not yet...") {
-                        // Update like count in UI
+                    if (didItButton.classList.contains('didIt')) {
                         didItCountElement.textContent = updatedPost.did;
-                        console.log("CHANING COLOR BACK TO BLACK")
-                        didItButton.style = "color: #a1a1a1;";
+                        didItButton.style = "color: #000000;";
+                        didItButton.classList.remove('didIt');
                     } else {
-                        // Update like count in UI
                         didItCountElement.textContent = updatedPost.did;
                         didItButton.style = "color: #59ba52;";
+                        didItButton.classList.add('didIt');
                     }
                 }
             })

@@ -1178,7 +1178,6 @@ app.get('/get_did_its/:postId', async (req, res) => {
       return res.status(200).json({ message: 'I Did It!' });
     }
 
-
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }

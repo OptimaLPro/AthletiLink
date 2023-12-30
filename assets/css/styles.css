@@ -446,3 +446,7 @@ body {
   position: absolute;
   z-index: 1050; /* Adjust as necessary */
 }
+
+.cursor{
+  cursor: pointer;
+}
