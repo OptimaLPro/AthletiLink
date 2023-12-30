@@ -442,11 +442,9 @@ body {
 }
 
 
-
 .dropdown-menu {
   position: absolute;
   z-index: 1050;
-  /* Adjust as necessary */
 }
 
 .cursor {

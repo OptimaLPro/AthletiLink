@@ -8,6 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
 
     <style>
         body {
@@ -48,11 +49,6 @@
             color: white;
             font-size: 16px;
             /* Adjust the font size of the icon */
-        }
-
-        .container {
-            width: 70%;
-            /* Adjust the width as needed */
         }
 
         .chat-container {
@@ -180,196 +176,288 @@
                 opacity: 0;
             }
         }
+
+        body {
+            background-color: #000000;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        body,
+        html {
+            height: 100%;
+            /* Ensure the full height for the page */
+            margin: 0;
+            /* Reset default margin */
+            padding: 0;
+            /* Reset default padding */
+        }
+
+        #gradient {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* Full viewport height */
+            width: 100vw;
+            /* Full viewport width */
+            position: fixed;
+        }
+
+        .container {
+            width: 70%;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <!-- Chat Container -->
-                <div class="chat-container">
-                    <!-- Chat Display -->
-                    <div id="chat-display">
-                        <!-- Chat messages will be displayed here -->
-                    </div>
-
-                    <!-- Chat Input -->
-                    <form id="chat-form" class="form-inline">
-                        <div class="form-group flex-grow-1">
-                            <input type="text" id="chat-input" class="form-control" placeholder="Ask FitBot...">
-                            <button type="submit" class="btn btn-dark submit-button">
-                                <i class="fa fa-paper-plane"></i>
-                            </button>
+    <div id="gradient">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <!-- Chat Container -->
+                    <div class="chat-container">
+                        <!-- Chat Display -->
+                        <div id="chat-display">
+                            <!-- Chat messages will be displayed here -->
                         </div>
-                    </form>
+
+                        <!-- Chat Input -->
+                        <form id="chat-form" class="form-inline">
+                            <div class="form-group flex-grow-1">
+                                <input type="text" id="chat-input" class="form-control" placeholder="Ask FitBot...">
+                                <button type="submit" class="btn btn-dark submit-button">
+                                    <i class="fa fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Loading Indicator -->
-    <!-- <div id="loading-indicator" class="text-center" style="display: none;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
+        <div id="typing-indicator" class="typing-indicator" style="display: none;">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
         </div>
-    </div> -->
 
-    <div id="typing-indicator" class="typing-indicator" style="display: none;">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+        <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+            <a href="index.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+                </span></a>
+
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     </div>
 
-    <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
-        <a href="index.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-times fa-stack-1x fa-inverse"></i>
-            </span></a>
-
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            displayInitialBotMessage();
-        });
-
-        function displayInitialBotMessage() {
-            const typingRow = showTypingIndicator();
-            setTimeout(() => {
-                const initialMessage = "FitBot: Hey there! I'm FitBot, your friendly fitness advisor on AthletiLink. 🤖💪 I'm here to provide guidance and support when it comes to fitness, workouts, nutrition, and general wellness. I can help you with workout routines, healthy eating tips, and motivation to keep you on track towards your fitness goals. Just think of me as your virtual workout buddy! How can I assist you today?";
-                replaceTypingIndicatorWithMessage(typingRow, initialMessage, 'bot');
-            }, 1500); // Delay of 1.5 seconds
-        }
-
-        document.getElementById('chat-form').addEventListener('submit', function (event) {
-            event.preventDefault();
-            sendChatMessage();
-        });
-
-        async function sendChatMessage() {
-            const inputField = document.getElementById('chat-input');
-            const message = inputField.value.trim();
-
-            if (message) {
-                displayMessage('You: ' + message, 'user');
-                const typingRow = showTypingIndicator(); // Show typing indicator and get the row element
-                inputField.value = ''; // Clear the input field
-
-                try {
-                    const response = await fetch('http://localhost:5500/sendToOpenAI', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ message: message })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-
-                    const data = await response.json();
-
-                    if (data.reply) {
-                        replaceTypingIndicatorWithMessage(typingRow, 'FitBot: ' + data.reply, 'bot');
-                    }
-                } catch (error) {
-                    replaceTypingIndicatorWithMessage(typingRow, 'Error: Could not reach the server.', 'bot');
-                    console.error('Fetch error:', error);
-                }
-            }
-        }
-
-        function showTypingIndicator() {
-            const chatDisplay = document.getElementById('chat-display');
-            const typingRow = document.createElement('div');
-            typingRow.className = 'message-row';
-            typingRow.innerHTML = '<div class="message bot-message"><div class="typing-indicator"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>';
-            chatDisplay.appendChild(typingRow);
-            chatDisplay.scrollTop = chatDisplay.scrollHeight;
-            return typingRow;
-        }
-
-        function replaceTypingIndicatorWithMessage(typingRow, message, sender) {
-            typingRow.innerHTML = '';
-            const messageElement = document.createElement('div');
-            messageElement.className = `message ${sender}-message`;
-
-            // Extract the sender text and the actual message
-            const senderText = 'FitBot: ';
-            const actualMessage = message.substring(senderText.length);
-
-            // Create elements for the sender text and the message
-            const senderElement = document.createElement('strong');
-            senderElement.textContent = senderText;
-            const messageTextElement = document.createElement('span');
-
-            messageElement.appendChild(senderElement);
-            messageElement.appendChild(messageTextElement);
-            typingRow.appendChild(messageElement);
-
-            // Call the function to type the message letter by letter
-            typeMessageLetterByLetter(messageTextElement, actualMessage, 0);
-        }
-
-        function processMessageForDisplay(message) {
-            // Convert new lines to HTML breaks
-            return message.replace(/\n/g, '<br>');
-        }
-
-        function typeMessageLetterByLetter(element, message, index, currentMessage = "") {
-            if (index < message.length) {
-                const char = message.charAt(index);
-                if (char === '\n') {
-                    currentMessage += '<br>'; // Add a line break for new lines
-                } else {
-                    currentMessage += char;
-                }
-
-                // Update the HTML of the element
-                element.innerHTML = currentMessage;
-
-                // Dynamic typing speed calculation
-                const baseSpeed = 20; // Base speed in milliseconds
-                const maxSpeed = 30; // Maximum speed in milliseconds
-                const lengthFactor = 300; // Adjust this factor to control how much the length affects the speed
-                let delay = Math.max(maxSpeed, baseSpeed - (message.length / lengthFactor));
-
-                setTimeout(() => {
-                    typeMessageLetterByLetter(element, message, index + 1, currentMessage);
-                }, delay);
-            }
-        }
-
-        function displayMessage(message, sender) {
-            const chatDisplay = document.getElementById('chat-display');
-            const messageRow = document.createElement('div');
-            messageRow.className = 'message-row';
-
-            const messageElement = document.createElement('div');
-            messageElement.className = `message ${sender}-message`;
-
-            const boldPart = document.createElement('strong');
-            const senderText = sender === 'user' ? 'You: ' : 'FitBot: ';
-            boldPart.textContent = senderText;
-
-            const normalPart = document.createTextNode(message.substring(senderText.length));
-
-            messageElement.appendChild(boldPart);
-            messageElement.appendChild(normalPart);
-            messageRow.appendChild(messageElement);
-
-            chatDisplay.appendChild(messageRow);
-            chatDisplay.scrollTop = chatDisplay.scrollHeight;
-        }
-
-    </script>
 
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 </body>
 
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        displayInitialBotMessage();
+    });
+
+    function displayInitialBotMessage() {
+        const typingRow = showTypingIndicator();
+        setTimeout(() => {
+            const initialMessage = "FitBot: Hey there! I'm FitBot, your friendly fitness advisor on AthletiLink. 🤖💪 I'm here to provide guidance and support when it comes to fitness, workouts, nutrition, and general wellness. I can help you with workout routines, healthy eating tips, and motivation to keep you on track towards your fitness goals. Just think of me as your virtual workout buddy! How can I assist you today?";
+            replaceTypingIndicatorWithMessage(typingRow, initialMessage, 'bot');
+        }, 1500); // Delay of 1.5 seconds
+    }
+
+    document.getElementById('chat-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        sendChatMessage();
+    });
+
+    async function sendChatMessage() {
+        const inputField = document.getElementById('chat-input');
+        const message = inputField.value.trim();
+
+        if (message) {
+            displayMessage('You: ' + message, 'user');
+            const typingRow = showTypingIndicator(); // Show typing indicator and get the row element
+            inputField.value = ''; // Clear the input field
+
+            try {
+                const response = await fetch('http://localhost:5500/sendToOpenAI', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                if (data.reply) {
+                    replaceTypingIndicatorWithMessage(typingRow, 'FitBot: ' + data.reply, 'bot');
+                }
+            } catch (error) {
+                replaceTypingIndicatorWithMessage(typingRow, 'Error: Could not reach the server.', 'bot');
+                console.error('Fetch error:', error);
+            }
+        }
+    }
+
+    function showTypingIndicator() {
+        const chatDisplay = document.getElementById('chat-display');
+        const typingRow = document.createElement('div');
+        typingRow.className = 'message-row';
+        typingRow.innerHTML = '<div class="message bot-message"><div class="typing-indicator"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>';
+        chatDisplay.appendChild(typingRow);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+        return typingRow;
+    }
+
+    function replaceTypingIndicatorWithMessage(typingRow, message, sender) {
+        typingRow.innerHTML = '';
+        const messageElement = document.createElement('div');
+        messageElement.className = `message ${sender}-message`;
+
+        // Extract the sender text and the actual message
+        const senderText = 'FitBot: ';
+        const actualMessage = message.substring(senderText.length);
+
+        // Create elements for the sender text and the message
+        const senderElement = document.createElement('strong');
+        senderElement.textContent = senderText;
+        const messageTextElement = document.createElement('span');
+
+        messageElement.appendChild(senderElement);
+        messageElement.appendChild(messageTextElement);
+        typingRow.appendChild(messageElement);
+
+        // Call the function to type the message letter by letter
+        typeMessageLetterByLetter(messageTextElement, actualMessage, 0);
+    }
+
+    function processMessageForDisplay(message) {
+        // Convert new lines to HTML breaks
+        return message.replace(/\n/g, '<br>');
+    }
+
+    function typeMessageLetterByLetter(element, message, index, currentMessage = "") {
+        if (index < message.length) {
+            const char = message.charAt(index);
+            if (char === '\n') {
+                currentMessage += '<br>'; // Add a line break for new lines
+            } else {
+                currentMessage += char;
+            }
+
+            // Update the HTML of the element
+            element.innerHTML = currentMessage;
+
+            // Dynamic typing speed calculation
+            const baseSpeed = 20; // Base speed in milliseconds
+            const maxSpeed = 30; // Maximum speed in milliseconds
+            const lengthFactor = 300; // Adjust this factor to control how much the length affects the speed
+            let delay = Math.max(maxSpeed, baseSpeed - (message.length / lengthFactor));
+
+            setTimeout(() => {
+                typeMessageLetterByLetter(element, message, index + 1, currentMessage);
+            }, delay);
+        }
+    }
+
+    function displayMessage(message, sender) {
+        const chatDisplay = document.getElementById('chat-display');
+        const messageRow = document.createElement('div');
+        messageRow.className = 'message-row';
+
+        const messageElement = document.createElement('div');
+        messageElement.className = `message ${sender}-message`;
+
+        const boldPart = document.createElement('strong');
+        const senderText = sender === 'user' ? 'You: ' : 'FitBot: ';
+        boldPart.textContent = senderText;
+
+        const normalPart = document.createTextNode(message.substring(senderText.length));
+
+        messageElement.appendChild(boldPart);
+        messageElement.appendChild(normalPart);
+        messageRow.appendChild(messageElement);
+
+        chatDisplay.appendChild(messageRow);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+    }
+
+
+
+
+    var colors = new Array(
+        [62, 35, 255],
+        [60, 255, 60],
+        [255, 35, 98],
+        [45, 175, 230],
+        [255, 0, 255],
+        [255, 128, 0]);
+
+    var step = 0;
+    //color table indices for: 
+    // current color left
+    // next color left
+    // current color right
+    // next color right
+    var colorIndices = [0, 1, 2, 3];
+
+    //transition speed
+    var gradientSpeed = 0.002;
+
+    function updateGradient() {
+
+        if ($ === undefined) return;
+
+        var c0_0 = colors[colorIndices[0]];
+        var c0_1 = colors[colorIndices[1]];
+        var c1_0 = colors[colorIndices[2]];
+        var c1_1 = colors[colorIndices[3]];
+
+        var istep = 1 - step;
+        var r1 = Math.round(istep * c0_0[0] + step * c0_1[0]);
+        var g1 = Math.round(istep * c0_0[1] + step * c0_1[1]);
+        var b1 = Math.round(istep * c0_0[2] + step * c0_1[2]);
+        var color1 = "rgb(" + r1 + "," + g1 + "," + b1 + ")";
+
+        var r2 = Math.round(istep * c1_0[0] + step * c1_1[0]);
+        var g2 = Math.round(istep * c1_0[1] + step * c1_1[1]);
+        var b2 = Math.round(istep * c1_0[2] + step * c1_1[2]);
+        var color2 = "rgb(" + r2 + "," + g2 + "," + b2 + ")";
+
+        $('#gradient').css({
+            background: "-webkit-gradient(linear, left top, right top, from(" + color1 + "), to(" + color2 + "))"
+        }).css({
+            background: "-moz-linear-gradient(left, " + color1 + " 0%, " + color2 + " 100%)"
+        });
+
+        step += gradientSpeed;
+        if (step >= 1) {
+            step %= 1;
+            colorIndices[0] = colorIndices[1];
+            colorIndices[2] = colorIndices[3];
+
+            //pick two new target color indices
+            //do not pick the same as the current one
+            colorIndices[1] = (colorIndices[1] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
+            colorIndices[3] = (colorIndices[3] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
+
+        }
+    }
+
+    setInterval(updateGradient, 10);
+</script>
