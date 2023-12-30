@@ -474,6 +474,7 @@
         function getPostsAndComments(all_posts) {
             //clear all posts first
             clearPosts();
+
             // console.log("Inside getPostsAndComments")
             // console.log(all_posts)
 
@@ -495,6 +496,19 @@
 
             // Render the posts as Cards
             var postsContainer = document.getElementById("section");
+
+            if (all_posts.length === 0) {
+                console.log('No posts to show');
+                var noPostsDiv = document.createElement("h1");
+                noPostsDiv.innerText = "No posts yet, but they will be coming soon! 💪";
+                noPostsDiv.style.textAlign = "center";
+                noPostsDiv.style.position = "absolute";
+                noPostsDiv.style.top = "50%";
+                noPostsDiv.style.left = "50%";
+                noPostsDiv.style.transform = "translate(-50%, -50%)";
+
+                postsContainer.appendChild(noPostsDiv);
+            }
             // var counter = 1;
             all_posts.forEach(function (post) {
                 if (post.status == "pending") {
