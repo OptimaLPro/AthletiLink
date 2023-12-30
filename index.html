@@ -242,10 +242,7 @@
 </html>
 
 <script>
-    fetch('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m')
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(err => console.log(err))
+
 
     document.getElementById('searchIcon').addEventListener('click', function () {
         var searchContainer = document.getElementById('searchContainer');
@@ -473,7 +470,6 @@
                 noGroupsContent.style.display = 'block';
             }
         }
-
 
         function getPostsAndComments(all_posts) {
             //clear all posts first
@@ -742,6 +738,7 @@
                 cardDiv.appendChild(rowDiv);
                 cardDiv.appendChild(deleteIcon);
 
+                cardDiv.classList.add('effect-fadeIn');
                 // Append the card to the container
                 postsContainer.appendChild(cardDiv);
 
@@ -792,6 +789,7 @@
                 console.error('Empty comment. Please enter a comment to add.');
             }
         }
+
         function appendNewCommentToUI(comment, comment_id, post_id) {
             var commentsContainer = document.getElementById(`accordionComments${post_id}`);
             if (commentsContainer) {
@@ -847,11 +845,14 @@
             });
         }
 
-
-
-
         function clearPosts() {
             var postsContainer = document.getElementById("section");
+
+            var posts = postsContainer.getElementsByClassName("card mb-3");
+            Array.from(posts).forEach(function (post) {
+                post.classList.remove('effect-fadeIn');
+            });
+
             postsContainer.innerHTML = ""; // Clear the content inside the section
         }
 
@@ -987,12 +988,12 @@
                     var likeCountElement = document.getElementById(`likeCount${postId}`);
                     // Update the button text based on whether the post is liked or not
                     if (likeButton.classList.contains('liked')) {
-                        
+
                         // Update like count in UI
                         likeCountElement.textContent = updatedPost.likes;
                         likeButton.style = "color: #000000;";
                         likeButton.classList.remove('liked');
-                        
+
                     } else {
                         // Update like count in UI
                         likeCountElement.textContent = updatedPost.likes;
