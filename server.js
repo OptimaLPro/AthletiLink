@@ -1235,14 +1235,27 @@ app.get('/uploadImage', async (req, res) => {
 app.post("/add_fitbot_clicks", async (req, res) => {
   try {
     fits_data = {
-      
+      user_id: session.user_id,
+      date: currentDate,
     };
     const db = mongoose.connection;
     const results = await db.collection("fitbots").insertOne(fits_data);
 
-    res.status(200).json({ message: "New fitbot clicks added successfully" });
+    res.status(200).json({ message: results });
   } catch (error) {
     console.error("Error adding fitbot clicks to the database:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ---------- Get Fitbot Clicks ----------
+app.get("/get_fitbot_clicks/:date", async (req, res) => {
+  try {
+    const fitbot = await Fitbot.find({date: req.params.date});
+    const fitbot_count = fitbot.length;
+    res.status(200).json({ fitbot_count });
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -1253,6 +1266,18 @@ app.get('/get_did_its_count/', async (req, res) => {
     const did_its = await Did_it.find({});
     const did_its_count = did_its.length;
     res.status(200).json({ did_its_count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//----------------- Get Posts by current date -----------------
+app.get('/get_posts_by_date/:date', async (req, res) => {
+  try {
+    const posts = await Posts.find({ created: req.params.date });
+    const posts_count = posts.length;
+    res.status(200).json({ posts_count });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
