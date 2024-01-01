@@ -5,6 +5,10 @@
     <title>Graphs</title>
     <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <style>
         .bar {
             fill-opacity: 0.7;
@@ -67,7 +71,7 @@
             text-align: center;
             width: auto;
             height: auto;
-            padding: 8px;
+            /* padding: 8px; */
             font: 12px sans-serif;
             background: rgba(255, 255, 255, 0.9);
             border: 1px solid #ccc;
@@ -80,10 +84,16 @@
 </head>
 
 
+
 <body>
 
     <div id="graph" style="display: flex; justify-content: center; align-items: center; height: 100vh;"></div>
-
+    <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+        <a href="control_panel.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+            </span></a>
+    </div>
     <script>
         // Function to asynchronously fetch all counts
         async function fetchAllCounts() {
@@ -97,15 +107,14 @@
                 const userGroupsCount = await getUserGroupsCount() || 0; // Default to 0 if null
 
                 const data = [
+                    { section: 'UserGroups', category: 'Total User Groups', value: userGroupsCount },
                     { section: 'Likes', category: 'Total Likes', value: likesCount },
                     { section: 'DidIt', category: 'Total Did-It', value: didItsCount },
                     { section: 'Comments', category: 'Total Comments', value: commentsCount },
                     { section: 'Posts', category: 'Total Posts', value: postsCount },
                     { section: 'Groups', category: 'Total Groups', value: groupsCount },
                     { section: 'Users', category: 'Total Users', value: usersCount },
-                    { section: 'UserGroups', category: 'Total User Groups', value: userGroupsCount }
                 ];
-
 
                 createGraph(data);
             } catch (error) {
@@ -132,7 +141,7 @@
                 .rangeRound([height, 0]);
 
             const color = d3.scaleOrdinal()
-                .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2"]);
+                .range(["#1f77b4", "#ff7f0e", "#05f0f4", "#2ca02c", "#d62728", "#8c564b", "#e9f603"]);
 
             const svg = d3.select("#graph").append("svg")
                 .attr("width", width + margin.left + margin.right)

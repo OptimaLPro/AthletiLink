@@ -172,17 +172,25 @@
       var newPassword = document.getElementById('newpassword').value;
       var confirmNewPassword = document.getElementById('confirmnewPassword').value;
 
-      if (newPassword !== confirmNewPassword) {
-        // Show error message
+      if (!validatePassword(newPassword) || newPassword !== confirmNewPassword) {
         const errorMessage = document.getElementById('errorMessage');
-        errorMessage.classList.remove('d-none'); // Show the error message
-        e.preventDefault(); // Prevent form submission
+        errorMessage.textContent = 'The passwords do not match or do not meet the criteria.';
+        errorMessage.classList.remove('d-none');
+        e.preventDefault();
       } else {
-        // Hide error message
         const errorMessage = document.getElementById('errorMessage');
-        errorMessage.classList.add('d-none'); // Hide the error message
+        errorMessage.classList.add('d-none');
       }
     };
+
+    function validatePassword(password) {
+        var minLength = 6;
+        var hasUpperCase = /[A-Z]/.test(password);
+        var hasLowerCase = /[a-z]/.test(password);
+        var hasNumbers = /\d/.test(password);
+        var hasSpecialChars = /\W/.test(password);
+        return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars;
+    }
   </script>
 </body>
 

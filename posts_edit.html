@@ -294,7 +294,8 @@
 
                     <div class="form-group">
                         <label for="location">Location</label>
-                        <input type="text" id="location" name="location" class="form-control" required />
+                        <input type="text" id="location" name="location" class="form-control" maxlength="100" required
+                            placeholder="" />
                     </div>
 
                     <div class="form-group">
@@ -372,6 +373,10 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
                 </div>
+                <div class="alert alert-danger fade show" id="locationAlert" role="alert"
+                    style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;">
+                    Invalid location. Please select a location from the suggestions.
+                </div>
             </div>
         </div>
     </div>
@@ -421,10 +426,28 @@
             </div>
         </div>
     </div>
+    <!-- Google API Modal -->
+    <div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mapModalLabel">Location Map</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="map" style="height: 400px;"></div> <!-- The map container -->
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 <script>
     var uploaded = false;
+
     $(document).ready(function () {
         $('#datepicker').datepicker({
             format: 'dd/mm/yyyy',
@@ -433,15 +456,45 @@
 
         $("form").submit(function (e) {
             e.preventDefault();
-            if (uploaded) {
-                this.submit();
+            if (validLocationSelected) {
+                if (uploaded) {
+                    this.submit();
+                }
+            } else {
+                showAlert(locationAlert); // Show the alert
             }
         });
 
-        var input = document.getElementById('location');
-        var autocomplete = new google.maps.places.Autocomplete(input, {
-            strictBounds: true
+        $('#updatePostModal').on('shown.bs.modal', function () {
+            initializeAutocomplete();
         });
+
+        function initializeAutocomplete() {
+            var input = document.getElementById('location');
+            if (!input) return; // Exit if input not found
+
+            var autocomplete = new google.maps.places.Autocomplete(input);
+            var locationAlert = $('#locationAlert');
+
+            autocomplete.addListener('place_changed', function () {
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    validLocationSelected = false;
+                    showAlert(locationAlert);
+                } else {
+                    validLocationSelected = true;
+                    locationAlert.hide();
+                    input.value = place.formatted_address;
+                }
+            });
+        }
+
+        function showAlert(alertElement) {
+            alertElement.show(); // Show the alert
+            setTimeout(function () {
+                alertElement.fadeOut(); // Fade out the alert after 4 seconds
+            }, 3000);
+        }
 
         let posts;
         fetchPosts();
@@ -522,43 +575,45 @@
                 }
 
                 const row = `
-        <tr>
-            <td><img src="${profilePicUrl}" alt="Picture" class="profile-pic"></td>
-            <td>
-                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#showIdModal${post._id}" onclick="showPostID('${post._id}')">Show ID</button>
-                <button type="button" class="btn btn-success copy-btn btn-sm" data-clipboard-text="${post._id}" onclick="copyToClipboard('${post._id}')">Copy ID</button>
-            </td>
-            <td>
-                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#showUserIdModal${post.user_id}" onclick="showUserID('${post.user_id}')">Show ID</button>
-                <button type="button" class="btn btn-success copy-btn btn-sm" data-clipboard-text="${post.user_id}" onclick="copyToClipboard('${post.user_id}')">Copy ID</button>
-            </td>
-            <td>${post.created}</td>
-            <td>${post.type}</td>
-            <td>${post.title}</td>
-            <td>${post.host}</td>
-            <td>${post.duration}</td>
-            <td>${post.location}</td>
-            <td>
-                <span class="truncate-text" data-toggle="tooltip" data-placement="top" title="${post.description}">
-                    ${truncatedDescription}
-                    ${post.description.length > 100 ? `<button class="btn btn-dark btn-sm show-more" data-toggle="modal" data-target="#descriptionModal" data-description="${post.description}">Show more</button>` : ''}
-                </span>
-            </td>
-            <td>${post.likes}</td>
-            <td>${post.did}</td>
-            <td>${post.comments}</td>
-            <td>${post.group_name}</td>
-            <td>${post.date}</td>
-            <td>${post.time}</td>
-            <td>${statusElement}</td>
-            <td>
-                <i onclick="updatePost('${post._id}')" class="fa fa-edit" style="font-size:24px; margin-right: 10px; cursor: pointer"></i>
-                <i onclick="deletePost('${post._id}')" class="fa fa-trash-o" style="font-size:24px;color:red; cursor: pointer"></i>
-            </td>
-        </tr>
-    `;
+                <tr>
+                    <td><img src="${profilePicUrl}" alt="Picture" class="profile-pic"></td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#showIdModal${post._id}" onclick="showPostID('${post._id}')">Show ID</button>
+                        <button type="button" class="btn btn-success copy-btn btn-sm" data-clipboard-text="${post._id}" onclick="copyToClipboard('${post._id}')">Copy ID</button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#showUserIdModal${post.user_id}" onclick="showUserID('${post.user_id}')">Show ID</button>
+                        <button type="button" class="btn btn-success copy-btn btn-sm" data-clipboard-text="${post.user_id}" onclick="copyToClipboard('${post.user_id}')">Copy ID</button>
+                    </td>
+                    <td>${post.created}</td>
+                    <td>${post.type}</td>
+                    <td>${post.title}</td>
+                    <td>${post.host}</td>
+                    <td>${post.duration}</td>
+                    <td onclick="showMapModal('${post.location}')">${post.location}</td>
+                    <td>
+                        <span class="truncate-text" data-toggle="tooltip" data-placement="top" title="${post.description}">
+                            ${truncatedDescription}
+                            ${post.description.length > 100 ? `<button class="btn btn-dark btn-sm show-more" data-toggle="modal" data-target="#descriptionModal" data-description="${post.description}">Show more</button>` : ''}
+                        </span>
+                    </td>
+                    <td>${post.likes}</td>
+                    <td>${post.did}</td>
+                    <td>${post.comments}</td>
+                    <td>${post.group_name}</td>
+                    <td>${post.date}</td>
+                    <td>${post.time}</td>
+                    <td>${statusElement}</td>
+                    <td>
+                        <i onclick="updatePost('${post._id}')" class="fa fa-edit" style="font-size:24px; margin-right: 10px; cursor: pointer"></i>
+                        <i onclick="deletePost('${post._id}')" class="fa fa-trash-o" style="font-size:24px;color:red; cursor: pointer"></i>
+                    </td>
+                </tr>
+                `;
                 tableBody.append(row);
             });
+
+
 
             // Show full description in modal when "Show more" is clicked
             $('.show-more').on('click', function () {
@@ -572,6 +627,31 @@
             // Remove the blinking effect after the animation ends
             $(".blink").on('animationend', function () {
                 $(this).removeClass('blink');
+            });
+        }
+
+        window.showMapModal = function (address) {
+            $('#mapModal').modal('show');
+            initMap(address);
+        }
+
+        function initMap(address) {
+            // Geocode the address
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status === 'OK') {
+                    var mapOptions = {
+                        zoom: 15,
+                        center: results[0].geometry.location
+                    };
+                    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
             });
         }
 

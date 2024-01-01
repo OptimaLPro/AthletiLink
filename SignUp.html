@@ -59,13 +59,12 @@
         <!-- Password -->
         <div class="form-group col-md-6">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" class="form-control" required value="Test" />
+          <input type="password" id="password" name="password" class="form-control" required  />
         </div>
         <!-- Confirm Password -->
         <div class="form-group col-md-6">
           <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required
-            value="Test" />
+          <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required />
         </div>
 
         <!-- Secret Phrase for Password Reset -->
@@ -76,24 +75,15 @@
         </div>
       </div>
 
-      <!-- The rest of your form remains unchanged -->
-
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" class="form-control" required value="Test@test.com" />
       </div>
 
-      <!-- <div class="form-group">
-        <label for="dob">Date of Birth</label>
-        <div class="input-group date" data-provide="datepicker">
-          <input type="text" id="dob" name="dob" class="form-control" required value="11/11/2023" />
-        </div>
-      </div> -->
-
       <div class="form-group">
         <label for="Date">Date of Birth</label>
         <div class="input-group date">
-          <input type="text" class="form-control" id="datepicker" name="dob" value="21/12/2023" required>
+          <input type="text" class="form-control" id="datepicker" name="dob" required>
           <div class="input-group-addon">
             <span class="glyphicon glyphicon-th"></span>
           </div>
@@ -144,6 +134,7 @@
     $(document).ready(function () {
       $('#datepicker').datepicker({
         format: 'dd/mm/yyyy',
+        "setDate": new Date(),
         autoclose: true
       });
 
@@ -155,15 +146,28 @@
           var passwordConfirm = $('#confirmPassword').val();
 
           // Check if passwords match
-          if (password !== passwordConfirm) {
-            $('#errorMessage').text('Passwords do not match');
+          if (!validatePassword(password) || password != passwordConfirm) {
+            console.log(validatePassword(password));
+            console.log(password != confirmPassword);
+            $('#errorMessage').text('Passwords do not match or do not meet criteria');
             $('#errorMessage').removeClass('d-none');
             return;
-          }
-          else {
+          } else {
             $('#errorMessage').addClass('d-none');
           }
-
+          // Password validation function
+          function validatePassword(password) {
+            var minLength = 6;
+            var hasUpperCase = /[A-Z]/.test(password);
+            console.log(hasUpperCase);
+            var hasLowerCase = /[a-z]/.test(password);
+            console.log(hasLowerCase);
+            var hasNumbers = /\d/.test(password);
+            console.log(hasNumbers);
+            var hasSpecialChars = /\W/.test(password);
+            console.log(hasSpecialChars);
+            return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars;
+          }
           fetch('http://localhost:5500/check_email/' + $('#email').val())
             .then(response => response.json())
             .then(data => {

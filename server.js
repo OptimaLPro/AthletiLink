@@ -13,6 +13,7 @@ const Groups = require("./models/groups");
 const Logs = require("./models/logs");
 const Likes = require("./models/likes");
 const Did_it = require("./models/did_it");
+const Fitbot = require("./models/fitbot");
 
 const now = new Date();
 const currentDate = now.toLocaleDateString(); // Get current date
@@ -659,7 +660,7 @@ app.post("/update_post/:post_id", async (req, res) => {
 
 // ---------- Delete Post by ID ----------
 app.post("/delete_post/:post_id", async (req, res) => {
-  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const post_id = req.params.post_id;
     const post = await Posts.findById(post_id);
@@ -674,6 +675,29 @@ app.post("/delete_post/:post_id", async (req, res) => {
   } catch (error) {
     console.error("Error deleting post:", error);
     res.status(500).json({ message: "Failed to delete post" });
+  }
+});
+
+// ---------- Get Posts by Group Name ----------
+app.get("/posts/:group_name", async (req, res) => {
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
+  try {
+    const posts = await Posts.find({ group_name: req.params.group_name });
+    res.status(200).json({ posts });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get("/posts/get_posts/:user_id", async (req, res) => {
+  try {
+    user_id = req.params.user_id;
+    const posts = await Posts.find({ user_id: user_id });
+    res.status(200).json({ posts });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -717,7 +741,7 @@ app.post("/approve_post/:post_id", async (req, res) => {
 
 // ---------- Get Posts Pending Count ----------
 app.get("/get_pendings", async (req, res) => {
-  if (!checkSession("admin")) return res.status(401).json({ message: "Unauthorized" });
+  if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
   try {
     const pending_posts = await Posts.find({ status: "pending" });
     const pending_posts_count = pending_posts.length;
@@ -983,38 +1007,6 @@ app.post("/delete_comment/:comment_id", async (req, res) => {
 // ********** Like Model  ********** //
 // ********************************* //
 
-// ---------- Like Post ----------
-// app.post("/like_post/:post_id", async (req, res) => {
-//   try {
-//     const postId = req.params.post_id;
-//     const userId = session.user_id;
-
-//     const post = await Posts.findById(postId);
-
-//     if (!post) {
-//       return res.status(404).json({ message: "Post not found" });
-//     }
-
-//     // Check if the user has already liked the post
-//     const userLiked = post.likes.includes(userId);
-
-//     if (userLiked) {
-//       // Unlike the post
-//       post.likes = post.likes.filter((id) => id !== userId);
-//     } else {
-//       // Like the post
-//       post.likes.push(userId);
-//     }
-
-//     await post.save();
-
-//     res.status(200).json({ likes: post.likes.length });
-//   } catch (error) {
-//     console.error("Error updating like status:", error);
-//     res.status(500).json({ message: "Failed to update like status" });
-//   }
-// });
-
 //----------- Like API -------------
 app.post('/like_posts/:postId', async (req, res) => {
   if (!checkSession("user")) return res.status(401).json({ message: "Unauthorized" });
@@ -1233,12 +1225,30 @@ app.get('/uploadImage', async (req, res) => {
   const apiKey = process.env.IMGBB_API_KEY;
   return res.status(200).json({ apiKey: apiKey });
 });
+
 // ******************************************* //
 // ********** General API'S Data ********** //
 // ******************************************* //
 
+
+// ---------- Add Fitbot Clicks ----------
+app.post("/add_fitbot_clicks", async (req, res) => {
+  try {
+    fits_data = {
+      
+    };
+    const db = mongoose.connection;
+    const results = await db.collection("fitbots").insertOne(fits_data);
+
+    res.status(200).json({ message: "New fitbot clicks added successfully" });
+  } catch (error) {
+    console.error("Error adding fitbot clicks to the database:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // ---------- Get Did it counts ----------
-app.get(/get_did_its_count/, async (req, res) => {
+app.get('/get_did_its_count/', async (req, res) => {
   try {
     const did_its = await Did_it.find({});
     const did_its_count = did_its.length;
@@ -1250,7 +1260,7 @@ app.get(/get_did_its_count/, async (req, res) => {
 });
 
 // ---------- Get Likes counts ----------
-app.get(/get_likes_count/, async (req, res) => {
+app.get('/get_likes_count/', async (req, res) => {
   try {
     const likes = await Likes.find({});
     const likes_count = likes.length;
@@ -1260,8 +1270,9 @@ app.get(/get_likes_count/, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 // ---------- Get Comments counts ----------
-app.get(/get_comments_count/, async (req, res) => {
+app.get('/get_comments_count/', async (req, res) => {
   try {
     const comments = await Comments.find({});
     const comments_count = comments.length;
@@ -1271,8 +1282,9 @@ app.get(/get_comments_count/, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 // ---------- Get Posts counts ----------
-app.get(/get_posts_count/, async (req, res) => {
+app.get('/get_posts_count/', async (req, res) => {
   try {
     const posts = await Posts.find({});
     const posts_count = posts.length;
@@ -1282,8 +1294,9 @@ app.get(/get_posts_count/, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 // ---------- Get Users counts ----------
-app.get(/get_users_count/, async (req, res) => {
+app.get('/get_users_count/', async (req, res) => {
   try {
     const users = await Users.find({});
     const users_count = users.length;
@@ -1293,8 +1306,9 @@ app.get(/get_users_count/, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 // ---------- Get Groups counts ----------
-app.get(/get_groups_count/, async (req, res) => {
+app.get('/get_groups_count/', async (req, res) => {
   try {
     const groups = await Groups.find({});
     const groups_count = groups.length;
@@ -1304,8 +1318,9 @@ app.get(/get_groups_count/, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 // ---------- Get User Groups counts ----------
-app.get(/get_user_groups_count/, async (req, res) => {
+app.get('/get_user_groups_count/', async (req, res) => {
   try {
     const user_groups = await User_groups.find({});
     const user_groups_count = user_groups.length;
@@ -1315,7 +1330,6 @@ app.get(/get_user_groups_count/, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 // ---------- Connect to DB ----------
 mongoose
