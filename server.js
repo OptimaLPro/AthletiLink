@@ -5,6 +5,7 @@ var session = require("express-session");
 var bodyParser = require("body-parser");
 const app = express();
 const mongoose = require("mongoose");
+const mongoSanitize = require('express-mongo-sanitize');
 const Users = require("./models/users");
 const User_groups = require("./models/user_groups");
 const Posts = require("./models/posts");
@@ -73,11 +74,18 @@ const createLog = async (event_type, description, req, response = "") => {
 // ---------- Body Parser ----------
 app.use(express.json());
 app.use(express.static("public"));
-app.use(bodyParser.urlencoded());
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
+);
+app.use(bodyParser.json());
+app.use(
+  mongoSanitize({
+    onSanitize: ({ req, key }) => {
+      console.warn(`This request[${key}] is sanitized`, req);
+    },
+  }),
 );
 
 // ---------- CORS ----------
@@ -578,6 +586,12 @@ app.post("/create_post", async (req, res) => {
   try {
     const user = await Users.findById(session.user_id);
 
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const yyyy = today.getFullYear();
+    const currentDate = `${dd}.${mm}.${yyyy}`;
+
     var data = {
       user_id: session.user_id,
       created: currentDate,
@@ -595,13 +609,12 @@ app.post("/create_post", async (req, res) => {
       date: req.body.date,
       time: req.body.time,
       status: "pending"
-
     };
 
     var db = mongoose.connection;
     const result = await db.collection("posts").insertOne(data); // Use await to wait for the operation to complete
     const post_id = result.insertedId;
-    createLog("Post Created", `${post_id}`, req, result);
+    createLog("Post Created", `${post_id}`, req);
     return res.redirect("http://127.0.0.1:5500/index.html");
   } catch (error) {
     console.log(error);
@@ -1234,6 +1247,12 @@ app.get('/uploadImage', async (req, res) => {
 // ---------- Add Fitbot Clicks ----------
 app.post("/add_fitbot_clicks", async (req, res) => {
   try {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const yyyy = today.getFullYear();
+    const currentDate = `${dd}.${mm}.${yyyy}`;
+
     fits_data = {
       user_id: session.user_id,
       date: currentDate,
@@ -1251,7 +1270,7 @@ app.post("/add_fitbot_clicks", async (req, res) => {
 // ---------- Get Fitbot Clicks ----------
 app.get("/get_fitbot_clicks/:date", async (req, res) => {
   try {
-    const fitbot = await Fitbot.find({date: req.params.date});
+    const fitbot = await Fitbot.find({ date: req.params.date });
     const fitbot_count = fitbot.length;
     res.status(200).json({ fitbot_count });
   } catch (error) {
