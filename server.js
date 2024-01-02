@@ -1222,7 +1222,7 @@ app.post('/sendToOpenAI', async (req, res) => {
 // ******************************************* //
 app.get('/uploadImage', async (req, res) => {
   // Handle file upload here using the environment variable for API key
-  const apiKey = process.env.IMGBB_API_KEY;
+  const apiKey = process.env.IMGBB_API_KEY ;
   return res.status(200).json({ apiKey: apiKey });
 });
 
