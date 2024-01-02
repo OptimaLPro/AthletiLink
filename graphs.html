@@ -1,319 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Graphs</title>
     <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
-    <script src="https://d3js.org/d3.v6.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-    <!-- Roboto Font -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css" />
     <style>
-        .bar {
-            fill-opacity: 0.7;
-            transition: fill-opacity 0.3s;
+        /* Reusing the styles from your provided example */
+        body {
+            font-family: "Roboto", sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f1f1f1;
         }
 
-        .bar:hover {
-            fill-opacity: 1;
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 30%;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
         }
 
-        .chart-title {
-            text-anchor: middle;
-            font-size: 24px;
-        }
-
-        .axis-label {
-            font-size: 14px;
-        }
-
-        .section-label {
-            font-weight: bold;
-            text-anchor: middle;
-        }
-
-        /* Color palette for different sections */
-        .Users {
-            fill: #1f77b4;
-        }
-
-        .Groups {
-            fill: #ff7f0e;
-        }
-
-        .UserGroups {
-            fill: #e9f603;
-        }
-
-        .Likes {
-            fill: #8c564b;
-        }
-
-        .DidIt {
-            fill: #d62728;
-        }
-
-        .Comments {
-            fill: #00f704;
-        }
-
-        .GroupsActivity {
-            fill: #9467bd;
-        }
-
-        .Posts {
-            fill: #05f0f4;
-        }
-
-        .tooltip {
-            position: absolute;
+        .icon-container {
             text-align: center;
-            width: auto;
-            height: auto;
-            /* padding: 8px; */
-            font: 12px sans-serif;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #ccc;
-            pointer-events: none;
-            opacity: 0;
-            visibility: hidden;
-            border-radius: 5px;
+            margin-top: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .icon {
+            font-size: 3em;
+            cursor: pointer;
+        }
+
+        .icon-title {
+            cursor: pointer;
         }
     </style>
 </head>
 
-
-
 <body>
+    <div class="container mt-6 effect-fadeIn">
+        <!-- Icon for Daily Graph -->
+        <div class="icon-container">
+            <div class="icon" onclick="redirectTo('graph_daily.html')">&#128202;</div>
+            <p class="icon-title" onclick="redirectTo('graph_daily.html')">Daily</p>
+        </div>
+        
+        <!-- Icon for Overall Graph -->
+        <div class="icon-container">
+            <div class="icon" onclick="redirectTo('graph_overall.html')">&#128200;</div>
+            <p class="icon-title" onclick="redirectTo('graph_overall.html')">Overall</p>
+        </div>
+    </div>
 
-    <div id="graph" style="display: flex; justify-content: center; align-items: center; height: 100vh;"></div>
-    <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+    <div id="close-icon" class="position-fixed effect-fadeIn"
+        style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
         <a href="control_panel.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-times fa-stack-1x fa-inverse"></i>
             </span></a>
     </div>
+
     <script>
-        // Function to asynchronously fetch all counts
-        async function fetchAllCounts() {
-            try {
-                const likesCount = await getLikesCount() || 0; // Default to 0 if null
-                const didItsCount = await getDidItsCount() || 0; // Default to 0 if null
-                const commentsCount = await getCommentsCount() || 0; // Default to 0 if null
-                const postsCount = await getPostsCount() || 0; // Default to 0 if null
-                const groupsCount = await getGroupsCount() || 0; // Default to 0 if null
-                const usersCount = await getUsersCount() || 0; // Default to 0 if null
-                const userGroupsCount = await getUserGroupsCount() || 0; // Default to 0 if null
-
-                const data = [
-                    { section: 'UserGroups', category: 'Total User Groups', value: userGroupsCount },
-                    { section: 'Likes', category: 'Total Likes', value: likesCount },
-                    { section: 'DidIt', category: 'Total Did-It', value: didItsCount },
-                    { section: 'Comments', category: 'Total Comments', value: commentsCount },
-                    { section: 'Posts', category: 'Total Posts', value: postsCount },
-                    { section: 'Groups', category: 'Total Groups', value: groupsCount },
-                    { section: 'Users', category: 'Total Users', value: usersCount },
-                ];
-
-                createGraph(data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
+        function redirectTo(page) {
+            window.location.href = page;
         }
-
-        // Call the function to fetch all counts and create the graph
-        fetchAllCounts();
-
-        function createGraph(data) {
-            const margin = { top: 60, right: 20, bottom: 100, left: 60 },
-                width = 960 - margin.left - margin.right,
-                height = 600 - margin.top - margin.bottom;
-
-            const x0 = d3.scaleBand()
-                .rangeRound([0, width])
-                .paddingInner(0.1);
-
-            const x1 = d3.scaleBand()
-                .padding(0.05);
-
-            const y = d3.scaleLinear()
-                .rangeRound([height, 0]);
-
-            const color = d3.scaleOrdinal()
-                .range(["#1f77b4", "#ff7f0e", "#05f0f4", "#2ca02c", "#d62728", "#8c564b", "#e9f603"]);
-
-            const svg = d3.select("#graph").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            const sections = data.map(d => d.section);
-            const categories = data.map(d => d.category);
-            x0.domain(sections);
-            x1.domain(categories).rangeRound([0, x0.bandwidth()]);
-            y.domain([0, d3.max(data, d => d.value)]);
-
-            svg.append("text")
-                .attr("class", "chart-title")
-                .attr("x", (width / 2))
-                .attr("y", 0 - (margin.top / 2))
-                .text("Website Statistics Overview");
-
-            svg.append("g")
-                .selectAll("g")
-                .data(data)
-                .enter().append("g")
-                .attr("transform", d => "translate(" + x0(d.section) + ",0)")
-                .selectAll("rect")
-                .data(d => [d])
-                .enter().append("rect")
-                .attr("class", d => "bar " + d.section)
-                .attr("x", d => x1(d.category))
-                .attr("y", d => y(d.value))
-                .attr("width", x1.bandwidth())
-                .attr("height", d => height - y(d.value));
-
-            svg.append("g")
-                .attr("class", "axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x0))
-                .selectAll(".tick text")
-                .style("text-anchor", "start")
-                .attr("dx", "-.8em")
-                .attr("dy", ".15em")
-                .attr("transform", "rotate(-65)");
-
-            svg.append("g")
-                .attr("class", "axis")
-                .call(d3.axisLeft(y).ticks(null, "s"))
-                .append("text")
-                .attr("class", "axis-label")
-                .attr("x", 2)
-                .attr("y", y(y.ticks().pop()) + 0.5)
-                .attr("dy", "0.32em")
-                .attr("fill", "#000")
-                .attr("font-weight", "bold")
-                .attr("text-anchor", "start")
-                .text("Value");
-
-            const legend = svg.append("g")
-                .attr("font-family", "sans-serif")
-                .attr("font-size", 10)
-                .attr("text-anchor", "end")
-                .selectAll("g")
-                .data(categories.slice().reverse())
-                .enter().append("g")
-                .attr("transform", (d, i) => "translate(0," + i * 20 + ")");
-
-            legend.append("rect")
-                .attr("x", width - 19)
-                .attr("width", 19)
-                .attr("height", 19)
-                .attr("fill", color);
-
-            legend.append("text")
-                .attr("x", width - 24)
-                .attr("y", 9.5)
-                .attr("dy", "0.32em")
-                .text(d => d);
-        }
-
-
-        // Function to fetch likes count
-        async function getLikesCount() {
-            try {
-                const response = await fetch('http://localhost:5500/get_likes_count');
-                const data = await response.json();
-                console.log(data.likes_count);
-                return data.likes_count; // Return only the likes_count value
-            } catch (error) {
-                console.error('Error fetching likes count:', error);
-                return null;
-            }
-        }
-
-
-        // Function to fetch did its count
-        async function getDidItsCount() {
-            try {
-                const response = await fetch('http://localhost:5500/get_did_its_count');
-                const data = await response.json();
-                console.log(data.did_its_count);
-                return data.did_its_count;
-            } catch (error) {
-                console.error('Error fetching did its count:', error);
-                return null;
-            }
-        }
-
-        // Function to fetch comments count
-        async function getCommentsCount() {
-            try {
-                const response = await fetch('http://localhost:5500/get_comments_count');
-                const data = await response.json();
-                console.log(data.comments_count);
-                return data.comments_count;
-            } catch (error) {
-                console.error('Error fetching comments count:', error);
-                return null;
-            }
-        }
-
-        // Function to fetch posts count
-        async function getPostsCount() {
-            try {
-                const response = await fetch('http://localhost:5500/get_posts_count');
-                const data = await response.json();
-                return data.posts_count;
-            } catch (error) {
-                console.error('Error fetching posts count:', error);
-                return null;
-            }
-        }
-
-        // Function to fetch groups count
-        async function getGroupsCount() {
-            try {
-                const response = await fetch('http://localhost:5500/get_groups_count');
-                const data = await response.json();
-                return data.groups_count;
-            } catch (error) {
-                console.error('Error fetching groups count:', error);
-                return null;
-            }
-        }
-
-        // Function to fetch users count
-        async function getUsersCount() {
-            try {
-                const response = await fetch('http://localhost:5500/get_users_count');
-                const data = await response.json();
-                return data.users_count;
-            } catch (error) {
-                console.error('Error fetching users count:', error);
-                return null;
-            }
-        }
-
-        // Function to fetch user groups count
-        async function getUserGroupsCount() {
-            try {
-                const response = await fetch('http://localhost:5500/get_user_groups_count');
-                const data = await response.json();
-                return data.user_groups_count;
-            } catch (error) {
-                console.error('Error fetching user groups count:', error);
-                return null;
-            }
-        }
-
-        // Example usage:
-        // getLikesCount().then(data => console.log('Likes Count:', data));
-        //getDidItsCount().then(data => console.log('Did Its Count:', data));
-        // Call other functions in a similar manner for respective counts...
-
     </script>
 </body>
 
