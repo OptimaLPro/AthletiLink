@@ -27,6 +27,62 @@
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+           body {
+            font-family: "Roboto", sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 60%;
+            /* Set the max-width to make it more narrow */
+            width: 100%;
+            /* Make sure it takes 100% width of its container */
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .icon-container {
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .icon {
+            font-size: 3em;
+            cursor: pointer;
+        }
+
+        .icon-title {
+            cursor: pointer;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            transform: translate(-50%, -50%);
+            background-color: #ea0000;
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75em;
+            line-height: 1;
+            /* Ensures text is vertically centered */
+        }
         /* CSS styles omitted for brevity */
     </style>
 </head>

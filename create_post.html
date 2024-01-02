@@ -1,5 +1,3 @@
-<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/create_post.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,11 +15,33 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <link rel="stylesheet" href="assets/css/styles.css" />
     <script
-        src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5WBEiQ8kMwK1exenCukskr8HCiERvjT0&libraries=places"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="assets/js/image_upload.js"></script>
     <style>
-        /* CSS styles */
+        body {
+            font-family: "Roboto", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f1f1f1;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            /* Adjusted for better responsiveness */
+            width: 100%;
+            margin: auto;
+        }
     </style>
 </head>
 
@@ -30,20 +50,17 @@
         <form action="http://localhost:5500/create_post" method="post">
             <h2 class="text-center mb-4">Create Post</h2>
 
-            <!-- Group selection -->
             <div class="form-group">
                 <label for="group">Group</label>
                 <select id="group" name="group" class="form-control" required>
                 </select>
             </div>
 
-            <!-- Title input -->
             <div class="form-group">
                 <label for="title">Title</label>
                 <input type="text" id="title" name="title" class="form-control" maxlength="50" required value="test" />
             </div>
 
-            <!-- Duration selection -->
             <div class="form-group">
                 <label for="duration">Duration</label>
                 <select id="duration" name="duration" class="form-control duration-dropdown" required>
@@ -58,14 +75,13 @@
                 </select>
             </div>
 
-            <!-- Time selection -->
             <div class="form-group">
                 <label for="time">Time</label>
                 <select id="time" name="time" class="form-control" required>
+                    <!-- Options will be dynamically added here using JavaScript -->
                 </select>
             </div>
 
-            <!-- Date input -->
             <div class="form-group">
                 <label for="Date">Date</label>
                 <div class="input-group date">
@@ -76,20 +92,17 @@
                 </div>
             </div>
 
-            <!-- Location input -->
             <div class="form-group">
                 <label for="location">Location</label>
                 <input type="text" id="location" name="location" class="form-control" maxlength="100" required
                     placeholder="" value="Tel Aviv, Israel" />
             </div>
 
-            <!-- Description textarea -->
             <div class="form-group">
                 <label for="description">Description</label>
                 <textarea id="description" name="description" class="form-control" rows="4" required>test</textarea>
             </div>
 
-            <!-- Profile picture upload -->
             <div class="form-group">
                 <label for="profilePicture">Cover Picture</label>
                 <div class="custom-file">
@@ -99,7 +112,6 @@
                 </div>
             </div>
 
-            <!-- Progress bar -->
             <div class="form-group">
                 <div class="progress" style="margin-top: 10px; display: none;">
                     <div class="progress-bar" role="progressbar" id="uploadProgressBar" style="width: 0%;"
@@ -107,23 +119,19 @@
                 </div>
             </div>
 
-            <!-- Hidden fields -->
             <input type="hidden" id="profilePictureUrl" name="profilePictureUrl">
+
             <div class="form-group">
                 <input type="hidden" id="like" name="like" value="0" />
                 <input type="hidden" id="did" name="did" value="0" />
                 <input type="hidden" id="comments" name="comments" value="0" />
             </div>
-
-            <!-- Information message -->
             <div>
                 <br>
                 <p class="text-center">Heads up! It might take around 10 minutes for us to give your request the thumbs
                     up. 😊</p>
                 <br>
             </div>
-
-            <!-- Submit button -->
             <div class="form-group">
                 <button type="submit" class="btn btn-dark btn-block">
                     Submit your request
@@ -131,28 +139,27 @@
             </div>
         </form>
     </div>
-
-    <!-- Close icon -->
     <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
         <a href="index.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-times fa-stack-1x fa-inverse"></i>
             </span></a>
+
     </div>
 
-    <!-- Location alert -->
     <div class="alert alert-danger fade show" id="locationAlert" role="alert"
         style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;">
         Invalid location. Please select a location from the suggestions.
     </div>
+
 
 </body>
 
 </html>
 
 <script>
-    // FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/create_post.html
-
+    var validLocationSelected = false; // Variable to track if a valid location is selected
+    var uploaded = false;
     // Initialize datepicker
     $(document).ready(function () {
         $('#datepicker').datepicker({
@@ -165,16 +172,17 @@
     var autocomplete = new google.maps.places.Autocomplete(input);
     var locationAlert = $('#locationAlert');
 
-    // Listen for place selection
     autocomplete.addListener('place_changed', function () {
         var place = autocomplete.getPlace();
 
         if (!place.geometry) {
+            // No valid place selected
             validLocationSelected = false;
-            showAlert(locationAlert);
+            showAlert(locationAlert); // Show the alert
         } else {
+            // Valid place selected
             validLocationSelected = true;
-            locationAlert.hide();
+            locationAlert.hide(); // Hide the alert
             input.value = place.formatted_address;
         }
     });
@@ -186,32 +194,32 @@
                 this.submit();
             }
         } else {
-            showAlert(locationAlert);
+            showAlert(locationAlert); // Show the alert
         }
     });
 
     function showAlert(alertElement) {
-        alertElement.show();
+        alertElement.show(); // Show the alert
         setTimeout(function () {
-            alertElement.fadeOut();
+            alertElement.fadeOut(); // Fade out the alert after 4 seconds
         }, 3000);
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Fetch user groups
         fetch('http://localhost:5500/user_groups/')
             .then(response => response.json())
             .then(data => {
-                const allGroups = data.user_groups_res;
+                const allGroups = data.user_groups_res; // Corrected variable name
                 const groupDropdown = document.getElementById('group');
                 allGroups.forEach(function (group) {
                     const option = document.createElement('option');
-                    option.value = group.group;
-                    option.text = group.group;
+                    option.value = group.group; // Use 'group' instead of data.user_groups_res.group
+                    option.text = group.group; // Use 'group' instead of data.user_groups_res.group
                     groupDropdown.appendChild(option);
                 });
             })
             .catch(error => console.error('Error fetching groups:', error));
+
 
         var timeDropdown = document.getElementById('time');
 
@@ -233,4 +241,5 @@
         }
         timeDropdown.value = "18:00";
     });
+
 </script>
