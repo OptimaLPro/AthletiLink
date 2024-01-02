@@ -17,6 +17,10 @@
   <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+    integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
@@ -50,9 +54,13 @@
 
         <!-- Password -->
         <div class="form-group col-md-6">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" class="form-control" required  />
+          <label for="password">Password
+            <i class="fa fa-info-circle" data-toggle="popover" title="Password Format"
+              data-content="Password must be at least 6 characters long, include uppercase, lowercase, numbers, and special characters."></i>
+          </label>
+          <input type="password" id="password" name="password" class="form-control" required />
         </div>
+
         <!-- Confirm Password -->
         <div class="form-group col-md-6">
           <label for="confirmPassword">Confirm Password</label>
@@ -121,7 +129,69 @@
   </div>
 
   <script>
-    // JavaScript code for form validation and functionality
+    var uploaded = false;
+
+    $(document).ready(function () {
+      $('[data-toggle="popover"]').popover({
+        trigger: 'hover',
+        placement: 'top'
+      });
+
+      $('#datepicker').datepicker({
+        format: 'dd/mm/yyyy',
+        "setDate": new Date(),
+        autoclose: true
+      });
+
+      // Prevent the form from submitting on its own
+      $("form").submit(function (e) {
+        e.preventDefault();
+        if (uploaded) {
+          var password = $('#password').val();
+          var passwordConfirm = $('#confirmPassword').val();
+
+          // Check if passwords match
+          if (!validatePassword(password) || password != passwordConfirm) {
+            console.log(validatePassword(password));
+            console.log(password != confirmPassword);
+            $('#errorMessage').text('Passwords do not match or do not meet criteria');
+            $('#errorMessage').removeClass('d-none');
+            return;
+          } else {
+            $('#errorMessage').addClass('d-none');
+          }
+          // Password validation function
+          function validatePassword(password) {
+            var minLength = 6;
+            var hasUpperCase = /[A-Z]/.test(password);
+            console.log(hasUpperCase);
+            var hasLowerCase = /[a-z]/.test(password);
+            console.log(hasLowerCase);
+            var hasNumbers = /\d/.test(password);
+            console.log(hasNumbers);
+            var hasSpecialChars = /\W/.test(password);
+            console.log(hasSpecialChars);
+            return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars;
+          }
+          fetch('http://localhost:5500/check_email/' + $('#email').val())
+            .then(response => response.json())
+            .then(data => {
+              const message = data.message; // Corrected variable name
+              if (message === "Exists") {
+                $('#errorMessage').text('Email already exists');
+                $('#errorMessage').removeClass('d-none');
+                return;
+              }
+              else {
+                $('#errorMessage').addClass('d-none');
+                $('form')[0].submit();
+              }
+            })
+            .catch(error => console.error('Error fetching groups:', error));
+        }
+      });
+    });
+
   </script>
 </body>
 

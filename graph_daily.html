@@ -1,0 +1,268 @@
+<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/manager_graph.html -->
+<!-- 
+    This HTML file represents the Manager Graphs page of the AthletiLink application.
+    It displays a bar chart that visualizes management statistics overview.
+    The chart shows the counts for FitBot entrances and daily posts requests.
+    The data is fetched asynchronously from the server using the fetch API.
+    The chart is created using the D3.js library.
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manager Graphs</title>
+    <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        /* CSS styles for the chart */
+    </style>
+</head>
+
+<body>
+    <!-- Chart container -->
+    <div id="graph"></div>
+
+    <!-- Close icon -->
+    <div id="close-icon" class="position-fixed">
+        <a href="control_panel.html">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+            </span>
+        </a>
+    </div>
+
+    <script>
+        // JavaScript code for fetching data and creating the chart
+    </script>
+</body>
+
+</html>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Daily Graph</title>
+    <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        .bar {
+            fill-opacity: 0.7;
+            transition: fill-opacity 0.3s;
+        }
+
+        .bar:hover {
+            fill-opacity: 1;
+        }
+
+        .chart-title {
+            text-anchor: middle;
+            font-size: 24px;
+        }
+
+        .axis-label {
+            font-size: 14px;
+        }
+
+        .section-label {
+            font-weight: bold;
+            text-anchor: middle;
+        }
+
+        /* Color palette for different sections */
+
+        .FitBot {
+            fill: #f60303;
+        }
+
+        .Daily_Posts {
+            fill: #03bdf6;
+        }
+
+
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            width: auto;
+            height: auto;
+            /* padding: 8px; */
+            font: 12px sans-serif;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+
+
+<body>
+
+    <div id="graph" style="display: flex; justify-content: center; align-items: center; height: 100vh;"></div>
+    <div id="close-icon" class="position-fixed" style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
+        <a href="graphs.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+            </span></a>
+    </div>
+    <script>
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const yyyy = today.getFullYear();
+        const currentDate = `${dd}.${mm}.${yyyy}`;
+        // Function to asynchronously fetch all counts
+        async function fetchAllCounts() {
+            try {
+                const FitBotClicksCount = await getFitBotClicksCount() || 0; // Default to 0 if null
+                const postsByDate = await getPostsByDate() || 0; // Default to 0 if null
+
+                const data = [
+                    { section: 'FitBot', category: 'FitBot Entrances ', value: FitBotClicksCount },
+                    { section: 'Daily_Posts', category: 'Daily Posts Requests', value: postsByDate },   // { section: 'Users', category: 'Total Users', value: usersCount },
+                ];
+
+                createGraph(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Call the function to fetch all counts and create the graph
+        fetchAllCounts();
+
+        function createGraph(data) {
+            const margin = { top: 60, right: 20, bottom: 100, left: 60 },
+                width = 700 - margin.left - margin.right,
+                height = 600 - margin.top - margin.bottom;
+
+            const x0 = d3.scaleBand()
+                .rangeRound([0, width])
+                .paddingInner(0.1);
+
+            const x1 = d3.scaleBand()
+                .padding(0.05);
+
+            const y = d3.scaleLinear()
+                .rangeRound([height, 0]);
+
+            const color = d3.scaleOrdinal()
+                .range(["#03bdf6", "#f60303"]);
+
+            const svg = d3.select("#graph").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            const sections = data.map(d => d.section);
+            const categories = data.map(d => d.category);
+            x0.domain(sections);
+            x1.domain(categories).rangeRound([0, x0.bandwidth()]);
+            y.domain([0, d3.max(data, d => d.value)]);
+
+            svg.append("text")
+                .attr("class", "chart-title")
+                .attr("x", (width / 2))
+                .attr("y", 0 - (margin.top / 2))
+                .text("Daily Graph");
+
+            svg.append("g")
+                .selectAll("g")
+                .data(data)
+                .enter().append("g")
+                .attr("transform", d => "translate(" + x0(d.section) + ",0)")
+                .selectAll("rect")
+                .data(d => [d])
+                .enter().append("rect")
+                .attr("class", d => "bar " + d.section)
+                .attr("x", d => x1(d.category))
+                .attr("y", d => y(d.value))
+                .attr("width", x1.bandwidth())
+                .attr("height", d => height - y(d.value));
+
+            svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x0))
+                .selectAll(".tick text")
+                .style("text-anchor", "start")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-65)");
+
+            svg.append("g")
+                .attr("class", "axis")
+                .call(d3.axisLeft(y).ticks(null, "s"))
+                .append("text")
+                .attr("class", "axis-label")
+                .attr("x", 2)
+                .attr("y", y(y.ticks().pop()) + 0.5)
+                .attr("dy", "0.32em")
+                .attr("fill", "#000")
+                .attr("font-weight", "bold")
+                .attr("text-anchor", "start")
+                .text("Value");
+
+            const legend = svg.append("g")
+                .attr("font-family", "sans-serif")
+                .attr("font-size", 10)
+                .attr("text-anchor", "end")
+                .selectAll("g")
+                .data(categories.slice().reverse())
+                .enter().append("g")
+                .attr("transform", (d, i) => "translate(0," + i * 20 + ")");
+
+            legend.append("rect")
+                .attr("x", width - 19)
+                .attr("width", 19)
+                .attr("height", 19)
+                .attr("fill", color);
+
+            legend.append("text")
+                .attr("x", width - 24)
+                .attr("y", 9.5)
+                .attr("dy", "0.32em")
+                .text(d => d);
+        }
+
+        //Function to fetch fitBot clicks count
+        async function getFitBotClicksCount() {
+            try {
+                const response = await fetch('http://localhost:5500/get_fitbot_clicks/' + currentDate);
+                const data = await response.json();
+                return data.fitbot_count;
+            } catch (error) {
+                console.error('Error fetching fitbot clicks count:', error);
+                return null;
+            }
+        }
+
+        //Function to get posts by date
+        async function getPostsByDate() {
+            try {
+                const response = await fetch('http://localhost:5500/get_posts_by_date/' + currentDate);
+                const data = await response.json();
+                return data.posts_count;
+            } catch (error) {
+                console.error('Error fetching fitbot clicks count:', error);
+                return null;
+            }
+        }
+
+    </script>
+</body>
+
+</html>
