@@ -1,3 +1,9 @@
+<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/posts_edit.html -->
+<!-- 
+    This HTML file is used for managing posts. It contains a form for searching and filtering posts, 
+    a table for displaying the posts, and modals for confirming post deletion and updating post information.
+    The file includes various CSS and JavaScript libraries for styling and functionality.
+-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -155,9 +161,7 @@
     <div class="container effect-fadeIn">
         <h1 class="d-flex justify-content-center">Posts Management</h1>
         <br>
-        <!-- <div class="input-group mb-3"> -->
-
-        <!-- <input type="text" class="form-control" id="searchText" placeholder="Search everything..."> -->
+      
         <div class="search-container input-group mb-3">
             <div class="input-group-prepend">
                 <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
@@ -272,11 +276,6 @@
                         <input type="text" id="host" name="host" class="form-control" required />
                     </div>
 
-                    <!-- <div class="form-group">
-                        <label for="duration">Duration</label>
-                        <input type="text" id="duration" name="duration" class="form-control" required />
-                    </div> -->
-
                     <div class="form-group">
                         <label for="duration">Duration</label>
                         <select id="duration" name="duration" class="form-control duration-dropdown" required>
@@ -321,11 +320,7 @@
                         </select>
                     </div>
 
-                    <!-- <div class="form-group">
-                        <label for="groupName">Group Name</label>
-                        <input type="text" id="groupName" name="groupName" class="form-control" required />
-                    </div> -->
-
+              
                     <div class="form-group">
                         <label for="datepicker">Date</label>
                         <div class="input-group date">
@@ -426,6 +421,7 @@
             </div>
         </div>
     </div>
+
     <!-- Google API Modal -->
     <div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModalLabel"
         aria-hidden="true">
@@ -461,7 +457,8 @@
                     this.submit();
                 }
             } else {
-                showAlert(locationAlert); // Show the alert
+                // Show the alert
+                showAlert(locationAlert); 
             }
         });
 
@@ -471,7 +468,8 @@
 
         function initializeAutocomplete() {
             var input = document.getElementById('location');
-            if (!input) return; // Exit if input not found
+            // Exit if input not found
+            if (!input) return; 
 
             var autocomplete = new google.maps.places.Autocomplete(input);
             var locationAlert = $('#locationAlert');
@@ -490,24 +488,25 @@
         }
 
         function showAlert(alertElement) {
-            alertElement.show(); // Show the alert
+            alertElement.show(); 
             setTimeout(function () {
-                alertElement.fadeOut(); // Fade out the alert after 4 seconds
+                // Fade out the alert after 4 seconds
+                alertElement.fadeOut(); 
             }, 3000);
         }
 
         let posts;
         fetchPosts();
-
+        // Fetch all groups
         fetch('http://localhost:5500/groups/')
             .then(response => response.json())
             .then(data => {
-                const allGroups = data.groups; // Corrected variable name
+                const allGroups = data.groups; 
                 const groupDropdown = document.getElementById('groupName');
                 allGroups.forEach(function (group) {
                     const option = document.createElement('option');
-                    option.value = group.group_name; // Use 'group' instead of data.user_groups_res.group
-                    option.text = group.group_name; // Use 'group' instead of data.user_groups_res.group
+                    option.value = group.group_name; 
+                    option.text = group.group_name; 
                     groupDropdown.appendChild(option);
                 });
             })
@@ -517,7 +516,7 @@
             var selectedValue = $(this).attr('value');
             $('#dropdownButton').html($(this).text() + ' <i class="fa fa-caret-down" aria-hidden="true"></i>');
             $('#dropdownButton').attr('value', selectedValue);
-            filterUsers(selectedValue); // Add this line to pass the selected value
+            filterUsers(selectedValue); 
         });
 
         $('#exampleModal').on('shown.bs.modal', function () {
@@ -525,9 +524,11 @@
         })
 
         $("#clearSearch").on("click", function () {
-            $("#searchText").val(""); // Clear the search input
+            // Clear the search input
+            $("#searchText").val(""); 
             const selectedValue = $("#dropdownButton").attr('value');
-            filterUsers(selectedValue); // Filter users after clearing search input
+            // Filter users after clearing search input
+            filterUsers(selectedValue); 
         });
 
         $("#searchText").on("input", function () {
@@ -538,11 +539,11 @@
         function fetchPosts() {
             $.get("http://localhost:5500/posts", function (data) {
                 posts = data.posts;
-                // console.log(posts);
                 populateTable(posts);
             });
         }
 
+        // Function to filter users
         function populateTable(posts) {
             // Show "pending" posts first
             posts.sort((a, b) => {
@@ -553,7 +554,6 @@
                 }
                 return 0;
             });
-            // console.log(posts);
             const tableBody = $("#userPosts tbody");
             tableBody.empty();
 
@@ -634,7 +634,7 @@
             $('#mapModal').modal('show');
             initMap(address);
         }
-
+        // Initialize and add the google map
         function initMap(address) {
             // Geocode the address
             var geocoder = new google.maps.Geocoder();
@@ -755,7 +755,7 @@
                 });
             });
         };
-
+        // Function to filter users
         function filterUsers(criteria) {
             const searchText = $("#searchText").val().toLowerCase();
             // const searchBy = $("#searchBy").val();
@@ -763,7 +763,7 @@
             const filteredUsers = filterByText(searchText, criteria);
             populateTable(filteredUsers);
         }
-
+        // Function to filter posts by text
         function filterByText(text, criteria) {
             const lowercaseText = text.toLowerCase();
             // console.log(`Filtering by ${criteria} for ${text}`);

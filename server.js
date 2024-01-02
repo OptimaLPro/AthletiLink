@@ -17,8 +17,8 @@ const Did_it = require("./models/did_it");
 const Fitbot = require("./models/fitbot");
 
 const now = new Date();
-const currentDate = now.toLocaleDateString(); // Get current date
-const currentTime = now.toLocaleTimeString(); // Get current time
+const currentDate = now.toLocaleDateString();
+const currentTime = now.toLocaleTimeString(); 
 
 app.use(express.static('assets'));
 const port = 5500;
@@ -380,32 +380,7 @@ app.post("/update_user/:user_id", async (req, res) => {
   }
 });
 
-/*
----------- Update User Profile Picture ----------
-app.post("/update_profile_picture/:url", async (req, res) => {
-  const img_url = req.params.url;
-  try {
-    var data = {
-      profile_pic: url.toString(),
-    };
 
-    const updatedFields = data;
-
-    const updatedUser = await Users.findByIdAndUpdate(user_id, updatedFields, {
-      new: true,
-    });
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    createLog("User Update", `Updated: ${user_id}`, req, updatedUser);
-    return res.status(200).json(updatedUser);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-*/
 
 // **************************************** //
 // ********** User Groups Model  ********** //
@@ -588,7 +563,7 @@ app.post("/create_post", async (req, res) => {
 
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); 
     const yyyy = today.getFullYear();
     const currentDate = `${dd}.${mm}.${yyyy}`;
 
@@ -702,7 +677,7 @@ app.get("/posts/:group_name", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
+// ---------- Get Posts by User ID ----------
 app.get("/posts/get_posts/:user_id", async (req, res) => {
   try {
     user_id = req.params.user_id;
@@ -793,7 +768,7 @@ app.post("/create_group", async (req, res) => {
     };
 
     var db = mongoose.connection;
-    const result = await db.collection("groups").insertOne(data); // Use await to wait for the operation to complete
+    const result = await db.collection("groups").insertOne(data); 
     createLog("Group Created", `${group_name}`, req, result);
     res.status(200).json({ result });
   } catch (error) {
@@ -1056,10 +1031,10 @@ app.post('/like_posts/:postId', async (req, res) => {
         first_name: foundUser.first_name,
         last_name: foundUser.last_name
       }
-      // console.log(likes_data);
+   
       const db = mongoose.connection;
       const results = await db.collection("likes").insertOne(likes_data);
-      // console.log(results);
+  
     }
 
     const data = {
@@ -1077,7 +1052,7 @@ app.post('/like_posts/:postId', async (req, res) => {
 
     return res.status(200).json({ message: 'Likes updated successfully', post: updatedPost, like: foundLike });
   } catch (error) {
-    console.error(error); // log the error
+    console.error(error); 
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -1163,7 +1138,7 @@ app.post('/did_its/:postId', async (req, res) => {
 
     return res.status(200).json({ message: 'Did its updated successfully', post: updatedPost, did: foundDid });
   } catch (error) {
-    console.error(error); // log the error
+    console.error(error); 
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -1242,7 +1217,6 @@ app.get('/uploadImage', async (req, res) => {
 // ******************************************* //
 // ********** General API'S Data ********** //
 // ******************************************* //
-
 
 // ---------- Add Fitbot Clicks ----------
 app.post("/add_fitbot_clicks", async (req, res) => {

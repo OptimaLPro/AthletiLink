@@ -1,4 +1,14 @@
+/**
+ * Mongoose schema for the likes collection.
+ *
+ * @typedef {Object} LikesSchema
+ * @property {string} post_id - The ID of the post being liked.
+ * @property {string} user_id - The ID of the user who liked the post.
+ * @property {string} first_name - The first name of the user who liked the post.
+ * @property {string} last_name - The last name of the user who liked the post.
+ */
 const mongoose = require('mongoose')
+
 
 const likesSchema = mongoose.Schema(
     {

@@ -1,3 +1,10 @@
+/**
+ * @typedef {Object} DidSchema
+ * @property {string} post_id - The ID of the post.
+ * @property {string} user_id - The ID of the user.
+ * @property {string} first_name - The first name of the user.
+ * @property {string} last_name - The last name of the user.
+ */
 const mongoose = require('mongoose')
 
 const didSchema = mongoose.Schema(

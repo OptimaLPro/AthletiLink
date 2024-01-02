@@ -1,3 +1,13 @@
+<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/Update.html -->
+<!-- 
+This HTML file represents the settings page of the AthletiLink application. It allows users to update their personal information, including their first name, last name, email, password, date of birth, and profile picture.
+
+The file includes the necessary HTML structure, CSS styles, and JavaScript code to create a responsive and interactive settings form. It also includes external dependencies such as Bootstrap, Bootstrap-datepicker, and jQuery.
+
+The form is submitted to the "http://localhost:5500/update_user" endpoint using the HTTP POST method. The form data is validated before submission, ensuring that the passwords match and meet the required criteria.
+
+Overall, this file provides a user-friendly interface for users to update their settings in the AthletiLink application.
+-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,7 +55,7 @@
       font-size: 1rem;
     }
 
-    /*Add the styles from signup.html here*/
+   
     .effect-fadeIn {
       animation: fadeIn 1s;
     }
@@ -153,15 +163,13 @@
       });
 
       // Fetch data from the API for the settings page
-      fetch('http://localhost:5500/user_details') // Replace with your API endpoint
+      fetch('http://localhost:5500/user_details') 
         .then(response => response.json())
         .then(data => {
-          // Populate the input fields with API data
           document.getElementById('firstName').value = data.users.first_name || '';
           document.getElementById('lastName').value = data.users.last_name || '';
           document.getElementById('email').value = data.users.email || '';
           document.getElementById('datepicker').value = data.users.date || '';
-          // Update other fields as needed
         })
         .catch(error => {
           console.error('Error fetching data:', error);
@@ -182,7 +190,7 @@
         errorMessage.classList.add('d-none');
       }
     };
-
+    // Function to validate password
     function validatePassword(password) {
         var minLength = 6;
         var hasUpperCase = /[A-Z]/.test(password);

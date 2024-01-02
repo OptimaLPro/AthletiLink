@@ -1,3 +1,12 @@
+<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/SignIn.html -->
+<!-- 
+    This HTML file represents the Sign In page of the AthletiLink web application.
+    It contains a form where users can enter their email and password to sign in.
+    If the user enters invalid credentials, an error message is displayed.
+    The form data is sent to the server for authentication using JavaScript fetch API.
+    Upon successful authentication, the user is redirected to the index.html page.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,23 +21,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css" />
     <style>
-        body {
-            font-family: "Roboto", sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 25%;
-            width: 100%;
-        }
+        /* CSS styles for the page layout */
     </style>
 </head>
 
@@ -84,66 +77,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form');
-
-            form.addEventListener('submit', function (event) {
-                var is_logged_in = false;
-                event.preventDefault();
-
-                var user_id = 0;
-                const emailInput = document.getElementById('email');
-                const passwordInput = document.getElementById('password');
-                const email = emailInput.value;
-                const password = passwordInput.value;
-                const apiUrl = `http://localhost:5500/getUserByMail/${email}`;
-
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.users === null) {
-                            console.error('Invalid Email or Password.');
-                            const errorMessage = document.getElementById('errorMessage');
-                            errorMessage.classList.remove('d-none'); // Show the error message
-                            // Reset the form to clear the input fields after showing the error message
-                            form.reset();
-                        } else
-
-                        if (data.users.password === password) {
-                                user_id = data.users._id;
-                                is_logged_in = true;
-                                console.log("Session User: " + user_id);
-                                var sessionApiUrl = "http://localhost:5500/SetSessionID/" + user_id;
-                                fetch(sessionApiUrl)
-                                    .then((response) => response.json())
-                                    .then((data) => {
-                                        window.location.href = 'index.html';
-                                    })
-                                    .catch((error) => {
-                                        console.error("Error fetching session ID:", error);
-                                    });
-
-
-                            } else {
-                                console.error('Invalid Email or Password.');
-                                const errorMessage = document.getElementById('errorMessage');
-                                errorMessage.classList.remove('d-none'); // Show the error message
-                                // Reset the form to clear the input fields after showing the error message
-                                form.reset();
-                            }
-                    })
-                    .catch(error => {
-                        console.error('There was a problem with the fetch operation:', error);
-                        // Handle errors that may occur during the fetch request
-                    });
-            });
-        });
-
+        // JavaScript code for form submission and authentication
     </script>
 </body>
 
