@@ -625,7 +625,7 @@
 
                                 var deleteIconComment = document.createElement("button");
                                 deleteIconComment.className = "btn btn-danger ml-auto mt-2 mr-2 deleteIcon";
-                                deleteIconComment.style.display = admin === "master" ? "inline" : "none";
+                                deleteIconComment.style.display = (admin === "master" || comment.user_id === user_id) ? "inline" : "none";
                                 deleteIconComment.innerHTML = '<i class="fa fa-times"></i>';
                                 deleteIconComment.addEventListener("click", function () {
                                     // Replace this with your actual function to delete a post
@@ -802,7 +802,7 @@
 
                 var deleteIconComment = document.createElement("button");
                 deleteIconComment.className = "btn btn-danger ml-auto mt-2 mr-2 deleteIcon";
-                deleteIconComment.style.display = admin === "master" ? "inline" : "none";
+                deleteIconComment.style.display = (admin === "master" || comment.user_id === user_id) ? "inline" : "none";
                 deleteIconComment.innerHTML = '<i class="fa fa-times"></i>';
                 deleteIconComment.addEventListener("click", function () {
                     deleteComment(comment_id);

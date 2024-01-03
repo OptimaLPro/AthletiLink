@@ -562,24 +562,38 @@
                     fetchUserGroups(userId);
 
                 });
+            };
 
-                function addUserToGroup(userId, groupName) {
-                    console.log(`Add user with ID ${userId} to group ${groupName}`);
-                    $.post(`http://localhost:5500/add_user_group/${userId}/${groupName}`, function (data) {
+            function addUserToGroup(userId, groupName) {
+                console.log(`Add user with ID ${userId} to group ${groupName}`);
+                fetch(`http://localhost:5500/add_user_group/${userId}/${groupName}`, {
+                    method: 'POST'
+                })
+                    .then(response => response.json())
+                    .then(data => {
                         console.log("User added to group successfully:", data);
+                    })
+                    .catch(error => {
+                        console.error("Error adding user to group:", error);
                     });
-                }
+            }
 
-                function deleteGroup(groupId, groupName) {
-                    $.post(`http://localhost:5500/delete_user_group/${groupId}`, function (data) {
+            function deleteGroup(groupId, groupName) {
+                fetch(`http://localhost:5500/delete_user_group/${groupId}`, {
+                    method: 'POST'
+                })
+                    .then(response => response.json())
+                    .then(data => {
                         console.log("User Group deleted successfully:", data);
                         // Refresh the list of groups
                         // const userId = fetchUserGroups(userId);
+                    })
+                    .catch(error => {
+                        console.error("Error deleting user group:", error);
                     });
-                    const dropdown = $("#addGroupDropdown");
-                    dropdown.append(`<option value="${groupId}">${groupName}</option>`);
-                }
-            };
+                const dropdown = $("#addGroupDropdown");
+                dropdown.append(`<option value="${groupId}">${groupName}</option>`);
+            }
 
             function filterUsers(criteria) {
                 const searchText = $("#searchText").val().toLowerCase();
