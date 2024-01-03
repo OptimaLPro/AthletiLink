@@ -1,3 +1,6 @@
+<!-- This file contains the code for the selected section. -->
+<!-- It is responsible for performing a specific task or functionality. -->
+<!-- Please refer to the code comments for detailed explanations of the implementation. -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,8 +10,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <title>My Groups</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
     <style>
@@ -25,7 +26,6 @@
             width: 30px;
             height: 30px;
             border: 2px solid #ffffff;
-            /* Dark background color for the header */
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             background-color: white;
             border-radius: 30%;
@@ -43,9 +43,7 @@
 
         .card {
             position: relative;
-            /* Needed for absolute positioning of pseudo-element */
             overflow: hidden;
-            /* Ensures the pseudo-element doesn't exceed card boundaries */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             will-change: transform, box-shadow;
@@ -62,15 +60,12 @@
             bottom: 0;
             background-color: black;
             opacity: 0.5;
-            /* 50% opacity for the black background */
             z-index: 0;
         }
 
         .card img {
             opacity: 0.5;
-            /* 50% opacity for the images */
             z-index: -1;
-            /* Ensures the image stays below the pseudo-element */
         }
 
         .card-body,
@@ -79,7 +74,6 @@
             position: relative;
             z-index: 2;
             text-align: center;
-            /* Ensure text is on top of the pseudo-element */
         }
 
         .card-selected {
@@ -93,7 +87,6 @@
             border: 2px solid rgb(28, 108, 45);
         }
 
-        /* Responsive design adjustments */
         @media (max-width: 768px) {
             #sports-cards-container {
                 flex-direction: column;
@@ -129,8 +122,6 @@
                 .then((data) => {
                     var groups = data.user_groups_res;
                     groups.forEach(function (group) {
-
-                        // group.group is the name of the group
                     });
                 })
                 .catch((error) => {
@@ -183,6 +174,7 @@
                         });
                 });
 
+            // Create the sports cards
             function createSportsCards() {
                 var mainContainer = document.getElementById("main-container");
                 var container = document.getElementById("sports-cards-container");
@@ -251,7 +243,6 @@
 
                     // Toggle checkbox state when the checkbox is clicked
                     checkbox.addEventListener("click", function (event) {
-                        // Stop the event from propagating to the card click handler
                         event.stopPropagation();
                         if (checkbox.checked) {
                             card.classList.add("card-selected");
@@ -277,11 +268,12 @@
                 var saveButton = document.createElement("button");
                 saveButton.className = "btn btn-dark btn-lg save-btn";
                 saveButton.textContent = "Save!";
-                saveButton.addEventListener("click", saveUserGroups); // Attach the saveUserGroups function to the click event
+                saveButton.addEventListener("click", saveUserGroups);
                 buttonRow.appendChild(saveButton);
                 mainContainer.appendChild(buttonRow);
             }
 
+            // Save the user groups to the database
             function saveUserGroups() {
                 var checkedCards = document.querySelectorAll('.form-check-input');
 
@@ -307,12 +299,7 @@
                 console.log("Selected categories:", newSelectedCategories);
                 console.log("Unselected categories:", unselectedCategories);
 
-                // Add logic to update the database based on selectedCategories
-                // You can use fetch() or another AJAX library to send a request to your server
-                // Example using fetch():
-
                 if (newSelectedCategories.length) {
-                    console.log("123ASD")
                     var apiUrl = "http://localhost:5500/add_user_groups";
                     fetch(apiUrl, {
                         method: 'POST',

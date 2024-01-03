@@ -1,4 +1,3 @@
-<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/control_panel.html -->
 <!-- 
     This is the control panel page of the AthletiLink application.
     It provides a user interface for managing users, posts, comments, groups, and graphs.
@@ -14,11 +13,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Control Panel</title>
     <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
-    <!-- Link to Roboto font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-    <!-- Bootstrap-datepicker CSS and jQuery -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
 
@@ -27,7 +24,7 @@
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-           body {
+        body {
             font-family: "Roboto", sans-serif;
             display: flex;
             align-items: center;
@@ -43,9 +40,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 60%;
-            /* Set the max-width to make it more narrow */
             width: 100%;
-            /* Make sure it takes 100% width of its container */
             display: flex;
             justify-content: space-around;
         }
@@ -81,15 +76,11 @@
             border-radius: 50%;
             font-size: 0.75em;
             line-height: 1;
-            /* Ensures text is vertically centered */
         }
-        /* CSS styles omitted for brevity */
     </style>
 </head>
 
 <body>
-    <!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/control_panel.html -->
-    <!-- BEGIN: ed8c6549bwf9 -->
     <div class="container mt-6 effect-fadeIn">
         <!-- Users Icon -->
         <div class="icon-container">
@@ -125,26 +116,20 @@
                 <i class="fa fa-times fa-stack-1x fa-inverse"></i>
             </span></a>
     </div>
-    <!-- END: ed8c6549bwf9 -->
 
     <script>
-        //  FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/control_panel.html 
-
-        /**
-         * Redirects the user to the specified page.
-         * @param {string} page - The URL of the page to redirect to.
-         */
+        // Redirect to the specified page
         function redirectTo(page) {
             window.location.href = page;
         }
 
+        // Get the number of pending posts and display it in the badge
         document.addEventListener("DOMContentLoaded", function () {
-            // Example: Fetch the number of pending posts from an API
             fetch('http://localhost:5500/get_pendings')
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    const pendingCount = data.pending_posts_count; // Adjust according to your API response
+                    const pendingCount = data.pending_posts_count;
                     console.log("pending count: " + pendingCount);
                     document.getElementById('pendingPostsBadge').textContent = pendingCount;
                 })

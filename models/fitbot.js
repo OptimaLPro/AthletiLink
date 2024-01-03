@@ -10,11 +10,11 @@ const fitbotSchema = mongoose.Schema(
     {
         user_id: {
             type: String,
-            required: [true, "please enter your post_id"]
+            required: [true, "please enter your user_id"]
         },
         date: {
             type: String,
-            required: [true, "please enter the user_id"]
+            required: [true, "please enter the date"]
         }
     }
 )

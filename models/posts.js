@@ -25,7 +25,7 @@ const postSchema = mongoose.Schema(
     {
         user_id: {
             type: String,
-            required: [true, "please enter your first name"]
+            required: [true, "please enter user_id"]
         },
         created: {
             type: String,
@@ -37,15 +37,15 @@ const postSchema = mongoose.Schema(
         },
         title: {
             type: String,
-            required: [true, "please enter your last name"]
+            required: [true, "please enter title"]
         },
         pic: {
             type: String,
-            required: [true, "please enter your email"]
+            required: [true, "please enter your pic"]
         },
         host: {
             type: String,
-            required: [true, "please enter your password"]
+            required: [true, "please enter host"]
         },
         group_name: {
             type: String,

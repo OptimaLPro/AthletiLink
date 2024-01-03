@@ -18,7 +18,7 @@ const Fitbot = require("./models/fitbot");
 
 const now = new Date();
 const currentDate = now.toLocaleDateString();
-const currentTime = now.toLocaleTimeString(); 
+const currentTime = now.toLocaleTimeString();
 
 app.use(express.static('assets'));
 const port = 5500;
@@ -301,7 +301,7 @@ app.post("/update_user", async (req, res) => {
     }
 
     const updatedUser = await Users.findByIdAndUpdate(session.user_id, updatedFields, {
-      new: true, // Return the updated document
+      new: true,
     });
 
     if (!updatedUser) {
@@ -475,7 +475,7 @@ app.post("/add_user_group/:user_id/:group_name", async (req, res) => {
     };
 
     var db = mongoose.connection;
-    const result = await db.collection("user_groups").insertOne(data); // Use await to wait for the operation to complete
+    const result = await db.collection("user_groups").insertOne(data);
     createLog("Create User Group", `${user_id}: ${group_name}`, req);
     res.status(200).json({ message: "New user group added successfully" });
   } catch (error) {
@@ -563,7 +563,7 @@ app.post("/create_post", async (req, res) => {
 
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); 
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yyyy = today.getFullYear();
     const currentDate = `${dd}.${mm}.${yyyy}`;
 
@@ -587,7 +587,7 @@ app.post("/create_post", async (req, res) => {
     };
 
     var db = mongoose.connection;
-    const result = await db.collection("posts").insertOne(data); // Use await to wait for the operation to complete
+    const result = await db.collection("posts").insertOne(data);
     const post_id = result.insertedId;
     createLog("Post Created", `${post_id}`, req);
     return res.redirect("http://127.0.0.1:5500/index.html");
@@ -768,7 +768,7 @@ app.post("/create_group", async (req, res) => {
     };
 
     var db = mongoose.connection;
-    const result = await db.collection("groups").insertOne(data); 
+    const result = await db.collection("groups").insertOne(data);
     createLog("Group Created", `${group_name}`, req, result);
     res.status(200).json({ result });
   } catch (error) {
@@ -882,7 +882,7 @@ app.post('/add_comment/:postId', async (req, res) => {
     console.log("comments data:" + data.description);
     console.log(results);
     const updatedPost = await Posts.findByIdAndUpdate(postId, { comments: CountComments }, {
-      new: true, // Return the updated document
+      new: true,
 
     });
     if (!updatedPost) {
@@ -1031,10 +1031,10 @@ app.post('/like_posts/:postId', async (req, res) => {
         first_name: foundUser.first_name,
         last_name: foundUser.last_name
       }
-   
+
       const db = mongoose.connection;
       const results = await db.collection("likes").insertOne(likes_data);
-  
+
     }
 
     const data = {
@@ -1052,7 +1052,7 @@ app.post('/like_posts/:postId', async (req, res) => {
 
     return res.status(200).json({ message: 'Likes updated successfully', post: updatedPost, like: foundLike });
   } catch (error) {
-    console.error(error); 
+    console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -1138,7 +1138,7 @@ app.post('/did_its/:postId', async (req, res) => {
 
     return res.status(200).json({ message: 'Did its updated successfully', post: updatedPost, did: foundDid });
   } catch (error) {
-    console.error(error); 
+    console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });

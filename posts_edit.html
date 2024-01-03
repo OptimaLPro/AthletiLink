@@ -1,4 +1,3 @@
-<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/posts_edit.html -->
 <!-- 
     This HTML file is used for managing posts. It contains a form for searching and filtering posts, 
     a table for displaying the posts, and modals for confirming post deletion and updating post information.
@@ -47,7 +46,6 @@
             width: 100%;
             height: 80%;
             margin-top: 20px;
-            /* Add margin at the top */
         }
 
         table.rounded-corners {
@@ -60,7 +58,6 @@
         #userPosts {
             width: 100%;
             margin-top: 20px;
-            /* Add margin to the table */
         }
 
         #userPosts th,
@@ -71,19 +68,15 @@
 
         #userPosts th {
             background-color: #343a40;
-            /* Set header background color */
             color: #fff;
-            /* Set header text color */
         }
 
         #userPosts tbody tr:nth-child(even) {
             background-color: #f8f9fa;
-            /* Set even row background color */
         }
 
         #userPosts tbody tr:hover {
             background-color: #e2e6ea;
-            /* Set hover row background color */
         }
 
         .profile-pic {
@@ -104,7 +97,6 @@
         .filter-container select,
         .filter-container input {
             width: 48%;
-            /* Adjust the width as needed */
             padding: 10px;
             margin-bottom: 10px;
             box-sizing: border-box;
@@ -112,9 +104,7 @@
 
         .scrollable-content {
             height: 60vh;
-            /* Set a fixed height for the scrollable content */
             overflow: auto;
-            /* Make the content scrollable */
         }
 
         .search-container {
@@ -152,7 +142,6 @@
 
         .blink {
             animation: blink 1s linear 3;
-            /* Change '3' to the number of blinks you want */
         }
     </style>
 </head>
@@ -161,7 +150,7 @@
     <div class="container effect-fadeIn">
         <h1 class="d-flex justify-content-center">Posts Management</h1>
         <br>
-      
+
         <div class="search-container input-group mb-3">
             <div class="input-group-prepend">
                 <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
@@ -320,7 +309,7 @@
                         </select>
                     </div>
 
-              
+
                     <div class="form-group">
                         <label for="datepicker">Date</label>
                         <div class="input-group date">
@@ -458,7 +447,7 @@
                 }
             } else {
                 // Show the alert
-                showAlert(locationAlert); 
+                showAlert(locationAlert);
             }
         });
 
@@ -469,7 +458,7 @@
         function initializeAutocomplete() {
             var input = document.getElementById('location');
             // Exit if input not found
-            if (!input) return; 
+            if (!input) return;
 
             var autocomplete = new google.maps.places.Autocomplete(input);
             var locationAlert = $('#locationAlert');
@@ -488,10 +477,10 @@
         }
 
         function showAlert(alertElement) {
-            alertElement.show(); 
+            alertElement.show();
             setTimeout(function () {
                 // Fade out the alert after 4 seconds
-                alertElement.fadeOut(); 
+                alertElement.fadeOut();
             }, 3000);
         }
 
@@ -501,12 +490,12 @@
         fetch('http://localhost:5500/groups/')
             .then(response => response.json())
             .then(data => {
-                const allGroups = data.groups; 
+                const allGroups = data.groups;
                 const groupDropdown = document.getElementById('groupName');
                 allGroups.forEach(function (group) {
                     const option = document.createElement('option');
-                    option.value = group.group_name; 
-                    option.text = group.group_name; 
+                    option.value = group.group_name;
+                    option.text = group.group_name;
                     groupDropdown.appendChild(option);
                 });
             })
@@ -516,7 +505,7 @@
             var selectedValue = $(this).attr('value');
             $('#dropdownButton').html($(this).text() + ' <i class="fa fa-caret-down" aria-hidden="true"></i>');
             $('#dropdownButton').attr('value', selectedValue);
-            filterUsers(selectedValue); 
+            filterUsers(selectedValue);
         });
 
         $('#exampleModal').on('shown.bs.modal', function () {
@@ -525,10 +514,10 @@
 
         $("#clearSearch").on("click", function () {
             // Clear the search input
-            $("#searchText").val(""); 
+            $("#searchText").val("");
             const selectedValue = $("#dropdownButton").attr('value');
             // Filter users after clearing search input
-            filterUsers(selectedValue); 
+            filterUsers(selectedValue);
         });
 
         $("#searchText").on("input", function () {
@@ -766,7 +755,6 @@
         // Function to filter posts by text
         function filterByText(text, criteria) {
             const lowercaseText = text.toLowerCase();
-            // console.log(`Filtering by ${criteria} for ${text}`);
             if (criteria == "approved") {
                 return posts.filter(function (post) {
                     const value = post["status"].toLowerCase();
@@ -795,6 +783,7 @@
         }
     });
 
+    // Function to copy text to clipboard
     function copyToClipboard(text) {
         const tempInput = $("<input>");
         $("body").append(tempInput);

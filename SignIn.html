@@ -1,4 +1,3 @@
-<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/SignIn.html -->
 <!-- 
     This HTML file represents the Sign In page of the AthletiLink web application.
     It contains a form where users can enter their email and password to sign in.
@@ -48,13 +47,12 @@
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control" value="forish.nati@gmail.com"
-                    required />
+                <input type="email" id="email" name="email" class="form-control" required />
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" value="654321" required />
+                <input type="password" id="password" name="password" class="form-control" required />
             </div>
 
             <div class="form-group">
@@ -93,7 +91,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <script>
-           document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.querySelector('form');
 
             form.addEventListener('submit', function (event) {
@@ -105,8 +103,8 @@
                 const passwordInput = document.getElementById('password');
                 const email = emailInput.value;
                 const password = passwordInput.value;
-                const apiUrl = `http://localhost:5500/getUserByMail/${email}`;
 
+                const apiUrl = `http://localhost:5500/getUserByMail/${email}`;
                 fetch(apiUrl)
                     .then(response => {
                         if (!response.ok) {
@@ -123,7 +121,7 @@
                             form.reset();
                         } else
 
-                        if (data.users.password === password) {
+                            if (data.users.password === password) {
                                 user_id = data.users._id;
                                 is_logged_in = true;
                                 console.log("Session User: " + user_id);
@@ -148,7 +146,6 @@
                     })
                     .catch(error => {
                         console.error('There was a problem with the fetch operation:', error);
-                        // Handle errors that may occur during the fetch request
                     });
             });
         });

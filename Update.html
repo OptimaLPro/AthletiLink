@@ -1,4 +1,3 @@
-<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/Update.html -->
 <!-- 
 This HTML file represents the settings page of the AthletiLink application. It allows users to update their personal information, including their first name, last name, email, password, date of birth, and profile picture.
 
@@ -16,10 +15,8 @@ Overall, this file provides a user-friendly interface for users to update their 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Settings</title>
   <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
-  <!-- Link to Roboto font from Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-  <!-- Bootstrap-datepicker CSS and jQuery -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
   <link rel="stylesheet" href="assets/css/styles.css" />
@@ -55,7 +52,7 @@ Overall, this file provides a user-friendly interface for users to update their 
       font-size: 1rem;
     }
 
-   
+
     .effect-fadeIn {
       animation: fadeIn 1s;
     }
@@ -163,7 +160,7 @@ Overall, this file provides a user-friendly interface for users to update their 
       });
 
       // Fetch data from the API for the settings page
-      fetch('http://localhost:5500/user_details') 
+      fetch('http://localhost:5500/user_details')
         .then(response => response.json())
         .then(data => {
           document.getElementById('firstName').value = data.users.first_name || '';
@@ -192,12 +189,12 @@ Overall, this file provides a user-friendly interface for users to update their 
     };
     // Function to validate password
     function validatePassword(password) {
-        var minLength = 6;
-        var hasUpperCase = /[A-Z]/.test(password);
-        var hasLowerCase = /[a-z]/.test(password);
-        var hasNumbers = /\d/.test(password);
-        var hasSpecialChars = /\W/.test(password);
-        return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars;
+      var minLength = 6;
+      var hasUpperCase = /[A-Z]/.test(password);
+      var hasLowerCase = /[a-z]/.test(password);
+      var hasNumbers = /\d/.test(password);
+      var hasSpecialChars = /\W/.test(password);
+      return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars;
     }
   </script>
 </body>

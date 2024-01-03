@@ -1,3 +1,6 @@
+<!-- This file contains the code for the selected section. -->
+<!-- It is responsible for performing a specific task or functionality. -->
+<!-- Please refer to the code comments for detailed explanations of the implementation. -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +8,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitBot Chat</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="/assets/images/Favicon/Regular/favicon-32x32.png" />
@@ -16,9 +18,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            /* Full viewport height */
             margin: 0;
-            /* Reset default margin */
             background-color: #f4f4f4;
             background-image: url("assets/images/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner.jpg");
             background-repeat: no-repeat;
@@ -33,28 +33,22 @@
             transform: translateY(-50%);
             border-radius: 50%;
             width: 34px;
-            /* Reduced size */
             height: 34px;
-            /* Reduced size */
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             border: none;
             background-color: #686868;
-            /* Adjust the color to match your design */
         }
 
         .submit-button .fa {
             color: white;
             font-size: 16px;
-            /* Adjust the font size of the icon */
         }
 
         .chat-container {
-            /* ... existing styles ... */
             margin: auto;
-            /* Center the container */
         }
 
         .chat-footer {
@@ -70,7 +64,6 @@
             border: 1px solid #ccc;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             border-radius: 15px;
-            /* Rounded top corners, square bottom corners */
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -82,7 +75,6 @@
             flex-grow: 1;
             padding: 15px;
             border-bottom: 1px solid #ccc;
-            /* Separate the chat display and the input */
         }
 
         #chat-form {
@@ -98,7 +90,6 @@
             width: 100%;
             padding-right: 60px;
             height: 110%;
-            /* Make space for the button */
         }
 
         #chat-form .btn {
@@ -132,7 +123,6 @@
             background-color: #ebebeb;
             border-bottom-right-radius: 0;
             margin-left: auto;
-            /* Aligns the bot message to the right */
         }
 
         .typing-indicator {
@@ -186,11 +176,8 @@
         body,
         html {
             height: 100%;
-            /* Ensure the full height for the page */
             margin: 0;
-            /* Reset default margin */
             padding: 0;
-            /* Reset default padding */
         }
 
         #gradient {
@@ -198,9 +185,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            /* Full viewport height */
             width: 100vw;
-            /* Full viewport width */
             position: fixed;
         }
 
@@ -254,10 +239,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     </div>
-
-
-
-
 </body>
 
 </html>
@@ -267,6 +248,7 @@
         displayInitialBotMessage();
     });
 
+    // Display the initial message from the bot
     function displayInitialBotMessage() {
         const typingRow = showTypingIndicator();
         setTimeout(() => {
@@ -275,11 +257,13 @@
         }, 1500); // Delay of 1.5 seconds
     }
 
+    // Listen for the form submit event
     document.getElementById('chat-form').addEventListener('submit', function (event) {
         event.preventDefault();
         sendChatMessage();
     });
 
+    // Send the message to the server
     async function sendChatMessage() {
         const inputField = document.getElementById('chat-input');
         const message = inputField.value.trim();
@@ -314,6 +298,7 @@
         }
     }
 
+    // Show the typing indicator and return the row element
     function showTypingIndicator() {
         const chatDisplay = document.getElementById('chat-display');
         const typingRow = document.createElement('div');
@@ -346,21 +331,22 @@
         typeMessageLetterByLetter(messageTextElement, actualMessage, 0);
     }
 
+    // Process the message for display
     function processMessageForDisplay(message) {
         // Convert new lines to HTML breaks
         return message.replace(/\n/g, '<br>');
     }
 
+    // Type the message letter by letter effect
     function typeMessageLetterByLetter(element, message, index, currentMessage = "") {
         if (index < message.length) {
             const char = message.charAt(index);
             if (char === '\n') {
-                currentMessage += '<br>'; // Add a line break for new lines
+                currentMessage += '<br>';
             } else {
                 currentMessage += char;
             }
 
-            // Update the HTML of the element
             element.innerHTML = currentMessage;
 
             // Dynamic typing speed calculation
@@ -375,6 +361,7 @@
         }
     }
 
+    // Display a message in the chat
     function displayMessage(message, sender) {
         const chatDisplay = document.getElementById('chat-display');
         const messageRow = document.createElement('div');
@@ -397,9 +384,6 @@
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
     }
 
-
-
-
     var colors = new Array(
         [62, 35, 255],
         [60, 255, 60],
@@ -409,11 +393,6 @@
         [255, 128, 0]);
 
     var step = 0;
-    //color table indices for: 
-    // current color left
-    // next color left
-    // current color right
-    // next color right
     var colorIndices = [0, 1, 2, 3];
 
     //transition speed
@@ -450,12 +429,8 @@
             step %= 1;
             colorIndices[0] = colorIndices[1];
             colorIndices[2] = colorIndices[3];
-
-            //pick two new target color indices
-            //do not pick the same as the current one
             colorIndices[1] = (colorIndices[1] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
             colorIndices[3] = (colorIndices[3] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
-
         }
     }
 
