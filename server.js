@@ -1350,9 +1350,12 @@ app.get('/get_user_groups_count/', async (req, res) => {
 });
 
 // ---------- Connect to DB ----------
+const mongoUserName = process.env.MONGO_USER_NAME;
+const mongoPassword = process.env.MONGO_PASSWORD;
+
 mongoose
   .connect(
-    "mongodb+srv://AthletiLink:5q8ImIn@cluster0.ktoakuq.mongodb.net/AthletiLink?retryWrites=true&w=majority"
+    `mongodb+srv://${mongoUserName}:${mongoPassword}@cluster0.ktoakuq.mongodb.net/AthletiLink?retryWrites=true&w=majority`
   )
   .then(() => {
     app.listen(port, () => {
