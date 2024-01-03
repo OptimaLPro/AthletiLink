@@ -17,47 +17,6 @@
   <title>Thank You!</title>
   <style>
     /* Add your animation styles here */
-    /* ... */
-  </style>
-</head>
-
-<body>
-  <div class="container container-center">
-    <div class="thank-you-message">
-      <span style="font-size: 4rem;">Thank you for registering!</span>
-    </div>
-    <!-- <div class="redirect-message">
-      Directing to the login page...
-    </div> -->
-  </div>
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-<script>
-  'use strict';
-
-  window.onload = function () {
-    // Confetti animation function
-    // ...
-  };
-
-</script>
-
-</html>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="5;url=index.html">
-  <title>Thank You!</title>
-  <style>
-    /* Add your animation styles here */
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -222,12 +181,17 @@
         // Update the domain
         for (i = domain.length - 1; i > 0; i -= 2) {
           l = i - 1, a = domain[l], b = domain[i];
+          // c---d          c---d  Do nothing
+          //   c-----d  c-----d    Move interior
+          //   c--------------d    Delete interval
+          //         c--d          Split interval
+          //       a------b
           if (a >= c && a < d)
-            if (b > d) domain[l] = d; 
-            else domain.splice(l, 2); 
+            if (b > d) domain[l] = d; // Move interior (Left case)
+            else domain.splice(l, 2); // Delete interval
           else if (a < c && b > c)
-            if (b <= d) domain[i] = c; 
-            else domain.splice(i, 0, c, d); 
+            if (b <= d) domain[i] = c; // Move interior (Right case)
+            else domain.splice(i, 0, c, d); // Split interval
         }
 
         // Re-measure the domain
@@ -309,7 +273,6 @@
       };
     }
 
-    // Confetto management
     function poof() {
       if (!frame) {
         // Append the container
@@ -348,7 +311,7 @@
         });
       }
     }
-    
+
     poof();
   };
 
