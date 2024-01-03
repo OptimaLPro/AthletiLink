@@ -1,5 +1,14 @@
 const mongoose = require('mongoose')
 
+/**
+ * @typedef {Object} LogsSchema
+ * @property {string} timestamp - The timestamp of the log entry.
+ * @property {string} user_id - The ID of the user associated with the log entry.
+ * @property {string} event_type - The type of event.
+ * @property {string} description - The description of the event.
+ * @property {string} response - The response received for the event.
+ * @property {string} ip_address - The IP address associated with the log entry.
+ */
 const logsSchema = mongoose.Schema(
     {
         timestamp: {

@@ -1,3 +1,10 @@
+<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/comments_edit.html -->
+<!-- 
+    This HTML file represents the Comments Management page of the AthletiLink application.
+    It includes a form for searching and filtering comments, a table for displaying comment data,
+    and modals for confirming comment deletion and updating comment information.
+    The page also includes CSS styles for layout and design.
+-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -121,11 +128,11 @@
 
 <body>
     <div class="container effect-fadeIn">
+        <!-- Comments Management Section -->
         <h1 class="d-flex justify-content-center">Comments Management</h1>
         <br>
-        <!-- <div class="input-group mb-3"> -->
 
-        <!-- <input type="text" class="form-control" id="searchText" placeholder="Search everything..."> -->
+        <!-- Search and Filter Section -->
         <div class="search-container input-group mb-3">
             <div class="input-group-prepend">
                 <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
@@ -147,6 +154,8 @@
                 </span>
             </div>
         </div>
+
+        <!-- Comment Table Section -->
         <div class="scrollable-content">
             <table id="userComments" class="table table-bordered table-hover">
                 <thead>
@@ -166,6 +175,7 @@
         </div>
     </div>
 
+    <!-- Delete Comment Modal -->
     <div class="modal fade" id="deleteCommentModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -187,6 +197,7 @@
         </div>
     </div>
 
+    <!-- Update Comment Modal -->
     <div class="modal fade" id="updateCommentModal" tabindex="-1" role="dialog"
         aria-labelledby="updateCommentModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -245,6 +256,7 @@
             </div>
         </div>
     </div>
+
     <div id="close-icon" class="position-fixed effect-fadeIn"
         style="top: 30px; right: 30px; font-size: 20px; cursor: pointer;">
         <a href="control_panel.html" style="text-decoration: none;"><span class="fa-stack fa-lg" style="color:#343a40;">
@@ -254,9 +266,9 @@
 
     </div>
 
-    <div class="modal fade" id="descriptionModal" tabindex="-1" role="dialog" aria-labelledby="descriptionModalLabel"
+         <div class="modal fade" id="descriptionModal" tabindex="-1" role="dialog" aria-labelledby="descriptionModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog" role="document">
+            <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="descriptionModalLabel">Full Description</h5>
@@ -283,26 +295,13 @@
         let comments;
         fetchComments();
 
-        // fetch('http://localhost:5500/comments/')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         const allComments = data.comments; // Corrected variable name
-        //         const groupDropdown = document.getElementById('groupName');
-        //         allGroups.forEach(function (group) {
-        //             const option = document.createElement('option');
-        //             option.value = group.group_name; // Use 'group' instead of data.user_groups_res.group
-        //             option.text = group.group_name; // Use 'group' instead of data.user_groups_res.group
-        //             groupDropdown.appendChild(option);
-        //         });
-        //     })
-        //     .catch(error => console.error('Error fetching groups:', error));
 
         $('.dropdown-item').click(function () {
             console.log($(this).attr('value'));
             var selectedValue = $(this).attr('value');
             $('#dropdownButton').html($(this).text() + ' <i class="fa fa-caret-down" aria-hidden="true"></i>');
             $('#dropdownButton').attr('value', selectedValue);
-            userComments(selectedValue); // Add this line to pass the selected value
+            userComments(selectedValue); 
         });
 
         $('#exampleModal').on('shown.bs.modal', function () {
@@ -312,7 +311,7 @@
         $("#clearSearch").on("click", function () {
             $("#searchText").val(""); // Clear the search input
             const selectedValue = $("#dropdownButton").attr('value');
-            userComments(selectedValue); // Filter users after clearing search input
+            userComments(selectedValue); 
         });
 
         $("#searchText").on("input", function () {
@@ -323,7 +322,6 @@
         function fetchComments() {
             $.get("http://localhost:5500/comments", function (data) {
                 comments = data.comments;
-                // console.log(comments);
                 populateTable(comments);
             });
         }
@@ -428,8 +426,7 @@
 
         function userComments(criteria) {
             const searchText = $("#searchText").val().toLowerCase();
-            // const searchBy = $("#searchBy").val();
-
+        
             const filteredComments = filterByText(searchText, criteria);
             populateTable(filteredComments);
         }

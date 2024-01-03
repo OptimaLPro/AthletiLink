@@ -1,3 +1,11 @@
+/**
+ * Represents the schema for the user groups.
+ *
+ * @typedef {Object} UserGroupsSchema
+ * @property {string} user_id - The user ID.
+ * @property {string} group - The group name.
+ */
+
 const mongoose = require('mongoose')
 
 const user_goups_Schema = mongoose.Schema(

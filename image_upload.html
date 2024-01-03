@@ -1,3 +1,9 @@
+<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/image_upload.html -->
+<!--
+    This HTML file allows users to upload an image using a form.
+    The selected image is sent to the ImgBB API for uploading.
+-->
+
 <html lang="en">
 
 <head>
@@ -18,6 +24,9 @@
 
 </html>
 <script>
+    /**
+     * Handles the file change event when an image is selected.
+     */
     function fileChange() {
         var file = document.getElementById('input_img');
         var form = new FormData();

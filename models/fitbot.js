@@ -1,3 +1,9 @@
+/**
+ * Represents the schema for the Fitbot model.
+ * @typedef {Object} FitbotSchema
+ * @property {string} user_id - The ID of the user.
+ * @property {string} date - The date of the Fitbot entry.
+ */
 const mongoose = require('mongoose')
 
 const fitbotSchema = mongoose.Schema(

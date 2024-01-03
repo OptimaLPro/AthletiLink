@@ -1,3 +1,9 @@
+<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/Welcome.html -->
+<!--
+    This is the Welcome page of the AthletiLink website.
+    It contains a logo, a video, and sign-in/sign-up buttons.
+-->
+
 <!DOCTYPE html>
 <html>
 
@@ -7,6 +13,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
     <style>
+        /* CSS styles for the page */
         body {
             background-color: #282525;
             display: flex;
@@ -114,19 +121,24 @@
             color: inherit;
             /* Link color on hover (inherits from button) */
         }
+        /* CSS styles for the page */
     </style>
 </head>
 
 <body>
+    <!-- Logo container -->
     <div class="logo-container">
         <img src="assets/images/logo-transparent-bg-white.png" alt="Logo" class="logo">
+        <!-- Video container -->
         <div class="video-container">
+            <!-- YouTube video embedded in an iframe -->
             <iframe width="960" height="540"
                 src="https://www.youtube.com/embed/Yb2cX8qwCho?si=e3DF9m6XgUGnVhQv&&amp;controls=0&amp;autoplay=1&amp;mute=1&amp;start=5"
                 title="YouTube video player" frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen class="video"></iframe>
         </div>
+        <!-- Sign-in/Sign-up buttons container -->
         <div class="sign-in-up-container">
             <button type="button" class="btn"><a href="SignIn.html" style="color:rgb(255, 255, 255)"> Sign
                     In</a></button>
@@ -135,6 +147,7 @@
         </div>
     </div>
 
+    <!-- JavaScript libraries -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
         integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"

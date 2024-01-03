@@ -23,18 +23,13 @@
             font-family: "Roboto", sans-serif;
             display: flex;
             flex-direction: column;
-            /* Changed from row to column */
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            /* Ensures the body takes up at least the viewport height */
             margin: 0;
             background-color: #f1f1f1;
-            /* Fixed the color code */
             padding-top: 20px;
-            /* Add top padding */
             padding-bottom: 20px;
-            /* Add bottom padding */
         }
 
         .container {
@@ -46,7 +41,6 @@
             /* Adjusted for better responsiveness */
             width: 100%;
             margin: auto;
-            /* Centers the container in the flex container */
         }
     </style>
 </head>
@@ -59,7 +53,6 @@
             <div class="form-group">
                 <label for="group">Group</label>
                 <select id="group" name="group" class="form-control" required>
-                    <!-- Use JavaScript to populate this dropdown with options from the Groups API -->
                 </select>
             </div>
 
@@ -71,8 +64,6 @@
             <div class="form-group">
                 <label for="duration">Duration</label>
                 <select id="duration" name="duration" class="form-control duration-dropdown" required>
-                    <!-- Populate this dropdown with options from 15 minutes to 2 hours in jumps of 15 minutes -->
-                    <!-- You can add these options dynamically using JavaScript -->
                     <option value="15">15 minutes</option>
                     <option value="30">30 minutes</option>
                     <option value="45" selected="true">45 minutes</option>
@@ -251,16 +242,4 @@
         timeDropdown.value = "18:00";
     });
 
-
-    // function getCurrentDateTime() {
-    //   const now = new Date();
-    //   const currentDate = now.toLocaleDateString(); // Get current date
-    //   const currentTime = now.toLocaleTimeString(); // Get current time
-
-    //   return `Current Date: ${currentDate}, Current Time: ${currentTime}`;
-    // }
-
-    // // Call the function to get the current date and time
-    // const currentDateTime = getCurrentDateTime();
-    // console.log(currentDateTime);
 </script>

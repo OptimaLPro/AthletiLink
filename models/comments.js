@@ -1,3 +1,15 @@
+
+/**
+ * Represents the schema for comments in the AthletiLink application.
+ * @typedef {Object} commentsSchema
+ * @property {string} post_id - The ID of the post the comment belongs to.
+ * @property {string} user_id - The ID of the user who made the comment.
+ * @property {string} first_name - The first name of the user who made the comment.
+ * @property {string} last_name - The last name of the user who made the comment.
+ * @property {string} description - The description of the comment.
+ * @property {string} date - The date the comment was made.
+ * @property {string} time - The time the comment was made.
+ */
 const mongoose = require('mongoose')
 
 const commentsSchema = mongoose.Schema(

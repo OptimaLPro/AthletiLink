@@ -1,3 +1,11 @@
+<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/groups_edit.html -->
+<!-- 
+    This HTML file represents the Groups Management page of the AthletiLink application.
+    It contains the necessary HTML structure, styles, and scripts to manage groups.
+    The page includes a search bar, a list of groups, and modals for adding, updating, and deleting groups.
+    Users can search for groups, add new groups, update existing groups, and delete groups.
+    The file also includes external dependencies such as Bootstrap, Font Awesome, and jQuery.
+-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -236,9 +244,11 @@
         });
 
         $("#clearSearch").on("click", function () {
-            $("#searchText").val(""); // Clear the search input
+            // Clear the search input
+            $("#searchText").val(""); 
             const selectedValue = $("#dropdownButton").attr('value');
-            searchGroups(selectedValue); // Filter users after clearing search input
+            // Filter users after clearing search input
+            searchGroups(selectedValue); 
         });
 
         $("#searchText").on("input", function () {
@@ -253,7 +263,7 @@
                 status: $("#status").val(),
             };
 
-
+            console.log(newGroup);
             fetch(`http://localhost:5500/create_group`, {
                 method: 'POST',
                 headers: {
@@ -278,13 +288,14 @@
 
         });
 
+        // Function to handle file upload
         function searchGroups(criteria) {
             const searchText = $("#searchText").val().toLowerCase();
             const filteredGroups = filterByText(searchText, criteria);
             clearGroups();
             createSportsCards(filteredGroups);
         }
-
+        // Function to filter users by text
         function filterByText(text, criteria) {
             const lowercaseText = text.toLowerCase();
             console.log(`Filtering by ${criteria} for ${text}`);
@@ -313,7 +324,7 @@
                 });
             }
         }
-
+        //// Clear the search input
         function createSportsCards(groups) {
             var mainContainer = document.getElementById("main-container");
             var container = document.getElementById("sports-cards-container");
@@ -350,11 +361,11 @@
 
                 var card = document.createElement("div");
                 card.className = "card";
-                card.style.cursor = "pointer"; // Set cursor style to indicate clickability
-                card.style.backgroundColor = "white"; // Set background color to white
-                card.style.color = "white"; // Set text color to white
-                card.style.height = "300px"; // Set card height
-                card.style.border = "1px solid #dee2e6"; // Add a border for separation
+                card.style.cursor = "pointer"; 
+                card.style.backgroundColor = "white";
+                card.style.color = "white"; 
+                card.style.height = "300px"; 
+                card.style.border = "1px solid #dee2e6"; 
 
                 // Set background image if available
                 if (group.pic) {
@@ -368,7 +379,7 @@
                 card.style.backgroundPosition = "center";
 
                 var cardBody = document.createElement("div");
-                cardBody.className = "card-body d-flex flex-column align-items-center justify-content-center"; // Center content vertically
+                cardBody.className = "card-body d-flex flex-column align-items-center justify-content-center"; 
 
                 var cardTitle = document.createElement("div");
                 cardTitle.className = "card-title";
@@ -380,33 +391,6 @@
                 cardTitle.textContent = group.group_name;
 
                 var formCheckDiv = document.createElement("div");
-                // formCheckDiv.className = "form-check text-center"; // Center the checkbox
-
-                // var checkbox = document.createElement("input");
-                // checkbox.className = "form-check-input default-checkboxs";
-
-                // // Add black shadow to the checkbox
-                // checkbox.style.boxShadow = "2px 2px 2px black";
-
-                // checkbox.type = "checkbox";
-                // checkbox.value = "";
-                // checkbox.checked = isChecked;
-
-                // // Toggle checkbox state when the card is clicked
-                // card.addEventListener("click", function (event) {
-                //     // Check if the click target is the checkbox
-                //     if (!event.target.classList.contains('form-check-input')) {
-                //         checkbox.checked = !checkbox.checked;
-                //     }
-                // });
-
-                // // Toggle checkbox state when the checkbox is clicked
-                // checkbox.addEventListener("click", function (event) {
-                //     // Stop the event from propagating to the card click handler
-                //     event.stopPropagation();
-                // });
-
-                // formCheckDiv.appendChild(checkbox);
 
                 cardBody.appendChild(cardTitle);
                 cardBody.appendChild(formCheckDiv);
@@ -422,13 +406,14 @@
             });
         }
 
+        // Function to clear the groups container
         function clearGroups() {
             console.log("clearGroups");
             var groupContainer = document.getElementById("sports-cards-container");
             groupContainer.innerHTML = "";
             console.log("DONE");
         }
-
+        // Function to fetch groups from the server
         function fetchGroups() {
             $.get("http://localhost:5500/groups", function (data) {
                 groups = data.groups;
@@ -455,7 +440,7 @@
                 };
 
                 console.log(updatedGroup);
-
+                // Send PUT request to update group
                 fetch(`http://localhost:5500/update_group/${group_id}`, {
                     method: 'POST',
                     headers: {

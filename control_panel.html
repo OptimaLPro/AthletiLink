@@ -1,3 +1,11 @@
+<!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/control_panel.html -->
+<!-- 
+    This is the control panel page of the AthletiLink application.
+    It provides a user interface for managing users, posts, comments, groups, and graphs.
+    The page includes icons for each category and a badge to display the number of pending posts.
+    The page also includes a close icon to navigate back to the index page.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,7 +27,7 @@
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
+           body {
             font-family: "Roboto", sans-serif;
             display: flex;
             align-items: center;
@@ -75,28 +83,36 @@
             line-height: 1;
             /* Ensures text is vertically centered */
         }
+        /* CSS styles omitted for brevity */
     </style>
 </head>
 
 <body>
+    <!-- FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/control_panel.html -->
+    <!-- BEGIN: ed8c6549bwf9 -->
     <div class="container mt-6 effect-fadeIn">
+        <!-- Users Icon -->
         <div class="icon-container">
             <div class="icon" onclick="redirectTo('users_edit.html')">&#128100;</div>
             <p class="icon-title" onclick="redirectTo('users_edit.html')">Users</p>
         </div>
+        <!-- Posts Icon -->
         <div class="icon-container">
             <div class="icon" onclick="redirectTo('posts_edit.html')">&#128203;</div>
             <span id="pendingPostsBadge" class="badge badge-pill badge-warning">0</span>
             <p class="icon-title" onclick="redirectTo('posts_edit.html')">Posts</p>
         </div>
+        <!-- Comments Icon -->
         <div class="icon-container">
             <div class="icon" onclick="redirectTo('comments_edit.html')">&#128172;</div>
             <p class="icon-title" onclick="redirectTo('comments_edit.html')">Comments</p>
         </div>
+        <!-- Groups Icon -->
         <div class="icon-container">
             <div class="icon" onclick="redirectTo('groups_edit.html')">&#128106;</div>
             <p class="icon-title" onclick="redirectTo('groups_edit.html')">Groups</p>
         </div>
+        <!-- Graphs Icon -->
         <div class="icon-container">
             <div class="icon" onclick="redirectTo('graphs.html')">&#128200;</div>
             <p class="icon-title" onclick="redirectTo('graphs.html')">Graphs</p>
@@ -108,10 +124,16 @@
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-times fa-stack-1x fa-inverse"></i>
             </span></a>
-
     </div>
+    <!-- END: ed8c6549bwf9 -->
 
     <script>
+        //  FILEPATH: /c:/Users/Omer/Documents/GitHub/AthletiLink/control_panel.html 
+
+        /**
+         * Redirects the user to the specified page.
+         * @param {string} page - The URL of the page to redirect to.
+         */
         function redirectTo(page) {
             window.location.href = page;
         }
