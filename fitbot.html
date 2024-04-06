@@ -338,11 +338,21 @@
     }
 
     // Type the message letter by letter effect
-    function typeMessageLetterByLetter(element, message, index, currentMessage = "") {
+    function typeMessageLetterByLetter(element, message, index, currentMessage = "", isBold = false) {
         if (index < message.length) {
             const char = message.charAt(index);
             if (char === '\n') {
                 currentMessage += '<br>';
+            } else if (char === '*' && message.slice(index, index + 2) === '**') {
+                // Check for the closing **
+                if (isBold) {
+                    currentMessage += '</strong>';
+                    isBold = false;
+                } else {
+                    currentMessage += '<strong>';
+                    isBold = true;
+                }
+                index += 1; // Skip the closing **
             } else {
                 currentMessage += char;
             }
@@ -356,8 +366,12 @@
             let delay = Math.max(maxSpeed, baseSpeed - (message.length / lengthFactor));
 
             setTimeout(() => {
-                typeMessageLetterByLetter(element, message, index + 1, currentMessage);
+                typeMessageLetterByLetter(element, message, index + 1, currentMessage, isBold);
             }, delay);
+        } else if (isBold) {
+            // If the message ends with an open bold tag, close it
+            currentMessage += '</strong>';
+            element.innerHTML = currentMessage;
         }
     }
 
