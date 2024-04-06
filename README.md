@@ -26,12 +26,18 @@
 
 <h2>Screenshots</h2>
 
-<img src="https://i.ibb.co/8PStjMw/1.png" alt="Screenshot 1" style="width: 100%;">
-<img src="https://i.ibb.co/hf7pYf0/2.png" alt="Screenshot 2" style="width: 100%;">
-<img src="https://i.ibb.co/Wy5sNrv/ezgif-5-d33174acb7.gif" alt="Screenshot 3" style="width: 100%;">
-<img src="https://i.ibb.co/Hh9pV6v/3.png" alt="Screenshot 4" style="width: 100%;">
-<img src="https://i.ibb.co/TkyDdSK/4.png" alt="Screenshot 5" style="width: 100%;">
-<img src="https://i.ibb.co/8s8Rmxh/5.png" alt="Screenshot 6" style="width: 100%;">
+![1](https://github.com/OptimaLPro/AthletiLink/assets/65537815/18f301a0-4ef5-479d-9158-a3765f3222df)
+![2](https://github.com/OptimaLPro/AthletiLink/assets/65537815/0b2c0404-ffcd-4f93-86e5-f902d63fb2af)
+![ezgif-5-d33174acb7 (1)](https://github.com/OptimaLPro/AthletiLink/assets/65537815/5ac18401-dcc9-4c39-94d4-ceb91cf72839)
+![3](https://github.com/OptimaLPro/AthletiLink/assets/65537815/45d14488-2302-479e-b685-2151906af591)
+![4](https://github.com/OptimaLPro/AthletiLink/assets/65537815/0a58758f-6910-46d4-9215-fad4b7706d9d)
+![5](https://github.com/OptimaLPro/AthletiLink/assets/65537815/08604c52-3c98-420e-826a-34002ff8433f)
+
+
+
+
+
+
 
 <h2>Getting Started</h2>
 
