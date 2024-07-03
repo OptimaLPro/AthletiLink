@@ -1355,7 +1355,8 @@ const mongoPassword = process.env.MONGO_PASSWORD;
 
 mongoose
   .connect(
-    `mongodb+srv://${mongoUserName}:${mongoPassword}@cluster0.ktoakuq.mongodb.net/AthletiLink?retryWrites=true&w=majority`
+    // `mongodb+srv://${mongoUserName}:${mongoPassword}@cluster0.ktoakuq.mongodb.net/AthletiLink?retryWrites=true&w=majority`
+    `mongodb+srv://${mongoUserName}:${mongoPassword}@athletilink.t9yt3qg.mongodb.net/AthletiLink?retryWrites=true&w=majority`
   )
   .then(() => {
     app.listen(port, () => {
